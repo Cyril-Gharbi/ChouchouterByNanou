@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Chouchouter By Nanou - Accueil</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+    </head>
+
+        <body>
+    <header>
+        <nav class="bloc_logo">
+            <img src="{{ url_for('static', filename='images/Logo.png')}}" alt="Logo" width="180">
+            <a class="un" href="{{ url_for('accueil') }}">Accueil</a>
+            <a class="deux" href="{{ url_for('portfolio') }}">Réalisations</a>
+            <a class="trois" href="{{ url_for('tarifs') }}">Tarifs</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="slogan">
+            <div class="texte1"><p></p></div>
+            <div class="texte2"><p></p></div>
+        </div>
+    </main>
+
+    <footer>
+        <p class="footer">Contact: 07.44.28.58.72</p>
+    </footer>
+        </body>
+</html>
+
