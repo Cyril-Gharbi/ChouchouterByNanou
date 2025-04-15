@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends "base.html" %}
 
-    <head>
-        <meta charset="utf-8">
-        <title>Chouchouter By Nanou - Accueil</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
-    </head>
+{% block title %}Tarifs - Chouchouter By Nanou{% endblock %}
 
-        <body>
-    <header>
-        <nav class="bloc_logo">
-            <img src="{{ url_for('static', filename='images/Logo.png')}}" alt="Logo" width="180">
-            <a class="un" href="{{ url_for('accueil') }}">Accueil</a>
-            <a class="deux" href="{{ url_for('portfolio') }}">Réalisations</a>
-            <a class="trois" href="{{ url_for('tarifs') }}">Tarifs</a>
-        </nav>
-    </header>
-
-    <main>
-
-    </main>
-
-    <footer>
-        <p class="footer">Contact: 07.44.28.58.72</p>
-    </footer>
-        </body>
-</html>
+{% block content %}
+    <h1>Bienvenue sur la page des tarifs</h1>
+    <p>Voici le contenu spécifique à la page des tarifs.</p>
+{% endblock %}
