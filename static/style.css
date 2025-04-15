@@ -10,7 +10,7 @@ body {
 
 
 .bloc_logo {
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(164, 136, 164, 0.9));
+    background: linear-gradient(to top, rgba(255, 255, 255), rgba(164, 136, 164, 0.9));
     font-size: 2em;
     padding: 10px 0px 20px;
     font-weight: bold;
@@ -23,8 +23,8 @@ body {
 
 main {
     background: linear-gradient(rgba(255, 255, 255), rgba(164, 136, 164, 0.9), rgba(255, 255, 255));
-    color: white;
-    padding: 20px;
+    color: black;
+    padding: 100px 20px;
 }
    
 
