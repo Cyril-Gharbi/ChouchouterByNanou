@@ -1,18 +1,25 @@
 * {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
 }
 
 body {
-    background-color: white;
-    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
-
-
+  
 
 .bloc_logo {
     background: linear-gradient(to top, rgba(255, 255, 255), rgba(164, 136, 164, 0.9));
-    font-size: 2em;
-    padding: 10px 0px 20px;
+    font-size: 1.5em;
+    padding: 20px 140px;
     font-weight: bold;
     display: flex;
     flex-direction: row;
@@ -20,25 +27,47 @@ body {
     align-items: top;
 }
 
+.bloc_logo a {
+    padding-top: 30px;
+    text-decoration: none;
+}
 
 main {
     background: linear-gradient(rgba(255, 255, 255), rgba(164, 136, 164, 0.9), rgba(255, 255, 255));
     color: black;
-    padding: 100px 20px;
+    padding: 0px 0px 100px 0px;
+    margin-top: 20px;
+    flex: 1;
 }
-   
+
+
+h1 {
+    background-image: url('/static/images/titre.png');
+    background-size: cover;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    color: #a9a075;
+    font-size: 2.3em;
+    text-align: center;
+    padding: 200px 0px 10px 0px; 
+    margin-bottom: 100px;
+    width: 100%;
+}
 
 footer {
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(164, 136, 164, 0.9));    font-size: 2em;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(164, 136, 164, 0.9));
+    font-size: 1.5em;
     font-weight: bold;
     text-align: center;
     padding: 30px 0px 30px;
+    
 }
 
 a {
     color: #000103;
+    transition: all 0.3s ease;
 }
 
 a:hover {
-    color: #c7b370;
+    color: #a9a075;
 }

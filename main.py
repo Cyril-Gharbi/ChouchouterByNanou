@@ -14,5 +14,13 @@ def portfolio():
 def tarifs():
     return render_template("tarifs.html")
 
+@app.route("/cgu")
+def cgu():
+    return render_template("cgu.html")
+
+@app.route("/mentions")
+def mentions():
+    return render_template("mentions.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

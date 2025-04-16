@@ -2,20 +2,28 @@
 
 {% block title %}Portfolio - Chouchouter By Nanou{% endblock %}
 
+{% block head %}
+   <link rel="stylesheet" href="{{ url_for('static', filename='portfolio.css') }}">
+{% endblock %}
+
 {% block content %}
-<h1>Bienvenue sur la page d'accueil</h1>
-<br><br><br>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-   ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-   laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-   voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-   non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-<br><br>
+<h1>Mes réalisations</h1>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-   ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-   laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-   voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-   non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<div class="photo-grid">
+    <!-- Groupe des photos Avant -->
+    <div class="photo-column">
+        <h2 class="column-title">Avant</h2>
+        <img class="photo-avant" src="{{ url_for('static', filename='images/réalisations/photo_1.jpg') }}" alt="Avant 1">
+        <img class="photo-avant" src="{{ url_for('static', filename='images/réalisations/photo_1.jpg') }}" alt="Avant 2">
+    </div>
+
+    <!-- Groupe des photos Après -->
+    <div class="photo-column">
+        <h2 class="column-title">Après</h2>
+        <img class="photo-apres" src="{{ url_for('static', filename='images/réalisations/photo_2.jpg') }}" alt="Après 1">
+        <img class="photo-apres" src="{{ url_for('static', filename='images/réalisations/photo_2.jpg') }}" alt="Après 2">
+    </div>
+</div>
+
 {% endblock %}

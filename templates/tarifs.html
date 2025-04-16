@@ -1,21 +1,138 @@
 {% extends "base.html" %}
 
-{% block title %}Tarifs - Chouchouter By Nanou{% endblock %}
+{% block title %}Prestations et tarifs - Chouchouter By Nanou{% endblock %}
+
+{% block head %}
+   <link rel="stylesheet" href="{{ url_for('static', filename='tarifs.css') }}">
+{% endblock %}
 
 {% block content %}
-<h1>Bienvenue sur la page d'accueil</h1>
-<br><br><br>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-   ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-   laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-   voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-   non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-<br><br>
+<h1>Mes prestations</h1>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-   ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-   laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-   voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-   non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<div class="container">
+    <div class="liste">
+      <h5>Semi-permanent</h5>
+        <button onclick="afficher('item1')">Manucure simple</button>
+        <button onclick="afficher('item2')">Pose semi permanent + couleur</button>
+        <button onclick="afficher('item3')">Pose semi permanent renforcé + couleur</button>
+        <button onclick="afficher('item4')">Dépose semi permanent</button>
+        <button onclick="afficher('item5')">Dépose / Repose semi permanent</button>
+        <button onclick="afficher('item6')">Gainage sur ongle naturel + couleur</button>
+        <button onclick="afficher('item7')">Supplément dépose et/ou repose VSP par autre PO</button>
+
+      <h5>Extension</h5>
+        <button onclick="afficher('item8')">Extension taille S</button>
+        <button onclick="afficher('item9')">Extension taille M</button>
+        <button onclick="afficher('item10')">Remplissage 3-4 semaines</button>
+        <button onclick="afficher('item11')">Remplissage > 4 semaines</button>
+        <button onclick="afficher('item12')">Dépose sans repose</button>
+        <button onclick="afficher('item13')">Pose capsules américaine</button>
+        <button onclick="afficher('item14')">Dépose capsules américaine</button>
+        <button onclick="afficher('item15')">Dépose / repose capsules américaine</button>
+
+      <h5>Nail art</h5>
+        <button onclick="afficher('item16')">Autocollant</button>
+        <button onclick="afficher('item17')">Dessin fait à la main</button>
+        <button onclick="afficher('item18')">French ou baby boomer</button>
+        <button onclick="afficher('item19')">Effet miroir / sucre</button>
+    </div>
+  
+    <div class="description">
+        <div id="item1" class="contenu actif">
+          <h2>Manucure simple</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>         
+        </div>
+        <div id="item2" class="contenu">
+          <h2>Pose semi permanent + couleur</h2>
+          <p>Description de l'article 2. Encore plus fascinant !</p>
+        </div>
+        <div id="item3" class="contenu">
+          <h2>Pose semi permanent renforcé + couleur</h2>
+          <p>Voici l'article 3. Dernier mais non des moindres.</p>
+        </div>
+        <div id="item4" class="contenu">
+            <h2>Dépose semi permanent</h2>
+            <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item5" class="contenu">
+            <h2>Dépose / Repose semi permanent</h2>
+            <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item6" class="contenu">
+            <h2>Gainage sur ongle naturel + couleur</h2>
+            <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item7" class="contenu">
+            <h2>Supplément dépose et/ou repose VSP par autre PO</h2>
+            <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item8" class="contenu">
+            <h2>Extension taille S</h2>
+            <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item9" class="contenu">
+            <h2>Extension taille M</h2>
+            <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item10" class="contenu">
+          <h2>Remplissage 3-4 semaines</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item11" class="contenu">
+          <h2>Remplissage > 4 semaines</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item12" class="contenu">
+          <h2>Dépose sans repose</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item13" class="contenu">
+          <h2>Pose capsules américaine</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item14" class="contenu">
+          <h2>Dépose capsules américaine</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item15" class="contenu">
+          <h2>Dépose / repose capsules américaine</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item16" class="contenu">
+          <h2>Autocollant</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item17" class="contenu">
+          <h2>Dessin fait à la main</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item18" class="contenu">
+          <h2>French ou baby boomer</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <div id="item19" class="contenu">
+          <h2>Effet miroir / sucre</h2>
+          <p>Voici une description de l'article 1. Il parle de choses intéressantes.</p>
+        </div>
+        <a target="_blank" href="https://chouchouter-by-nanou2.reservio.com/services" class="btn">Réserver</a>
+    </div>
+
+</div>
+  
+<script>
+  function afficher(id) {
+    const contenus = document.querySelectorAll('.contenu');
+    contenus.forEach(c => c.classList.remove('actif'));
+
+    const element = document.getElementById(id);
+    element.classList.add('actif');
+
+    // Scroll fluide vers le début du bloc description
+    document.querySelector('.description').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+
+
+
 {% endblock %}

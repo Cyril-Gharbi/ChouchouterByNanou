@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}Chouchouter By Nanou{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head %}{% endblock %}
 </head>
 <body>
 
@@ -12,7 +13,7 @@
             <img src="{{ url_for('static', filename='images/Logo.png')}}" alt="Logo" width="180">
             <a class="un" href="{{ url_for('accueil') }}">Accueil</a>
             <a class="deux" href="{{ url_for('portfolio') }}">Réalisations</a>
-            <a class="trois" href="{{ url_for('tarifs') }}">Tarifs</a>
+            <a class="trois" href="{{ url_for('tarifs') }}">Prestations et Réservations</a>
         </nav>
     </header>
 
@@ -22,6 +23,9 @@
 
     <footer>
         <p class="footer">Contact: 07.44.28.58.72</p>
+        <p><a class="quatre" href="{{ url_for('mentions') }}">Mentions Légales</a></p>
+        <a href="{{ url_for('cgu') }}">Conditions Générales d’Utilisation</a>
+
     </footer>
 
 </body>

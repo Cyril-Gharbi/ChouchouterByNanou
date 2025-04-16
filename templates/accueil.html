@@ -2,20 +2,21 @@
 
 {% block title %}Accueil - Chouchouter By Nanou{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='accueil.css') }}">
+{% endblock %}
+
 {% block content %}
-    <h1>Bienvenue sur la page d'accueil</h1>
-    <br><br><br>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-       ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-       laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-       voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-       non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-    <br><br>
-
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-       ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-       laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-       voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-       non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<h1>Bienvenue sur la page d'accueil</h1>
+<div class="container">
+   <img src="{{ url_for('static', filename='images/accueil.jpg')}}" alt="Chouchouter" class="image">
+   <div class="text">
+      <p>Lorem ipsum dolor sit amet. Ea itaque enim sed laborum veniam 33 ducimus explicabo id recusandae
+         rerum sit voluptas tempore nam rerum omnis ut aliquid galisum. Id magnam iusto eum dolor accusamus
+         non natus deserunt. Eum eaque laudantium est harum vero eos omnis blanditiis sed iste incidunt et
+         fugiat aspernatur. Ut vero possimus aut voluptatem magni non quibusdam ratione.Sit perspiciatis
+         exercitationem aut fuga iure est rerum voluptas et omnis voluptas et nulla internos ut ipsa nisi?
+         Et rerum rerum aut ipsum ratione et ullam eius.</p>
+   </div>
+</div>
 {% endblock %}
