@@ -4,9 +4,15 @@
     box-sizing: border-box;
 }
 
+
 html, body {
     height: 100%;
     margin: 0;
+    padding: 0;
+    font-family: "Lora", serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
 }
 
 body {
@@ -24,7 +30,7 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    align-items: top;
+    align-items: center;
 }
 
 .bloc_logo a {
@@ -34,25 +40,23 @@ body {
 
 main {
     background: linear-gradient(rgba(255, 255, 255), rgba(164, 136, 164, 0.9), rgba(255, 255, 255));
-    color: black;
+    color: #000103;
     padding: 0px 0px 100px 0px;
     margin-top: 20px;
     flex: 1;
 }
 
-
-h1 {
+.vernis {
     background-image: url('/static/images/titre.png');
+    width: 100vw;
+    height: 30vh;
     background-size: cover;
-    background-position: bottom;
+    background-position: center bottom; 
     background-repeat: no-repeat;
-    color: #a9a075;
-    font-size: 2.3em;
-    text-align: center;
-    padding: 200px 0px 10px 0px; 
-    margin-bottom: 100px;
-    width: 100%;
+    margin-top: 10px;
+    overflow: hidden;
 }
+
 
 footer {
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(164, 136, 164, 0.9));
@@ -71,3 +75,4 @@ a {
 a:hover {
     color: #a9a075;
 }
+

@@ -1,0 +1,40 @@
+# 🌐 Web (Flask + outils)
+flask
+flask_sqlalchemy
+flask_wtf
+flask_migrate
+python-dotenv
+gunicorn
+
+# 🛢️ Base de données
+psycopg2-binary      # PostgreSQL
+mysqlclient          # MySQL
+sqlalchemy
+
+# 📊 Data / Analyse
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+openpyxl             # pour lire/écrire du Excel
+
+# 🔧 Outils généraux
+requests
+beautifulsoup4
+lxml
+python-dateutil
+tqdm
+pydantic
+tabulate
+rich
+
+# 🧪 Tests
+pytest
+
+# 🔍 Dev/debug
+ipython
+ipdb
+
+# 🧱 Environnements
+virtualenv

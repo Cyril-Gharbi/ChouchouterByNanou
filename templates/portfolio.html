@@ -11,19 +11,10 @@
 <h1>Mes réalisations</h1>
 
 <div class="photo-grid">
-    <!-- Groupe des photos Avant -->
-    <div class="photo-column">
-        <h2 class="column-title">Avant</h2>
-        <img class="photo-avant" src="{{ url_for('static', filename='images/réalisations/photo_1.jpg') }}" alt="Avant 1">
-        <img class="photo-avant" src="{{ url_for('static', filename='images/réalisations/photo_1.jpg') }}" alt="Avant 2">
-    </div>
-
-    <!-- Groupe des photos Après -->
-    <div class="photo-column">
-        <h2 class="column-title">Après</h2>
-        <img class="photo-apres" src="{{ url_for('static', filename='images/réalisations/photo_2.jpg') }}" alt="Après 1">
-        <img class="photo-apres" src="{{ url_for('static', filename='images/réalisations/photo_2.jpg') }}" alt="Après 2">
-    </div>
+        <img class="photo" src="{{ url_for('static', filename='images/réalisations/photo_1.jpg') }}" alt="photo 1">
+        <img class="photo" src="{{ url_for('static', filename='images/réalisations/photo_2.jpg') }}" alt="photo 2">
+        <img class="photo" src="{{ url_for('static', filename='images/réalisations/photo_1.jpg') }}" alt="photo 3">
+        <img class="photo" src="{{ url_for('static', filename='images/réalisations/photo_2.jpg') }}" alt="photo 4">
 </div>
 
 {% endblock %}
