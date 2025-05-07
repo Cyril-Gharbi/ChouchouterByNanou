@@ -9,11 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     {% block head %}{% endblock %}
 </head>
+
 <body>
+    <div class="overlay">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" class="overlay-logo" alt="Logo">
+    </div>
+      
 
     <header>
         <nav class="bloc_logo">
-            <img src="{{ url_for('static', filename='images/Logo.png')}}" alt="Logo" width="180">
+            <img src="{{ url_for('static', filename='images/logo.png')}}" alt="Logo" width="180">
             <a class="un" href="{{ url_for('accueil') }}">Accueil</a>
             <a class="deux" href="{{ url_for('portfolio') }}">Réalisations</a>
             <a class="trois" href="{{ url_for('tarifs') }}">Prestations & Réservations</a>
@@ -32,5 +37,41 @@
         <a href="{{ url_for('cgu') }}">Conditions Générales d’Utilisation</a>
     </footer>
 
+    <script>
+        const overlay = document.querySelector('.overlay');
+      
+        // FONDU D’ENTRÉE
+        if (sessionStorage.getItem('fading') === 'true') {
+          overlay.style.opacity = '1';
+          requestAnimationFrame(() => {
+            overlay.style.opacity = '0';
+          });
+          setTimeout(() => {
+            overlay.style.display = 'none';
+          }, 1500); // doit correspondre à la durée de transition
+          sessionStorage.removeItem('fading');
+        } else {
+          overlay.style.display = 'none';
+        }
+      
+        // FONDU DE SORTIE
+        document.querySelectorAll('a[href]').forEach(link => {
+          link.addEventListener('click', e => {
+            const url = link.getAttribute('href');
+            if (!url.startsWith('http') && !url.startsWith('#')) {
+              e.preventDefault();
+              overlay.style.display = 'flex';
+              requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+              });
+              sessionStorage.setItem('fading', 'true');
+              setTimeout(() => {
+                window.location.href = url;
+              }, 1500); // la même durée ici aussi
+            }
+          });
+        });
+      </script>
+      
 </body>
 </html>
