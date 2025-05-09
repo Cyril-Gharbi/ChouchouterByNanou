@@ -1,9 +1,0 @@
-CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    firstname VARCHAR(20) NOT NULL,
-    lastname VARCHAR(20) NOT NULL,
-    email VARCHAR(40) UNIQUE NOT NULL,
-    pass_word VARCHAR(200) NOT NULL,
-    inscription_date DATE DEFAULT CURRENT_DATE,
-    active BOOLEAN DEFAULT TRUE
-);
