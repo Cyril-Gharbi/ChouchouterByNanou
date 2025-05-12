@@ -38,3 +38,6 @@ ipdb
 
 # 🧱 Environnements
 virtualenv
+
+# Sécurité
+werkzeug

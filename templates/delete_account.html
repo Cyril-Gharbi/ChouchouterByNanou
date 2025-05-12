@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmation de suppression{% endblock %}
+
+{% block content %}
+<h2>Confirmer la suppression de votre compte</h2>
+<p>Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
+
+<form method="post">
+    <label for="password">Mot de passe :</label>
+    <input type="password" name="password" id="password" required>
+    <button type="submit">Confirmer la suppression</button>
+</form>
+
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+{% endblock %}

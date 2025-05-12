@@ -1,4 +1,3 @@
-/* Styles généraux pour le formulaire de connexion */
 .login-box {
     display: flex;
     flex-direction: column;
@@ -9,9 +8,14 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(1, 0, 3, 0.1);
     width: 100%;
-    max-width: 400px; /* Limite la largeur du formulaire */
-    margin: auto; /* Centre le formulaire */
-    margin-top: 100px; /* Espacement au-dessus */
+    max-width: 400px;
+    margin: auto;
+    margin-top: 100px;
+}
+
+.login-box.connecte {
+    max-width: 800px;
+    font-size: 1.5em;
 }
 
 .login-box p {
@@ -75,4 +79,18 @@
     font-weight: bold;
     color: #a488a4;
     text-align: center;
+}
+img {
+    border-radius: 20px;
+    margin: 10px 0px;
+}
+
+span {
+    color: #a9a075;
+    text-decoration: underline;
+}
+
+.login-box.connecte a {
+    font-weight: 200;
+    font-size: 0.8em;
 }

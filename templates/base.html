@@ -22,7 +22,11 @@
             <a class="un" href="{{ url_for('accueil') }}">Accueil</a>
             <a class="deux" href="{{ url_for('portfolio') }}">Réalisations</a>
             <a class="trois" href="{{ url_for('tarifs') }}">Prestations & Réservations</a>
-            <a class="quatre" href="{{ url_for('connexion') }}">Connexion</a>
+            {% if not session.get("user") %}
+              <a class="quatre" href="{{ url_for('connexion') }}">Connexion</a>
+            {% else %}
+              <a class="quatre" href="{{ url_for('connexion') }}">Ma fidélité</a>
+            {% endif %}
         </nav>
         {% block header %}<div class="vernis"></div>{% endblock %}
     </header>
