@@ -3,17 +3,23 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
 
-home_dir = os.getenv('HOME')  # Récupère la variable d'environnement HOME
-print(f"Le répertoire HOME est : {home_dir}")
-
-
 
 from models import db, create_app, User
+
+import logging
+from logging import FileHandler
+
+
 
 load_dotenv()
 
 app = create_app()
 migrate = Migrate(app, db)
+
+# Activer les logs
+file_handler = FileHandler('app.log')
+file_handler.setLevel(logging.DEBUG)
+app.logger.addHandler(file_handler)
 
 
 @app.route("/")
@@ -62,14 +68,13 @@ def login():
                 "lastname": user.lastname,
                 "fidelity_level": user.fidelity_level
             }
-            next_page = request.args.get("next")
-            if next_page:
-                return redirect(next_page)
-            else:
-                return redirect(url_for("connexion"))
+
+            next_page = request.form.get("next")
+            return redirect(next_page or url_for("connexion"))
         else:
             return render_template("connexion.html", error="Identifiants incorrects")
-    return render_template("connexion.html")
+    next_page = request.args.get("next")
+    return render_template("connexion.html", next=next_page)
 
 @app.route("/logout")
 def logout():
@@ -132,16 +137,26 @@ def scan():
 
     username = session["user"]["username"]
     user = User.query.filter_by(username=username).first()
+
     if user:
         # Incrémente fidélité
+        print(">>> Avant : fidelity =", user.fidelity_level)
         if user.fidelity_level < 10:
             user.fidelity_level += 1
         else:
             user.fidelity_level = 1
+        print(">>> Après : fidelity =", user.fidelity_level)
         db.session.commit()
+        fresh_user = User.query.filter_by(username=username).first()
+        print(">>> En DB maintenant :", fresh_user.fidelity_level)
 
-        # Met à jour la session
-        session["user"]["fidelity_level"] = user.fidelity_level
+        # Remplace toute la session utilisateur pour forcer la mise à jour
+        session["user"] = {
+            "username": user.username,
+            "firstname": user.firstname,
+            "lastname": user.lastname,
+            "fidelity_level": user.fidelity_level
+        }
 
     return redirect(url_for("connexion", scan_success="1"))
 

@@ -51,7 +51,7 @@ main {
     width: 100vw;
     height: 30vh;
     background-size: cover;
-    background-position: center bottom; 
+    background-position: center; 
     background-repeat: no-repeat;
     margin-top: 10px;
     overflow: hidden;

@@ -13,50 +13,54 @@
         <form action="{{ url_for('login') }}" method="post" class="login-form">
             <input type="text" name="username" placeholder="Nom d'utilisateur" required>
             <input type="password" name="password" placeholder="Mot de passe" required>
+
+            {% if next %}
+                <!-- Champ caché pour rediriger vers /scan après login -->
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
             <button type="submit">Connexion</button>
         </form>
         <a href="{{ url_for('register') }}">Créer un compte</a>
+
+    {% elif request.args.get("scan_success") %}
+        <div class="welcome">
+            <p>Voici votre nouveau niveau :</p>
+
+            {% set level = session["user"]["fidelity_level"] %}
+
+            {% if 0 <= level <= 10 %}
+                <p><img src="{{ url_for('static', filename='images/fidelite/carte_' ~ level ~ '.png') }}" alt="Carte {{ level }} prestations" width="600"></p>
+            {% else %}
+                <p>Niveau de fidélité inconnu.</p>
+            {% endif %}
+
+            {% if request.args.get("scan_success") %}
+                <!-- Affiche le message flash si scan_success est présent -->
+                <p class="merci-message">Merci de votre fidélité ❤️ !</p>
+            {% endif %}
+        </div>
+
+
+
     {% else %}
         <div class="welcome">
             <p>Bonjour <span>{{ session["user"]["firstname"] }} {{ session["user"]["lastname"] }}</span> !</p>
             <p>Voici votre niveau de fidélité :</p>
- 
+
             {% set level = session["user"]["fidelity_level"] %}
 
-            {% if request.args.get("scan_success") %}
-                <p class="merci-message">Merci de votre fidélité ❤️</p>
+            {% if 0 <= level <= 10 %}
+                <p><img src="{{ url_for('static', filename='images/fidelite/carte_' ~ level ~ '.png') }}" alt="Carte {{ level }} prestations" width="600"></p>
+            {% else %}
+                <p>Niveau de fidélité inconnu.</p>
             {% endif %}
 
-
-
-            {% if level == 0 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_0.png') }}" alt="Nouvelle carte" width="700" height="auto"></p>
-            {% elif level == 1 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_1.png') }}" alt="Carte 1 prestation"></p>
-            {% elif level == 2 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_2.png') }}" alt="Carte 2 prestations"></p>
-            {% elif level == 3 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_3.png') }}" alt="Carte 3 prestations"></p>
-            {% elif level == 4 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_4.png') }}" alt="Carte 4 prestations"></p>
-            {% elif level == 5 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_5.png') }}" alt="Carte 20%"></p>
-            {% elif level == 6 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_6.png') }}" alt="Carte 6 prestations"></p>
-            {% elif level == 7 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_7.png') }}" alt="Carte 7 prestations"></p>
-            {% elif level == 8 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_8.png') }}" alt="Carte 8 prestations"></p>
-            {% elif level == 9 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_9.png') }}" alt="Carte 9 prestations"></p>
-            {% elif level == 10 %}
-                <p><img src="{{ url_for('static', filename='images/fidélité/carte_10.png') }}" alt="Carte 30%"></p>
-            {% endif %}
+                <p class="merci-message">Merci de votre fidélité ❤️ !</p>
 
             <a href="{{ url_for('logout') }}">Déconnexion</a>
             <a href="{{ url_for('delete_account') }}">Supprimer mon compte</a>
         </div>
     {% endif %}
 </div>      
-
 {% endblock %}

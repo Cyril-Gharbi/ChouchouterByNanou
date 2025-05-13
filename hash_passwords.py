@@ -4,10 +4,10 @@ from werkzeug.security import generate_password_hash
 # Connexion à ta base PostgreSQL
 conn = psycopg2.connect(
     dbname="chouchouter_db",
-    user="cyg_gh",         # ← remplace ici
-    password="Assia_2010",    # ← remplace ici
-    host="localhost",               # ou IP de ton serveur
-    port="5432"                     # par défaut
+    user="cyg_gh",
+    password="Assia_2010",
+    host="localhost",
+    port="5432"
 )
 cursor = conn.cursor()
 
