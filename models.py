@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import os
@@ -33,3 +34,13 @@ class User(db.Model):
     def check_password(self, password):
         """Check the password against the stored hash."""
         return check_password_hash(self.password_hash, password)
+    
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    # Lien avec l'utilisateur
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('comments', lazy=True))

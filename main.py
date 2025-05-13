@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
 
 
-from models import db, create_app, User
+from models import db, create_app, User, Comment
+from datetime import datetime
 
 import logging
 from logging import FileHandler
@@ -16,11 +17,6 @@ load_dotenv()
 app = create_app()
 migrate = Migrate(app, db)
 
-# Activer les logs
-file_handler = FileHandler('app.log')
-file_handler.setLevel(logging.DEBUG)
-app.logger.addHandler(file_handler)
-
 
 @app.route("/")
 def accueil():
@@ -30,9 +26,9 @@ def accueil():
 def portfolio():
     return render_template("portfolio.html")
 
-@app.route("/tarifs")
-def tarifs():
-    return render_template("tarifs.html")
+@app.route("/rates")
+def rates():
+    return render_template("rates.html")
 
 @app.route("/cgu")
 def cgu():
@@ -42,13 +38,43 @@ def cgu():
 def mentions():
     return render_template("mentions.html")
 
-@app.route("/connexion")
-def connexion():
+@app.route("/connection")
+def connection():
     if "user" not in session:
         return redirect(url_for("login"))  # Redirige vers la page de login si l'utilisateur n'est pas connecté
     
     user = session["user"]
-    return render_template("connexion.html", user=user)
+    return render_template("connection.html", user=user)
+
+
+
+@app.route('/comments')
+def comments():
+    all_comments = Comment.query.order_by(Comment.date.desc()).all()
+    return render_template('comments.html', comments=all_comments)
+
+@app.route('/add_comment', methods=['POST'])
+def add_comment():
+    if 'user_id' not in session:
+        flash("Vous devez être connecté pour laisser un commentaire.")
+        return redirect(url_for('connection'))
+    
+    content = request.form.get('content', '').strip()
+    if not content:
+        flash("Le commentaire ne peut pas être vide.")
+        return redirect(url_for('comments'))
+
+    user = User.query.get(session['user_id'])
+    if not user:
+        flash("Utilisateur non trouvé.")
+        return redirect(url_for('connection'))
+
+    comment = Comment(content=content, user=user)
+    db.session.add(comment)
+    db.session.commit()
+
+    flash("Merci pour votre commentaire !")
+    return redirect(url_for('comments'))
 
 
 
@@ -70,11 +96,11 @@ def login():
             }
 
             next_page = request.form.get("next")
-            return redirect(next_page or url_for("connexion"))
+            return redirect(next_page or url_for("connection"))
         else:
-            return render_template("connexion.html", error="Identifiants incorrects")
+            return render_template("connection.html", error="Identifiants incorrects")
     next_page = request.args.get("next")
-    return render_template("connexion.html", next=next_page)
+    return render_template("connection.html", next=next_page)
 
 @app.route("/logout")
 def logout():
@@ -103,7 +129,7 @@ def register():
             "lastname": user.lastname,
             "fidelity_level": user.fidelity_level
         }
-        return redirect(url_for("connexion"))
+        return redirect(url_for("connection"))
     return render_template("register.html")
 
 @app.route("/delete_account", methods=["GET", "POST"])
@@ -140,15 +166,13 @@ def scan():
 
     if user:
         # Incrémente fidélité
-        print(">>> Avant : fidelity =", user.fidelity_level)
         if user.fidelity_level < 10:
             user.fidelity_level += 1
         else:
             user.fidelity_level = 1
-        print(">>> Après : fidelity =", user.fidelity_level)
+
         db.session.commit()
         fresh_user = User.query.filter_by(username=username).first()
-        print(">>> En DB maintenant :", fresh_user.fidelity_level)
 
         # Remplace toute la session utilisateur pour forcer la mise à jour
         session["user"] = {
@@ -158,7 +182,7 @@ def scan():
             "fidelity_level": user.fidelity_level
         }
 
-    return redirect(url_for("connexion", scan_success="1"))
+    return redirect(url_for("connection", scan_success="1"))
 
         
 if __name__ == "__main__":

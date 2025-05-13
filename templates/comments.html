@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Commentaires - Chouchouter By Nanou{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='comments.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="comments-section">
+    <h2>Commentaires des clients</h2>
+
+    <!-- Liste des commentaires existants -->
+    <div class="comments-list">
+        {% for comment in comments %}
+            <div class="comment">
+                <p class="author">{{ comment.author }} a écrit :</p>
+                <p class="content">{{ comment.content }}</p>
+                <p class="date">{{ comment.date.strftime('%d/%m/%Y à %H:%M') }}</p>
+            </div>
+        {% else %}
+            <p>Aucun commentaire pour le moment.</p>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <!-- Formulaire ou message selon connexion -->
+    {% if session.get("user") %}
+        <div class="comment-form">
+            <h3>Laissez un commentaire</h3>
+            <form method="POST" action="{{ url_for('add_comment') }}">
+                <textarea name="content" placeholder="Votre commentaire..." required></textarea>
+                <button type="submit">Envoyer</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="login-prompt">
+            <p>Vous devez être <a href="{{ url_for('connection') }}">connecté(e)</a> pour laisser un commentaire.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
