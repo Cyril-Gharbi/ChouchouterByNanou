@@ -42,14 +42,13 @@ main {
     background: linear-gradient(rgba(255, 255, 255), rgba(164, 136, 164, 0.9), rgba(255, 255, 255));
     color: #000103;
     padding: 0px 0px 100px 0px;
-    margin-top: 20px;
     flex: 1;
 }
 
 .vernis {
     background-image: url('/static/images/titre.png');
     width: 100vw;
-    height: 30vh;
+    height: 20vh;
     background-size: cover;
     background-position: center; 
     background-repeat: no-repeat;

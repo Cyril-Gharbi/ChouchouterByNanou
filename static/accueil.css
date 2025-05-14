@@ -1,14 +1,13 @@
 .container {
     display: flex;
     align-items: center;
-    height: 65vh;
-    margin-top: 20px;
+    height: 60vh;
     padding-right: 5vw; /* un peu d'espace à droite */
 }
 
 .photo-container {
-    max-width: 25vw;
-    min-width: 300px;
+    max-width: 20vw;
+    min-width: 200px;
     height: auto;
     transition: transform 0.3s ease;
     overflow: hidden;
@@ -24,8 +23,8 @@
 
 .text {
     flex: 1;                       /* Prend le reste de l’espace */
-    margin-left: 40px;            /* Espacement avec la photo */
-    font-size: 1.7em;
+    margin: 0 300px;            /* Espacement avec la photo */
+    font-size: 1.5em;
     text-align: justify;
     border-radius: 20px;
     border: 2px solid #a488a4;

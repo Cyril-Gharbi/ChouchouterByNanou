@@ -9,6 +9,7 @@ from datetime import datetime
 
 import logging
 from logging import FileHandler
+from pymongo import MongoClient
 
 
 
@@ -16,6 +17,16 @@ load_dotenv()
 
 app = create_app()
 migrate = Migrate(app, db)
+
+# Base de données NoCode (MongoDB)
+mongo_uri = os.getenv("MONGO_URI")
+client = MongoClient(mongo_uri)
+db = client["chouchouter"]
+
+@app.route("/tablettes")
+def afficher_tablettes():
+    tablettes = list(db.tablettes.find())
+    return render_template("tablettes.html", tablettes=tablettes)
 
 
 @app.route("/")
