@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}CGU - Chouchouter By Nanou{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='cgu.css') }}">
+{% endblock %}
+
+{% block content %}
+<h1>Conditions Générales d’Utilisation</h1>
+
+<section class="container">
+
+    <h2>1. Présentation du site</h2>
+    <p>Le site <strong>Chouchouter By Nanou</strong> est édité par une micro-entreprise immatriculée sous le numéro <strong>[SIRET]</strong>, dont le siège est situé à <strong>[Adresse]</strong>.</p>
+
+    <h2>2. Acceptation des conditions</h2>
+    <p>L’utilisation du site implique l’acceptation pleine et entière des présentes CGU par l’utilisateur.</p>
+
+    <h2>3. Services proposés</h2>
+    <p>Ce site présente les prestations de prothésie ongulaire et permet de réserver un rendez-vous via une plateforme spécialisée externe.</p>
+
+    <h2>4. Accès au site</h2>
+    <p>Le site est accessible gratuitement, hors coûts d’accès internet à la charge de l’utilisateur.</p>
+
+    <h2>5. Réservation et annulation de rendez-vous</h2>
+    <h3>5.1 Réservation</h3>
+    <p>Les réservations s’effectuent via une plateforme externe (<strong>[Nom de la plateforme]</strong>) accessible depuis le site. Cette plateforme applique ses propres conditions générales.</p>
+
+    <h3>5.2 Retard</h3>
+    <p>Tout retard supérieur à <strong>[X minutes]</strong> peut entraîner l’annulation du rendez-vous si cela gêne le bon déroulement de la journée.</p>
+
+    <h3>5.3 Annulation</h3>
+    <p>Les annulations doivent être faites au moins <strong>24/48 heures</strong> à l’avance. En cas d’absence ou d’annulation tardive, un acompte pourra être demandé pour les futures réservations.</p>
+
+    <h2>6. Données personnelles</h2>
+    <p>Les données collectées via le formulaire de contact ou la plateforme externe sont traitées dans un cadre strictement professionnel. Pour les données fournies sur la plateforme de réservation, veuillez consulter leur politique de confidentialité.</p>
+
+    <h2>7. Propriété intellectuelle</h2>
+    <p>Les contenus du site (textes, images, design) sont protégés par le droit d’auteur. Toute reproduction sans autorisation est interdite.</p>
+
+    <h2>8. Responsabilité</h2>
+    <p>Chouchouter By Nanou ne saurait être tenue responsable des erreurs ou interruptions du site, ni des contenus des liens externes.</p>
+
+    <h2>9. Modification des CGU</h2>
+    <p>Ces conditions peuvent être modifiées à tout moment. Les utilisateurs sont invités à consulter cette page régulièrement.</p>
+
+    <h2>10. Droit applicable</h2>
+    <p>Les présentes CGU sont régies par le droit français. En cas de litige, seuls les tribunaux français seront compétents.</p>
+
+</section>
+{% endblock %}

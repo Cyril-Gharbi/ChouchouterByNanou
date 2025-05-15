@@ -15,16 +15,28 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    print("DATABASE_URL =", repr(os.getenv("DATABASE_URL")))
+
+        # Configuration Flask-Mail
+    app.config['MAIL_SERVER'] = 'smtp.mail.me.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+
     db.init_app(app)
+    
     return app
+
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(512), nullable=False)
     firstname = db.Column(db.String(150), nullable=False)
     lastname = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
     fidelity_level = db.Column(db.Integer, default=0)
 
     def set_password(self, password):
@@ -44,3 +56,24 @@ class Comment(db.Model):
     # Lien avec l'utilisateur
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('comments', lazy=True))
+
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password_hash = db.Column(db.String(512))
+    email = db.Column(db.String(150), unique=True, nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def delete_user(self, user_id):
+        user = User.query.get(user_id)
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return True
+        return False

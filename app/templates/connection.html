@@ -21,6 +21,7 @@
 
             <button type="submit">Connexion</button>
         </form>
+        <a href="{{ url_for('reset_request') }}">Mot de passe oublié ?</a>
         <a href="{{ url_for('register') }}">Créer un compte</a>
 
     {% elif request.args.get("scan_success") %}

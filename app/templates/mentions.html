@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Mentions Légales - Chouchouter By Nanou{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='mentions.css') }}">
+{% endblock %}
+
+{% block content %}
+<h1>Mentions Légales</h1>
+
+<section class="container">
+
+    <h2>1. Présentation du site</h2>
+    <p>Le site <strong>Chouchouter By Nanou</strong> est édité par une micro-entreprise immatriculée sous le numéro <strong>[SIRET]</strong>, dont le siège est situé à <strong>[Adresse]</strong>.</p>
+
+    <h2>2. Informations légales</h2>
+    <p>Conformément à la législation en vigueur, voici les informations légales concernant ce site :</p>
+    <ul>
+        <li><strong>Nom de l'entreprise :</strong> Chouchouter By Nanou</li>
+        <li><strong>Statut juridique :</strong> Micro-entreprise</li>
+        <li><strong>Numéro SIRET :</strong> [Numéro SIRET]</li>
+        <li><strong>Adresse :</strong> [Adresse complète]</li>
+        <li><strong>Numéro de téléphone :</strong> 07.44.28.58.72</li>
+        <li><strong>Email :</strong> [Email]</li>
+    </ul>
+
+    <h2>3. Directeur de la publication</h2>
+    <p>Le directeur de la publication est : <strong>[Nom du responsable]</strong>, en qualité de [fonction].</p>
+
+    <h2>4. Hébergement</h2>
+    <p>Le site est hébergé par :</p>
+    <ul>
+        <li><strong>Nom de l'hébergeur :</strong> [Nom de l'hébergeur]</li>
+        <li><strong>Adresse de l'hébergeur :</strong> [Adresse complète]</li>
+        <li><strong>Numéro de téléphone de l'hébergeur :</strong> [Numéro de téléphone]</li>
+    </ul>
+
+    <h2>5. Propriété intellectuelle</h2>
+    <p>Le contenu de ce site, notamment les textes, images, graphiques, logos et icônes, est protégé par le droit d'auteur et reste la propriété exclusive de <strong>Chouchouter By Nanou</strong>. Toute reproduction, représentation ou diffusion totale ou partielle de ce site sans autorisation préalable est interdite.</p>
+
+    <h2>6. Données personnelles</h2>
+    <p>Le site <strong>Chouchouter By Nanou</strong> s'engage à protéger la confidentialité des données personnelles fournies par les utilisateurs. Les informations collectées via le formulaire de contact ou les services externes sont utilisées uniquement dans le cadre de la relation commerciale. Pour plus d’informations, consultez notre <a href="{{ url_for('cgu') }}">politique de confidentialité</a>.</p>
+
+    <h2>7. Responsabilité</h2>
+    <p>Chouchouter By Nanou s'efforce de fournir des informations exactes et actualisées sur ce site, mais ne peut garantir l'exactitude, la complétude ou l'absence d'erreurs. Le site peut contenir des liens vers des sites externes. Chouchouter By Nanou ne saurait être tenue responsable des contenus ou de l'utilisation de ces sites.</p>
+
+    <h2>8. Modification des mentions légales</h2>
+    <p>Chouchouter By Nanou se réserve le droit de modifier ces mentions légales à tout moment. Les utilisateurs sont invités à consulter cette page régulièrement.</p>
+
+</section>
+{% endblock %}

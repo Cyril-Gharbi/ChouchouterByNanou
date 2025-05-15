@@ -9,6 +9,7 @@
 {% block content %}
 <section class="comments-section">
     <h2>Commentaires des clients</h2>
+    <hr>
 
     <!-- Liste des commentaires existants -->
     <div class="comments-list">
@@ -23,7 +24,7 @@
         {% endfor %}
     </div>
 
-    <hr>
+
 
     <!-- Formulaire ou message selon connexion -->
     {% if session.get("user") %}
