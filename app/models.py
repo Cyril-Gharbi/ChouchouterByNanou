@@ -38,6 +38,10 @@ class User(db.Model):
     lastname = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
     fidelity_level = db.Column(db.Integer, default=0)
+    fidelity_cycle = db.Column(db.Integer, default=0)
+
+    admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
+    admin = db.relationship('Admin', backref=db.backref('users', lazy=True))
 
     def set_password(self, password):
         """Hash the password before storing it."""
@@ -77,3 +81,13 @@ class Admin(db.Model):
             db.session.commit()
             return True
         return False
+    
+
+class FidelityRewardLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    level_reached = db.Column(db.Integer, nullable=False)  # 4 ou 9
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    cycle_number = db.Column(db.Integer, nullable=False)
+
+    user = db.relationship('User', backref=db.backref('reward_logs', lazy=True))

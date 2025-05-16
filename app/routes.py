@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from . import app, db, mongo_db
-from .models import User, Comment, Admin
+from .models import User, Comment, Admin, FidelityRewardLog
 from datetime import datetime
 import os
 
@@ -76,7 +76,9 @@ def login():
                 "username": user.username,
                 "firstname": user.firstname,
                 "lastname": user.lastname,
-                "fidelity_level": user.fidelity_level
+                "email": user.email,
+                "fidelity_level": user.fidelity_level,
+                "fidelity_cycle": user.fidelity_cycle
             }
             next_page = request.form.get("next")
             return redirect(next_page or url_for("connection"))
@@ -108,7 +110,7 @@ def register():
         if User.query.filter_by(username=username).first():
             return "Nom d'utilisateur déjà utilisé"
         
-        user = User(username=username, firstname=firstname, lastname=lastname, fidelity_level=0)
+        user = User(username=username, firstname=firstname, lastname=lastname, email=email, fidelity_level=0, fidelity_cycle=0)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
@@ -117,7 +119,9 @@ def register():
             "username": user.username,
             "firstname": user.firstname,
             "lastname": user.lastname,
-            "fidelity_level": user.fidelity_level
+            "email": user.email,
+            "fidelity_level": user.fidelity_level,
+            "fidelity_cycle": user.fidelity_cycle
         }
         return redirect(url_for("connection"))
     return render_template("register.html")
@@ -142,6 +146,8 @@ def delete_account():
     
     return render_template("delete_account.html")
 
+# QR CODE
+
 @app.route("/scan")
 def scan():
     if "user" not in session:
@@ -155,15 +161,33 @@ def scan():
             user.fidelity_level += 1
         else:
             user.fidelity_level = 1
+            user.fidelity_cycle += 1
 
         db.session.commit()
+        update_user_session(user)
 
-        session["user"] = {
-            "username": user.username,
-            "firstname": user.firstname,
-            "lastname": user.lastname,
-            "fidelity_level": user.fidelity_level
-        }
+
+        # Palier fidélité récompensé ?
+        if user.fidelity_level in [4, 9]:
+            # Vérifie si mail déjà envoyé pour ce palier
+            existing_reward = FidelityRewardLog.query.filter_by(
+                user_id=user.id, 
+                level_reached=user.fidelity_level,
+                cycle_number=user.fidelity_cycle
+            ).first()
+
+            if not existing_reward:
+                # Envoi du mail
+                send_discount_email(user, user.fidelity_level)
+                print(f"Envoi du mail pour user {user.email} au niveau {user.fidelity_level}")
+                # Enregistrement du mail envoyé pour ce palier
+                new_reward = FidelityRewardLog(
+                    user_id=user.id,
+                    level_reached=user.fidelity_level,
+                    cycle_number=user.fidelity_cycle
+                )
+                db.session.add(new_reward)
+                db.session.commit()
 
     return redirect(url_for("connection", scan_success="1"))
 
@@ -223,6 +247,7 @@ def admin_edit_user(user_id):
         user.firstname = request.form["firstname"]
         user.lastname = request.form["lastname"]
         user.fidelity_level = int(request.form["fidelity_level"])
+        user.email = request.form["email"]
         db.session.commit()
         flash("Utilisateur modifié.")
         return redirect(url_for("admin_dashboard"))
@@ -234,7 +259,7 @@ def admin_edit_user(user_id):
 
 from flask_mail import Message
 from . import mail
-from .utils import generate_password_reset_token, verify_password_reset_token
+from .utils import generate_password_reset_token, verify_password_reset_token, send_discount_email, update_user_session
 
 @app.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
