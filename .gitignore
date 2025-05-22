@@ -1,5 +1,36 @@
-.env
+# Virtual environments
+venv/
+env/
+
+# Compiled Python files
 __pycache__/
 *.__pyc
+
+# Log files
+*.log
+
+# Environment variables file (contains sensitive info)
+.env
+
+# Local configuration files (for Flask)
 instance/
+
+# Sensitive script to exclude
 create_admin.py
+
+# MongoDB dumps (backup files, ignore if any)
+dump/
+*.bson
+*.json
+
+# Local database files (SQLite)
+*.db
+*.SQLite3
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
