@@ -17,13 +17,13 @@
             <a class="un" href="{{ url_for('accueil') }}">Accueil</a>
             <a class="deux" href="{{ url_for('portfolio') }}">Réalisations</a>
             <a class="trois" href="{{ url_for('rates') }}">Prestations & Réservations</a>
+            <a href="{{ url_for('afficher_tablettes') }}">Nos produits</a>
             <a class="five" href="{{ url_for('comments') }}">Commentaires</a>
             {% if not session.get("user") %}
               <a class="quatre" href="{{ url_for('connection') }}">Connexion</a>
             {% else %}
               <a class="quatre" href="{{ url_for('connection') }}">Ma fidélité</a>
             {% endif %}
-            <a href="{{ url_for('afficher_tablettes') }}">Nos Vernis</a>
         </nav>
         {% block header %}<div class="vernis"></div>{% endblock %}
     </header>

@@ -1,23 +1,32 @@
 from itsdangerous import URLSafeTimedSerializer
 from flask import current_app
 
-def generate_password_reset_token(user_email, expires_sec=3600):
-    s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-    return s.dumps(user_email, salt='password-reset-salt')
 
-def verify_password_reset_token(token, expires_sec=3600):
-    s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+# Generates a password reset token that expires after a given time (default: 1 hour)
+def generate_password_reset_token(email, user_type, secret_key, expires_sec=3600):
+    s = URLSafeTimedSerializer(secret_key)
+    data = {"email": email, "type": user_type}
+    return s.dumps(data, salt='password-reset-salt')
+
+# Verifies a password reset token and returns the user's email if valid
+def verify_password_reset_token(token, secret_key, expires_sec=3600):
+    s = URLSafeTimedSerializer(secret_key)
     try:
-        email = s.loads(token, salt='password-reset-salt', max_age=expires_sec)
+        # Try to load the email from the token; check if token has expired
+        data= s.loads(token, salt='password-reset-salt', max_age=expires_sec)
+        email = data.get("email")
+        user_type = data.get("type")
     except Exception:
-        return None
-    return email
+        # Return None if the token is invalid or expired
+        return None, None
+    return email, user_type
 
 
 
 from flask_mail import Message
 from . import mail
 
+# Sends a loyalty discount email to the user based on their fidelity level
 def send_discount_email(user, level):
     discount = 20 if level == 4 else 30
     msg = Message(
@@ -37,6 +46,7 @@ L'équipe Chouchouter""",
 
 from flask import session
 
+# Stores the user's information in the Flask session
 def update_user_session(user):
     session["user"] = {
         "username": user.username,

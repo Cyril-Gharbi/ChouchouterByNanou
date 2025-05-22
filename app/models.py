@@ -12,11 +12,14 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
+    # Load secret key from environment variables
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+    # Load database connection URI from environment variables
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+    # Disable tracking modifications to save resources
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-        # Configuration Flask-Mail
+    # Flask-Mail configuration for sending emails
     app.config['MAIL_SERVER'] = 'smtp.mail.me.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
@@ -24,6 +27,7 @@ def create_app():
     app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
     app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
 
+    # Initialize SQLAlchemy with the Flask app
     db.init_app(app)
     
     return app
@@ -85,9 +89,9 @@ class Admin(db.Model):
 
 class FidelityRewardLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     level_reached = db.Column(db.Integer, nullable=False)  # 4 ou 9
     date = db.Column(db.DateTime, default=datetime.utcnow)
     cycle_number = db.Column(db.Integer, nullable=False)
 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('reward_logs', lazy=True))

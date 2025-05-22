@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Gestion des Utilisateurs</title>
+    <title>Admin - Gestion des Utilisateurs - Chouchouter By Nanou</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 2rem; }
         table { border-collapse: collapse; width: 100%; }
@@ -12,9 +12,9 @@
         .actions { white-space: nowrap; }
         .button-container {
             text-align: center;
-            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
-        .retour-site {
+        .retour-site, .photos {
             display: inline-block;
             padding: 10px 16px;
             background-color: white;
@@ -25,7 +25,7 @@
             font-weight: bold;
             transition: background-color 0.3s, color 0.3s;
         }
-        .retour-site:hover {
+        .retour-site:hover, .photos:hover {
             background-color: #4CAF50;
             color: white;
         }
@@ -33,7 +33,13 @@
 </head>
 <body>
     <h1>Panneau d'administration</h1>
+    <div class="button-container">
+        <a href="{{ url_for('accueil') }}" class="retour-site">Retour au site</a>
+        <a href="{{ url_for('admin_upload_photo') }}" class="photos">Ajouter photo</a>
+        <a href="{{ url_for('admin_photos') }}" class="photos">Supprimer photo</a>
+    </div>
     <h2>Liste des utilisateurs</h2>
+
 
     <table>
         <thead>
@@ -68,9 +74,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <div class="button-container">
-        <a href="{{ url_for('accueil') }}" class="retour-site">Retour au site</a>
-    </div>
+
 
 </body>
 </html>
