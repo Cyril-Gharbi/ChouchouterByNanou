@@ -24,6 +24,46 @@ h1 {
     margin-bottom: 80px;
 }
 
+/* display photo large */
+
+.lightbox-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.lightbox-overlay.visible {
+    visibility: visible;
+    opacity: 1;
+}
+.lightbox-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+}
+.lightbox-content img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 4px;
+}
+.lightbox-close {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.7);
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 25px;
+    user-select: none;
+}
 
 
 @media (max-width: 768px) {
