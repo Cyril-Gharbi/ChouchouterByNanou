@@ -1,45 +1,26 @@
+<!-- display of the dashboard page after admin connection -->
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Admin - Gestion des Utilisateurs - Chouchouter By Nanou</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background-color: #f2f2f2; }
-        form { display: inline; }
-        .actions { white-space: nowrap; }
-        .button-container {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .retour-site, .photos {
-            display: inline-block;
-            padding: 10px 16px;
-            background-color: white;
-            color: #4CAF50;
-            border: 2px solid #4CAF50;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .retour-site:hover, .photos:hover {
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_dashboard.css') }}">
 </head>
 <body>
+    <header>
     <h1>Panneau d'administration</h1>
-    <div class="button-container">
-        <a href="{{ url_for('accueil') }}" class="retour-site">Retour au site</a>
-        <a href="{{ url_for('admin_upload_photo') }}" class="photos">Ajouter photo</a>
-        <a href="{{ url_for('admin_photos') }}" class="photos">Supprimer photo</a>
-    </div>
-    <h2>Liste des utilisateurs</h2>
-
+        <div class="button-container">
+            <a href="{{ url_for('accueil') }}" class="retour">Retour au site</a>
+            <a href="#renvoi-liste" class="button">Liste des utilisateurs</a>
+            <a href="#renvoi-photos" class="button">Gestion des photos</a>
+        </div>
+    </header>
+    <main>
+        <div class="main-search">
+            <input type="text" id="searchInput" placeholder="🔍 Rechercher..." />
+        </div>
+    <h2 class="renvoi-liste">Liste des utilisateurs</h2>
 
     <table>
         <thead>
@@ -75,6 +56,57 @@
         </tbody>
     </table>
 
+<div id="photos-section">
+    <h2 class="renvoi-photos">Gestion des photos</h2>
+        
 
+  <div style="display:flex; flex-wrap: wrap; gap: 20px; margin-top:20px;">
+    {% for image in images %}
+      <div style="border:1px solid #ccc; padding:10px; text-align:center;">
+        <img src="{{ url_for('static', filename='images/realisations/' ~ image) }}" alt="{{ image }}" style="max-width:150px; max-height:150px; display:block; margin-bottom:10px;">
+        <form action="{{ url_for('admin_delete_photo', filename=image) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette photo ?');">
+          <button type="submit" style="background-color:#e74c3c; color:white; border:none; padding:5px 10px; cursor:pointer;">Supprimer</button>
+        </form>
+      </div>
+    {% else %}
+      <p>Aucune image trouvée.</p>
+    {% endfor %}
+  </div>
+  <h3>Ajouter une photo</h3>
+
+            <form method="POST" enctype="multipart/form-data">
+            <label for="photo">Choisir une photo :</label>
+            <input type="file" id="photo" name="photo" accept="image/*" required>
+            <button type="submit">Importer</button>
+            </form>
+</div>
+    </main>
+
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const photosSection = document.getElementById('photos-section');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('table tbody tr')
+
+            rows.forEach(row => {
+                const lastname = row.cells[1].textContent.toLowerCase();
+                const firstname = row.cells[2].textContent.toLowerCase();
+                const username = row.cells[3].textContent.toLowerCase();
+                const email = row.cells[5].textContent.toLowerCase();
+
+                const match = lastname.includes(searchTerm) || firstname.includes(searchTerm) || username.includes(searchTerm) || email.includes(searchTerm);
+                row.style.display = match ? '' : 'none';
+            });
+
+            if (searchTerm.length > 0) {
+                photosSection.style.display = 'none';
+            } else {
+                photosSection.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>

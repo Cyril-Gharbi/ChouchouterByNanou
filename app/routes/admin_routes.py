@@ -33,11 +33,46 @@ def admin_login():
     return render_template("admin_login.html")
 
 # Admin dashboard showing all users
-@app.route("/admin/dashboard")
+@app.route("/admin/dashboard", methods=['GET', 'POST'])
 @admin_required
 def admin_dashboard():
     users = User.query.all()
-    return render_template("admin_dashboard.html", users=users)
+
+    # Dossier contenant les images — chemin absolu
+    folder = os.path.join(current_app.root_path, UPLOAD_FOLDER)
+
+    if request.method == 'POST':
+        if 'photo' not in request.files:
+            flash("Aucun fichier envoyé.", "error")
+            return redirect(url_for('admin_dashboard'))
+
+        photo = request.files['photo']
+
+        if photo.filename == '':
+            flash("Aucun fichier sélectionné.", "error")
+            return redirect(url_for('admin_dashboard'))
+
+        if not allowed_file(photo.filename):
+            flash("Extension de fichier non autorisée.", "error")
+            return redirect(url_for('admin_dashboard'))
+
+        # Sécurisation du nom de fichier
+        filename = secure_filename(photo.filename)
+        save_path = os.path.join(folder, filename)
+
+        # Sauvegarde
+        photo.save(save_path)
+        flash("Photo ajoutée avec succès.", "success")
+        return redirect(url_for('admin_dashboard'))
+
+    # Liste les fichiers images
+    images = [
+        f
+        for f in sorted(os.listdir(folder))
+        if allowed_file(f)
+    ]
+
+    return render_template("admin_dashboard.html", users=users, images=images)
 
 # Admin edits user details (GET shows form, POST updates data)
 @app.route("/admin/user/edit/<int:user_id>", methods=["GET", "POST"])
@@ -75,62 +110,12 @@ def admin_delete_user(user_id):
 
 
 
-# Gallery for admin to view photos
-@app.route("/galerie")
-@admin_required
-def galerie():
-    # Dossier contenant les images
-    folder = os.path.join(app.static_folder, "images/realisations")
-
-    # Extensions autorisées (modifie si besoin)
-    allowed_extensions = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
-
-    # Lister les fichiers images
-    images = [
-        os.path.join("images/realisations", f)
-        for f in sorted(os.listdir(folder))
-        if os.path.splitext(f)[1].lower() in allowed_extensions
-    ]
-
-    return render_template("galerie.html", images=images)
-
-
 # Photo upload and delete for admin
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-UPLOAD_FOLDER = 'app/static/images/realisations'  # adapte si besoin
+UPLOAD_FOLDER = 'static/images/realisations'  # adapte si besoin
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/admin/upload-photo', methods=['GET', 'POST'])
-@admin_required
-def admin_upload_photo():
-    if request.method == 'POST':
-        if 'photo' not in request.files:
-            flash('Aucun fichier sélectionné.')
-            return redirect(request.url)
-        file = request.files['photo']
-        if file.filename == '':
-            flash('Aucun fichier sélectionné.')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            save_path = os.path.join(UPLOAD_FOLDER, filename)
-            file.save(save_path)
-            flash('Photo ajoutée avec succès !')
-            return redirect(url_for('admin_dashboard'))
-        else:
-            flash('Format de fichier non autorisé.')
-            return redirect(request.url)
-    return render_template('admin_upload_photo.html')
-
-@app.route("/admin/photos")
-@admin_required
-def admin_photos():
-    image_folder = os.path.join(current_app.root_path, 'static', 'images', 'realisations')
-    images = os.listdir(image_folder)
-    images = [img for img in images if img.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
-    return render_template("admin_photos.html", images=images)
 
 @app.route("/admin/delete_photo/<filename>", methods=["POST"])
 @admin_required
@@ -142,7 +127,10 @@ def admin_delete_photo(filename):
         flash(f"L'image {filename} a été supprimée.")
     else:
         flash("Image introuvable.")
-    return redirect(url_for('admin_photos'))
+    return redirect(url_for('admin_dashboard'))
+
+
+
 
 
 # Request password reset: send email with reset token

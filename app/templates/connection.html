@@ -44,8 +44,7 @@
 
     {% else %}
         <div class="welcome">
-            <p>Bonjour <span>{{ session["user"]["firstname"] }} {{ session["user"]["lastname"] }}</span> !</p>
-            <p>Voici votre niveau de fidélité :</p>
+            <p><span>Bonjour {{ session["user"]["firstname"] }}</span> !</p>
 
             {% set level = session["user"]["fidelity_level"] %}
 

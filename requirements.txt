@@ -28,6 +28,7 @@ tqdm
 pydantic
 tabulate
 rich
+pymango
 
 # 🧪 Tests
 pytest

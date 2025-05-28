@@ -4,10 +4,7 @@
     padding: 0;
     box-sizing: border-box;
 }
-body {
-    background-color: #f4f4f4;
-    padding: 20px;
-}
+
 h1 {
     text-align: center;
     margin-bottom: 30px;

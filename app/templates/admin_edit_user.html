@@ -1,90 +1,53 @@
+<!-- display of the user edit page after clicking on the edit button in the admin dashboard -->
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Admin - Modification des Utilisateurs - Chouchouter By Nanou</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 2rem;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 2rem;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        input[type="text"], input[type="number"], input[type="email"] {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 6px;
-        }
-
-        .button-container {
-            text-align: center;
-        }
-
-        button {
-            padding: 10px 16px;
-            margin: 0 8px;
-            border: 2px solid #4CAF50;
-            background-color: white;
-            color: #4CAF50;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        button:hover {
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_edit_user.css') }}">
 </head>
 <body>
+    <header>
+        <h1>Panneau d'administration</h1>
+            <div class="button-container">
+                <a href="{{ url_for('accueil') }}" class="retour">Retour au site</a>
+                <a href="#renvoi-liste" class="button">Liste des utilisateurs</a>
+                <a href="#renvoi-photos" class="button">Gestion des photos</a>
+            </div>
+    </header>
+    <main>
+        <h2>Modification de l'utilisateur</h2>
 
-    <h1>Panneau d'administration</h1>
-    <h2>Modification de l'utilisateur</h2>
+        <form method="POST">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Niveau fidélité</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="lastname" value="{{ user.lastname }}" required></td>
+                        <td><input type="text" name="firstname" value="{{ user.firstname }}" required></td>
+                        <td><input type="text" name="username" value="{{ user.username }}" required></td>
+                        <td><input type="number" name="fidelity_level" value="{{ user.fidelity_level }}" min="0" required></td>
+                        <td><input type="email" name="email" value="{{ user.email }}" required></td>
+                    </tr>
+                </tbody>
+            </table>
 
-    <form method="POST">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Nom d'utilisateur</th>
-                    <th>Niveau fidélité</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" name="lastname" value="{{ user.lastname }}" required></td>
-                    <td><input type="text" name="firstname" value="{{ user.firstname }}" required></td>
-                    <td><input type="text" name="username" value="{{ user.username }}" required></td>
-                    <td><input type="number" name="fidelity_level" value="{{ user.fidelity_level }}" min="0" required></td>
-                    <td><input type="email" name="email" value="{{ user.email }}" required></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="button-container">
-            <button type="submit">✅ Valider</button>
-            {% set dashboard_url = url_for('admin_dashboard') %}
-            <button type="button" onclick="window.location.href='{{ dashboard_url }}'">❌ Annuler</button>
-        </div>
-    </form>
+            <div class="button-container">
+                <button type="submit" class="button">✅ Valider</button>
+                {% set dashboard_url = url_for('admin_dashboard') %}
+                <button type="button" class="button" onclick="window.location.href='{{ dashboard_url }}'">❌ Annuler</button>
+            </div>
+        </form>
+    </main>
 
 </body>
 </html>
