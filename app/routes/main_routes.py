@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, current_app
-from app import app, mongo_db
+from app import app, mongo_db, db
+from bson import ObjectId
 import os
 
 
@@ -24,7 +25,11 @@ def portfolio():
 # Rates page route
 @app.route("/rates")
 def rates():
-    return render_template("rates.html")
+    prestations = list(mongo_db.Prestations.find())
+    for p in prestations:
+        p['_id'] = str(p['_id'])
+
+    return render_template("rates.html", prestations=prestations)
 
 # Display tablets collection from MongoDB (NoSQL)
 @app.route("/tablettes")

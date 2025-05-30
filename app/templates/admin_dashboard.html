@@ -13,24 +13,26 @@
         <div class="button-container">
             <a href="{{ url_for('accueil') }}" class="retour">Retour au site</a>
             <a href="#renvoi-liste" class="button">Liste des utilisateurs</a>
+            <a href="#renvoi-prestations" class="button">Liste des prestations</a>
             <a href="#renvoi-photos" class="button">Gestion des photos</a>
         </div>
     </header>
     <main>
         <div class="main-search">
-            <input type="text" id="searchInput" placeholder="🔍 Rechercher..." />
+          <h2 id="renvoi-liste">Liste des utilisateurs</h2>
+          <input type="text" id="searchInput" placeholder="🔍 Rechercher..." />
         </div>
-    <h2 class="renvoi-liste">Liste des utilisateurs</h2>
 
     <table>
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Nom d'utilisateur</th>
                 <th>Nom</th>
                 <th>Prénom</th>
-                <th>Nom d'utilisateur</th>
                 <th>Niveau fidélité</th>
                 <th>Email</th>
+                <th>Niveau du cycle</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -38,17 +40,18 @@
             {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
                 <td>{{ user.lastname }}</td>
                 <td>{{ user.firstname }}</td>
-                <td>{{ user.username }}</td>
                 <td>{{ user.fidelity_level }}</td>
                 <td>{{ user.email }}</td>
+                <td>{{ user.fidelity_cycle }}</td>
                 <td class="actions">
-                    <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Supprimer cet utilisateur ?');">
-                        <button type="submit">🗑 Supprimer</button>
-                    </form>
                     <form action="{{ url_for('admin_edit_user', user_id=user.id) }}" method="GET">
                         <button type="submit">✏️ Modifier</button>
+                    </form>
+                    <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                        <button type="submit">🗑 Supprimer</button>
                     </form>
                 </td>
             </tr>
@@ -56,11 +59,65 @@
         </tbody>
     </table>
 
-<div id="photos-section">
-    <h2 class="renvoi-photos">Gestion des photos</h2>
+
+<hr>
+
+<h2 id="renvoi-prestations">Liste des prestations</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Catégorie</th>
+      <th>Nom</th>
+      <th>Description</th>
+      <th>Prix</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for p in prestations %}
+      <tr>
+        <td>{{ p.category }}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.description }}</td>
+        <td>{{ p.price }}</td>
+        <td class="actions">
+          <form action="{{ url_for('edit_rate', id=p._id) }}" method="GET" style="display:inline;">
+            <button type="submit">✏️ Modifier</button>
+          </form>
+          <form action="{{ url_for('delete_prestation', id=p._id) }}" method="POST" onsubmit="return confirm('Supprimer cette prestation ?');" style="display:inline;">
+            <button type="submit">🗑 Supprimer</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+  </tbody>
+</table>
+
+<h3>Ajouter des prestations</h3>
+<form id="edit_prestation" method="POST">
+  <div>
+      <select id="category" name="category" required>
+        <option value="">--- Catégorie ---</option>
+        <option value="Semi-permanent">Semi-permanent</option>
+        <option value="Extension">Extension</option>
+        <option value="Nail art">Nail art</option>
+      </select>
+      <input name="name" placeholder="Nom" required>
+      <input name="price" placeholder="Prix" required>
+  </div>
+  <textarea name="description" placeholder="Description" required rows="4" style="resize: vertical;"></textarea>
+  <button type="submit">Ajouter</button>
+</form>
+
+
+<hr>
+
+<div id="renvoi-photos">
+    <h2 class="photos-section">Gestion des photos</h2>
         
 
-  <div style="display:flex; flex-wrap: wrap; gap: 20px; margin-top:20px;">
+  <div style="display:flex; flex-wrap: wrap; gap: 20px; margin-top:20px; justify-content: center;">
     {% for image in images %}
       <div style="border:1px solid #ccc; padding:10px; text-align:center;">
         <img src="{{ url_for('static', filename='images/realisations/' ~ image) }}" alt="{{ image }}" style="max-width:150px; max-height:150px; display:block; margin-bottom:10px;">
@@ -73,19 +130,22 @@
     {% endfor %}
   </div>
   <h3>Ajouter une photo</h3>
-
+          <div class="add_photo">
             <form method="POST" enctype="multipart/form-data">
             <label for="photo">Choisir une photo :</label>
             <input type="file" id="photo" name="photo" accept="image/*" required>
             <button type="submit">Importer</button>
             </form>
+          </div>
 </div>
+
+
     </main>
 
 
     <script>
         const searchInput = document.getElementById('searchInput');
-        const photosSection = document.getElementById('photos-section');
+        const photosSection = document.getElementById('renvoi-photos');
 
         searchInput.addEventListener('input', function () {
             const searchTerm = this.value.toLowerCase().trim();

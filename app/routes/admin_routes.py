@@ -1,10 +1,11 @@
 from flask import render_template, request, redirect, url_for, session, current_app, flash
-from app import app, db, mail
+from app import app, db, mail, mongo_db
 from ..models import User, Admin
 from functools import wraps
 from werkzeug.utils import secure_filename
 from ..utils import generate_password_reset_token, verify_password_reset_token, send_discount_email, update_user_session
 from flask_mail import Message
+from bson import ObjectId
 import os
 
 
@@ -32,22 +33,22 @@ def admin_login():
             return render_template("admin_login.html", error="Identifiants invalides")
     return render_template("admin_login.html")
 
+
+
+
+
+
 # Admin dashboard showing all users
 @app.route("/admin/dashboard", methods=['GET', 'POST'])
 @admin_required
 def admin_dashboard():
+    db = mongo_db
     users = User.query.all()
-
     # Dossier contenant les images — chemin absolu
     folder = os.path.join(current_app.root_path, UPLOAD_FOLDER)
 
-    if request.method == 'POST':
-        if 'photo' not in request.files:
-            flash("Aucun fichier envoyé.", "error")
-            return redirect(url_for('admin_dashboard'))
-
+    if request.method == 'POST' and 'photo' in request.files:
         photo = request.files['photo']
-
         if photo.filename == '':
             flash("Aucun fichier sélectionné.", "error")
             return redirect(url_for('admin_dashboard'))
@@ -64,15 +65,54 @@ def admin_dashboard():
         photo.save(save_path)
         flash("Photo ajoutée avec succès.", "success")
         return redirect(url_for('admin_dashboard'))
-
-    # Liste les fichiers images
+    
     images = [
         f
         for f in sorted(os.listdir(folder))
         if allowed_file(f)
     ]
 
-    return render_template("admin_dashboard.html", users=users, images=images)
+
+    if 'category' in request.form:
+        category = request.form.get("category")
+        name = request.form.get("name")
+        description = request.form.get("description")
+        price_str = request.form.get("price")
+
+        try:
+            price = float(price_str)
+            if price < 0:
+                flash("Le prix ne peut pas être négatif.", "error")
+                return redirect(url_for('admin_dashboard'))
+        except (ValueError, TypeError):
+            flash("Prix invalide. Veuillez entrer un nombre.", "error")
+            return redirect(url_for('admin_dashboard'))
+
+        new_prestation = {
+            "category": category,
+            "name": name,
+            "description": description,
+            "price": price,
+        }
+        db.Prestations.insert_one(new_prestation)
+        flash("Prestation ajoutée.", "success")
+        return redirect(url_for('admin_dashboard'))
+    
+    category_order = ['Semi-permanent', 'Extension', 'Nail art']
+    
+
+    prestations = list(mongo_db.Prestations.find({}))
+    prestations.sort(key=lambda p: category_order.index(p['category']) if p['category'] in category_order else len(category_order))
+    for p in prestations:
+        p['_id'] = str(p['_id'])
+
+    return render_template("admin_dashboard.html", users=users, images=images, prestations=prestations)
+
+
+
+
+
+
 
 # Admin edits user details (GET shows form, POST updates data)
 @app.route("/admin/user/edit/<int:user_id>", methods=["GET", "POST"])
@@ -195,3 +235,54 @@ def reset_token(token):
         return redirect(url_for('login'))
 
     return render_template('reset_password_form.html')
+
+
+
+# Edit rates
+@app.route('/admin/rate/edit/<id>', methods=['GET', 'POST'])
+@admin_required
+def edit_rate(id):
+    db = mongo_db
+    # Récupérer la prestation existante
+    prestation = db.Prestations.find_one({"_id": ObjectId(id)})
+    if not prestation:
+        flash("Prestation introuvable.", "error")
+        return redirect(url_for('admin_dashboard'))
+
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        category = request.form.get('category')
+        name = request.form.get('name')
+        description = request.form.get('description')
+        price = request.form.get('price')
+
+        if not category or not name or not description or not price:
+            flash("Tous les champs sont obligatoires.", "error")
+            return redirect(url_for('edit_rate', id=id))
+
+        # Mettre à jour la prestation en base
+        db.Prestations.update_one(
+            {"_id": ObjectId(id)},
+            {"$set": {
+                "category": category,
+                "name": name,
+                "description": description,
+                "price": price
+            }}
+        )
+        flash("Prestation mise à jour avec succès.", "success")
+        return redirect(url_for('admin_dashboard'))
+
+    # GET: afficher le formulaire avec les données existantes
+    return render_template('admin_edit_prestation.html', prestation=prestation)
+
+
+
+# Delete rates
+@app.route("/admin/delete/<id>", methods=["POST"])
+@admin_required
+def delete_prestation(id):
+    db = mongo_db
+    db.Prestations.delete_one({"_id": ObjectId(id)})
+    flash("Prestation supprimée.", "success")
+    return redirect(url_for("admin_dashboard"))

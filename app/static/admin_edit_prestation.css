@@ -44,3 +44,16 @@ header {
 }
 
 main { padding-top: 200px; }
+
+
+select[name="category"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px;
+    height: 32px; /* ou la même hauteur que tes inputs */
+    border: 1px solid grey;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+    /* garde la flèche native du navigateur */
+}

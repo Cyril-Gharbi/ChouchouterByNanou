@@ -1,0 +1,55 @@
+<!-- display of the prestation edit page after clicking on the edit button in the admin dashboard -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Modification des Prestations - Chouchouter By Nanou</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_edit_prestation.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Panneau d'administration</h1>
+        <div class="button-container">
+            <a href="{{ url_for('accueil') }}" class="retour">Retour au site</a>
+        </div>
+    </header>
+
+    <main>
+        <h2>Modification de la prestation</h2>
+
+        <form method="POST">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Catégorie</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Prix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select name="category" required>
+                                <option value="Semi-permanent" {% if prestation.category == 'Semi-permanent' %}selected{% endif %}>Semi-permanent</option>
+                                <option value="Extension" {% if prestation.category == 'Extension' %}selected{% endif %}>Extension</option>
+                                <option value="Nail art" {% if prestation.category == 'Nail art' %}selected{% endif %}>Nail art</option>
+                            </select>
+                        </td>
+                        <td><input type="text" name="name" value="{{ prestation.name }}" required></td>
+                        <td><input type="text" name="description" value="{{ prestation.description }}" required></td>
+                        <td><input type="number" name="price" step="0.01" value="{{ prestation.price }}" required></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="button-container">
+                <button type="submit" class="button">✅ Valider</button>
+                {% set dashboard_url = url_for('admin_dashboard') %}
+                <button type="button" class="button" onclick="window.location.href='{{ dashboard_url }}'">❌ Annuler</button>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

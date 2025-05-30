@@ -3,8 +3,10 @@ body { font-family: Arial, sans-serif; margin: 2rem; }
 table { border-collapse: collapse; width: 100%; }
 th, td { border: 1px solid #ddd; padding: 8px; }
 th { background-color: #f2f2f2; }
+h2 { text-align: center; margin-bottom: 40px;}
 form { display: inline; }
-.actions { white-space: nowrap; }
+.actions { white-space: nowrap; text-align: center; }
+.actions form { display: inline-block;}
 .button-container { text-align: center; margin-bottom: 2rem; }
 .button, .retour {
     display: inline-block;
@@ -40,17 +42,138 @@ header {
     text-align: center;
     z-index: 1000;
 }
-.renvoi-photos { margin-top: 10rem; }
+
 main { padding-top: 200px;}
+
+
 .main-search {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1rem;
+position: relative;
+width: 100%;
+padding: 20px 0;
+display: flex;
+align-items: center;
+justify-content: center;
 }
-.main-search input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 250px;
-    font-size: 14px;
+
+.main-search h2 {
+margin: 0 auto;
+position: absolute;
+left: 50%;
+transform: translateX(-50%);
+}
+
+.main-search input[type="text"] {
+margin-left: auto;
+margin-right: 20px;
+font-size: 1.1rem;
+}
+
+
+
+
+
+
+
+
+#edit_prestation {
+    width: 33vw !important;
+    min-width: 300px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+}
+
+/* Flexbox pour select + input sur une ligne */
+#edit_prestation > div {
+    display: flex;
+    gap: 1em;
+    margin-bottom: 1em;
+}
+
+#edit_prestation select {
+    flex: 1;
+    min-width: 100px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+#edit_prestation input {
+    flex: 2;
+    height: 34px;
+    font-size: 1.2em;
+}
+
+/* textarea pleine largeur */
+#edit_prestation textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1.2em;
+    padding: 0.3em 0.5em;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 6em;
+    margin-bottom: 1em;
+}
+
+/* Bouton centré */
+#edit_prestation button {
+    display: block;
+    margin: 0 auto;
+    padding: 0.5em 1.5em;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+h3 {
+    text-align: center;
+    margin: 40px;
+    text-decoration: underline;
+}
+
+hr {
+    margin: 150px 10vw;
+}
+
+#renvoi-liste, #renvoi-prestations, #renvoi-photos {
+    scroll-margin-top: 220px;
+}
+
+.add_photo {
+    text-align: center;
+}
+
+
+
+
+
+/* Ajustement du tableau des prestations */
+table:nth-of-type(2) {
+table-layout: fixed;
+}
+
+table:nth-of-type(2) th:nth-child(1), /* Catégorie */
+table:nth-of-type(2) td:nth-child(1) {
+width: 6%;
+}
+
+table:nth-of-type(2) th:nth-child(2), /* Nom */
+table:nth-of-type(2) td:nth-child(2) {
+width: 20%;
+}
+
+table:nth-of-type(2) th:nth-child(3), /* Description */
+table:nth-of-type(2) td:nth-child(3) {
+width: 54%;
+word-wrap: break-word;
+}
+
+table:nth-of-type(2) th:nth-child(4), /* Prix */
+table:nth-of-type(2) th:nth-child(4) {
+width: 10%;
+}
+
+table:nth-of-type(2) th:nth-child(5), /* Actions */
+table:nth-of-type(2) td:nth-child(5) {
+width: 10%;
 }

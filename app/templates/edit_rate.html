@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier Prestation - Chouchouter By Nanou</title>
+</head>
+<body>
+    <h1>Modifier la prestation</h1>
+
+    <form method="POST">
+        <label>Catégorie</label><br>
+        <input name="category" value="{{ prestation.category }}" required><br><br>
+
+        <label>Nom</label><br>
+        <input name="name" value="{{ prestation.name }}" required><br><br>
+
+        <label>Description</label><br>
+        <textarea name="description" required>{{ prestation.description }}</textarea><br><br>
+
+        <button type="submit">Enregistrer</button>
+        <a href="{{ url_for('admin_dashboard') }}">Annuler</a>
+    </form>
+</body>
+</html>
