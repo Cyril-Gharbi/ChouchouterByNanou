@@ -29,6 +29,11 @@ def create_app():
 
     # Initialize SQLAlchemy with the Flask app
     db.init_app(app)
+
+    @app.context_processor
+    def inject_user_logged_in():
+        from flask import session
+        return dict(user_logged_in=('user' in session))
     
     return app
 

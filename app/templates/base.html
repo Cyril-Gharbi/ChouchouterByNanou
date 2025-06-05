@@ -1,45 +1,126 @@
-<!-- html base for all pages of the site -->
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Chouchouter By Nanou{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
-    {% block head %}{% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Chouchouter By Nanou{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  {% block head %}{% endblock %}
 </head>
-
 <body>
-    <header>
-        <nav class="bloc_logo">
-            <img src="{{ url_for('static', filename='images/logo.png')}}" alt="Logo" width="180">
-            <a class="un" href="{{ url_for('accueil') }}">Accueil</a>
-            <a class="deux" href="{{ url_for('portfolio') }}">Réalisations</a>
-            <a class="trois" href="{{ url_for('rates') }}">Prestations & Réservations</a>
-            <a href="{{ url_for('afficher_tablettes') }}">Nos produits</a>
-            <a class="five" href="{{ url_for('comments') }}">Commentaires</a>
-            {% if not session.get("user") %}
-              <a class="quatre" href="{{ url_for('connection') }}">Connexion</a>
+  <header>
+    <nav class="nav-container">
+      <div class="nav-left">
+        <a href="{{ url_for('accueil') }}">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+        </a>
+      </div>
+      <div class="nav-right">
+        <div class="nav-item">
+          <button class="nav-toggle" aria-label="Ouvrir le menu principal" aria-expanded="false" aria-controls="main-menu">
+            ☰ Menu
+          </button>
+          <div class="nav-menu" id="main-menu">
+            <ul>
+              <li><a href="{{ url_for('accueil') }}">Accueil</a></li>
+              <li><a href="{{ url_for('portfolio') }}">Réalisations</a></li>
+              <li><a href="{{ url_for('rates') }}">Prestations & Réservations</a></li>
+              <li><a href="{{ url_for('afficher_tablettes') }}">Nos produits</a></li>
+              <li><a href="{{ url_for('comments') }}">Commentaires</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="nav-item">
+            {% if user_logged_in %}
+                <button class="nav-toggle" aria-label="Ouvrir le menu mon compte" aria-expanded="false" aria-controls="connexion-menu">
+                👤 Mon compte
+                </button>
+                <div class="nav-menu" id="connexion-menu">
+                    <ul>
+                        <li><a href="{{ url_for('connection') }}">Ma carte fidélité</a></li>
+                        <li><a href="{{ url_for('logout') }}">Déconnexion</a></li> <!-- lien logout -->
+                    </ul>
+                </div>
             {% else %}
-              <a class="quatre" href="{{ url_for('connection') }}">Ma fidélité</a>
+                <button class="nav-toggle" aria-label="Ouvrir le menu connexion" aria-expanded="false" aria-controls="connexion-menu">
+                👤 Connexion
+                </button>
+                <div class="nav-menu" id="connexion-menu">
+                    <ul>
+                        <li><a href="{{ url_for('connection') }}">Connexion</a></li>
+                        <li><a href="{{ url_for('register') }}">Créer un compte</a></li>
+                    </ul>
+                </div>
             {% endif %}
-        </nav>
-        {% block header %}<div class="vernis"></div>{% endblock %}
-    </header>
+        </div>
+      </div>
+    </nav>
+    {% block header %}<div class="vernis"></div>{% endblock %}
+  </header>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
 
-    <footer>
-        <p class="footer">Contact: 07.44.28.58.72</p>
-        <p><a class="cinq" href="{{ url_for('mentions') }}">Mentions Légales</a></p>
-        <a href="{{ url_for('cgu') }}">Conditions Générales d’Utilisation</a>
-    </footer>
+<footer>
+  <div class="footer-content">
+    <!-- Réseaux sociaux à gauche -->
+    <div class="footer-left">
+      <a href="https://www.instagram.com" target="_blank" aria-label="Instagram">
+        <img src="/static/images/instagram.png" alt="Instagram">
+      </a>
+      <a href="https://www.facebook.com" target="_blank" aria-label="Facebook">
+        <img src="/static/images/facebook.png" alt="Facebook">
+      </a>
+    </div>
 
-  
+    <!-- Liens au centre -->
+    <div class="footer-center">
+      <a class="cinq" href="{{ url_for('mentions') }}">Mentions légales</a> |
+      <a href="{{ url_for('cgu') }}">CGU</a> |
+      <a href="{{ url_for('cgu') }}">Nous contacter</a>
+    </div>
+
+    <!-- Contact à droite -->
+    <div class="footer-right">
+    </div>
+  </div>
+</footer>
+
+
+  <script>
+    document.querySelectorAll('.nav-toggle').forEach(button => {
+      button.addEventListener('click', () => {
+        const menuId = button.getAttribute('aria-controls');
+        const menu = document.getElementById(menuId);
+        const isOpen = menu.classList.contains('open');
+
+        // Ferme tous les autres menus
+        document.querySelectorAll('.nav-menu').forEach(m => m.classList.remove('open'));
+        document.querySelectorAll('.nav-toggle').forEach(b => b.setAttribute('aria-expanded', 'false'));
+
+        // Ouvre ou ferme celui cliqué
+        if (!isOpen) {
+          menu.classList.add('open');
+          button.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // Ferme les menus en cliquant ailleurs
+    document.addEventListener('click', (event) => {
+      const isClickInside = [...document.querySelectorAll('.nav-item')]
+        .some(item => item.contains(event.target));
+
+      if (!isClickInside) {
+        document.querySelectorAll('.nav-menu').forEach(menu => menu.classList.remove('open'));
+        document.querySelectorAll('.nav-toggle').forEach(button => button.setAttribute('aria-expanded', 'false'));
+      }
+    });
+  </script>
 </body>
 </html>

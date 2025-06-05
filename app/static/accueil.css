@@ -2,6 +2,9 @@
     display: flex;
     align-items: center;
     height: 60vh;
+    flex-wrap: wrap; /* Permet le retour à la ligne sur petits écrans */
+    justify-content: center;
+    padding: 20px 0px;
 }
 
 .photo-container {
@@ -10,7 +13,7 @@
     height: auto;
     transition: transform 0.3s ease;
     overflow: hidden;
-    margin-left: 0; /* s'assurer qu'il n'y a pas d'espace à gauche */
+    margin-left: 0;
 }
 
 .photo-container img {
@@ -21,14 +24,15 @@
 }
 
 .text {
-    flex: 1;                       /* Prend le reste de l’espace */
-    margin: 0 40px;            /* Espacement avec la photo */
+    flex: 1;
+    margin: 0 40px;
     font-size: 1.5em;
     text-align: justify;
     border-radius: 20px;
     border: 2px solid #a488a4;
     background-color: rgba(161, 82, 106, 0.8);
-    padding: 40px 40px;
+    padding: 40px;
+    min-width: 300px;
 }
 
 .text p {
@@ -40,20 +44,94 @@ h2, h3 {
     text-align: center;
 }
 
+/* --- MEDIA QUERIES --- */
 
-  @media (max-width: 768px) {
+/* Écrans ≤ 1200px (laptops, tablettes paysage) */
+@media (max-width: 1200px) {
     .container {
-      flex-direction: column;
-      align-items: flex-start;
+        flex-direction: column;
+        height: auto;
+        padding: 20px 40px;
     }
-  
-    .image {
-      max-width: 100%;
-      margin-right: 0;
-      margin-bottom: 15px;
+
+    .photo-container {
+        max-width: 60vw;
+        margin-bottom: 30px;
+        margin-left: auto;
+        margin-right: auto;
     }
-  
+
     .text {
-      max-width: 100%;
+        margin: 0;
+        padding: 30px 20px;
+        min-width: auto;
     }
-  }
+
+    .text p {
+        padding: 20px 80px;
+    }
+
+    h2, h3 {
+        padding: 30px 20px;
+    }
+}
+
+/* Écrans ≤ 768px (tablettes portrait, mobiles larges) */
+@media (max-width: 768px) {
+    .photo-container {
+        max-width: 80vw;
+    }
+
+    .text {
+        font-size: 1.2em;
+        padding: 20px 15px;
+    }
+
+    .text p {
+        padding: 20px 40px;
+    }
+
+    h2, h3 {
+        padding: 20px 15px;
+    }
+}
+
+/* Écrans ≤ 480px (smartphones) */
+@media (max-width: 480px) {
+    .text {
+        font-size: 1em;
+        padding: 15px 10px;
+    }
+
+    .text p {
+        padding: 10px 20px;
+    }
+
+    h2, h3 {
+        font-size: 1.2em;
+        padding: 10px 10px;
+    }
+}
+
+/* Cacher les images en mode portrait sur petits écrans (smartphones/tablettes) */
+@media (max-width: 1024px) and (orientation: portrait) {
+    .photo-container {
+        display: none;
+    }
+
+    .container {
+        height: auto; /* Ajuste la hauteur pour pas d’espace vide */
+        justify-content: center;
+    }
+
+    .text {
+        margin: 0 auto;
+        padding: 20px;
+        max-width: 90vw;
+        font-size: 1.2em;
+    }
+
+    .text p {
+        padding: 10px 20px;
+    }
+}
