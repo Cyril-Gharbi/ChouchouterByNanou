@@ -16,7 +16,7 @@
   h1 {
     text-align: center;
     margin-bottom: 80px;
-}
+  }
 
   h5 {
     margin-bottom: 20px;
@@ -33,14 +33,18 @@
     border: 2px solid #a488a4;
     border-radius: 20px;
     box-shadow: 0 4px 20px rgba(1, 0, 3, 0.1);
-    height: auto;  /* Laisse la hauteur s'adapter au contenu */
+    height: 100%;
+  }
+
+  .liste::-webkit-scrollbar {
+    display: none;
   }
   
   .liste button {
     display: block;  /* Assure que les boutons sont en colonne, un sous l'autre */
     width: 100%;
     margin-bottom: 10px;
-    padding: 10px;
+    padding: 8px;
     background-color: rgba(164, 136, 164, 0.9);
     border: none;
     cursor: pointer;
@@ -55,7 +59,7 @@
   
   .description {
     flex: 1;  /* La description occupe le reste de l'espace */
-    padding: 80px 20px 20px 20px;
+    padding: 40px 20px 20px 20px;
   }
 
   .description p {
@@ -99,4 +103,3 @@
     box-shadow: 6px 6px 12px rgba(1, 0, 3, 0.3);
     transform: translateY(-2px);
   }
-  

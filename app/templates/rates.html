@@ -15,6 +15,7 @@
           {% for category in categories %}
             <h5>{{ category }}</h5>
             {% set cat_prestations = prestations | selectattr('category', 'equalto', category) | list %}
+            {% set cat_prestations = cat_prestations | sort(attribute='order') %}
             {% if cat_prestations %}
               {% for prestation in cat_prestations %}
                 <button onclick='afficher("prestation-{{ prestation._id }}")'>{{ prestation.name }}</button>
@@ -38,7 +39,8 @@
             <a target="_blank" href="https://chouchouter-by-nanou2.reservio.com/services" class="btn">Réserver</a>
         </div>
 </div>
-  
+
+<!-- display of content after clicking on the link -->
 <script>
   function afficher(id) {
     const contenus = document.querySelectorAll('.contenu');
@@ -47,11 +49,22 @@
     const element = document.getElementById(id);
     if (element) {
       element.classList.add('actif');
-      document.querySelector('.description').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Définir l'offset en pixels (hauteur du header)
+      const topOffset = 260;
+
+      // Calculer la position de la description par rapport à la page
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+
+      // Position finale à scroller
+      const offsetPosition = elementPosition - topOffset;
+
+      // Scroll en douceur vers la description
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   }
 </script>
-
-
-
 {% endblock %}

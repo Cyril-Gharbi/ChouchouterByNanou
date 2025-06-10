@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}CGU - Chouchouter By Nanou{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='politique_confidentialite.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="container">
+
+    <h1>Politique de Confidentialité</h1>
+
+    <section>
+        <p>
+            La présente politique de confidentialité a pour objectif d’informer les utilisateurs du site <strong>[Nom du site]</strong> sur la collecte, l’utilisation et la protection de leurs données personnelles, conformément à la réglementation en vigueur (RGPD).
+        </p>
+    </section>
+
+    <section>
+        <h2>1. Responsable du traitement</h2>
+        <p>
+            Le responsable du traitement des données est :<br>
+            <strong>[Nom de la prothésiste ongulaire ou de l’entreprise]</strong><br>
+            Adresse : [Adresse complète]<br>
+            Email : [Adresse email de contact]
+        </p>
+    </section>
+
+    <section>
+        <h2>2. Données collectées</h2>
+        <p>
+            Lors de la création de votre compte, nous collectons les données suivantes :
+            <ul>
+                <li>Nom</li>
+                <li>Prénom</li>
+                <li>Nom d’utilisateur</li>
+                <li>Adresse e-mail</li>
+                <li>Mot de passe (crypté)</li>
+            </ul>
+        </p>
+    </section>
+
+    <section>
+        <h2>3. Finalités de la collecte</h2>
+        <p>
+            Vos données personnelles sont collectées pour les finalités suivantes :
+            <ul>
+                <li>Création et gestion de votre compte utilisateur</li>
+                <li>Envoi d’informations et d’offres relatives à nos services par e-mail</li>
+            </ul>
+        </p>
+    </section>
+
+    <section>
+        <h2>4. Destinataires des données</h2>
+        <p>
+            Vos données personnelles ne sont en aucun cas transmises, cédées ou vendues à des tiers. Elles sont utilisées exclusivement par <strong>[Nom du site ou de l’entreprise]</strong>.
+        </p>
+    </section>
+
+    <section>
+        <h2>5. Durée de conservation</h2>
+        <p>
+            Vos données sont conservées pendant toute la durée de votre inscription sur le site. Vous pouvez demander la suppression de votre compte et de vos données à tout moment (voir point 7).
+        </p>
+    </section>
+
+    <section>
+        <h2>6. Sécurité des données</h2>
+        <p>
+            Nous mettons en œuvre toutes les mesures techniques et organisationnelles appropriées pour garantir la sécurité et la confidentialité de vos données personnelles (mot de passe crypté, accès sécurisé, etc.).
+        </p>
+    </section>
+
+    <section>
+        <h2>7. Vos droits</h2>
+        <p>
+            Conformément à la réglementation, vous disposez des droits suivants :
+            <ul>
+                <li>Droit d’accès à vos données</li>
+                <li>Droit de rectification</li>
+                <li>Droit de suppression</li>
+                <li>Droit d’opposition et de limitation du traitement</li>
+            </ul>
+            Pour exercer ces droits, il vous suffit de nous contacter à l’adresse suivante : <strong>[Adresse email de contact]</strong>.
+        </p>
+    </section>
+
+    <section>
+        <h2>8. Cookies</h2>
+        <p>
+            Aucun cookie de suivi ou de publicité n’est utilisé sur ce site. Seuls des cookies techniques nécessaires au bon fonctionnement du site peuvent être déposés.
+        </p>
+    </section>
+
+    <section>
+        <h2>9. Modification de la politique de confidentialité</h2>
+        <p>
+            Nous nous réservons le droit de modifier la présente politique de confidentialité à tout moment. Toute modification sera publiée sur cette page.
+        </p>
+    </section>
+{% endblock %}

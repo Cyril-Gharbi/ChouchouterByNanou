@@ -31,7 +31,7 @@
             {% set level = session["user"]["fidelity_level"] %}
 
             {% if 0 <= level <= 10 %}
-                <p><img src="{{ url_for('static', filename='images/fidelite/carte_' ~ level ~ '.png') }}" alt="Carte {{ level }} prestations" width="600"></p>
+                <p><img class="points" src="{{ url_for('static', filename='images/fidelite/carte_' ~ level ~ '.png') }}" alt="Carte {{ level }} prestations" width="600"></p>
             {% else %}
                 <p>Niveau de fidélité inconnu.</p>
             {% endif %}
@@ -49,7 +49,7 @@
             {% set level = session["user"]["fidelity_level"] %}
 
             {% if 0 <= level <= 10 %}
-                <p><img src="{{ url_for('static', filename='images/fidelite/carte_' ~ level ~ '.png') }}" alt="Carte {{ level }} prestations" width="600"></p>
+                <p><img class="points" src="{{ url_for('static', filename='images/fidelite/carte_' ~ level ~ '.png') }}" alt="Carte {{ level }} prestations" width="600"></p>
             {% else %}
                 <p>Niveau de fidélité inconnu.</p>
             {% endif %}

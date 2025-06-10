@@ -77,15 +77,16 @@ def admin_dashboard():
         category = request.form.get("category")
         name = request.form.get("name")
         description = request.form.get("description")
-        price_str = request.form.get("price")
+        price = request.form.get("price")
+        order_str = request.form.get("order")
 
         try:
-            price = float(price_str)
-            if price < 0:
-                flash("Le prix ne peut pas être négatif.", "error")
+            order = int(order_str)
+            if order < 1:
+                flash("L'ordre doit être un entier positif.", "error")
                 return redirect(url_for('admin_dashboard'))
         except (ValueError, TypeError):
-            flash("Prix invalide. Veuillez entrer un nombre.", "error")
+            flash("Ordre invalide. Veuillez entrer un entier.", "error")
             return redirect(url_for('admin_dashboard'))
 
         new_prestation = {
@@ -93,7 +94,13 @@ def admin_dashboard():
             "name": name,
             "description": description,
             "price": price,
+            "order": order,
         }
+
+        db.Prestations.update_many(
+            {"order": {"$gte": order}},
+            {"$inc": {"order": 1}}
+        )
         db.Prestations.insert_one(new_prestation)
         flash("Prestation ajoutée.", "success")
         return redirect(url_for('admin_dashboard'))
@@ -102,8 +109,14 @@ def admin_dashboard():
     
 
     prestations = list(mongo_db.Prestations.find({}))
-    prestations.sort(key=lambda p: category_order.index(p['category']) if p['category'] in category_order else len(category_order))
+    prestations.sort(key=lambda p: (
+                        category_order.index(p['category']) if p['category'] in category_order else len(category_order),
+                        p.get('order', 999)
+                    )
+    )
     for p in prestations:
+        if 'order' not in p:
+            p['order'] = 9999
         p['_id'] = str(p['_id'])
 
     return render_template("admin_dashboard.html", users=users, images=images, prestations=prestations)
@@ -167,7 +180,7 @@ def admin_delete_photo(filename):
         flash(f"L'image {filename} a été supprimée.")
     else:
         flash("Image introuvable.")
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('admin_dashboard') + '#renvoi-photos')
 
 
 
@@ -255,10 +268,25 @@ def edit_rate(id):
         name = request.form.get('name')
         description = request.form.get('description')
         price = request.form.get('price')
-
+        new_order = int(request.form.get('order'))
+                        
         if not category or not name or not description or not price:
             flash("Tous les champs sont obligatoires.", "error")
             return redirect(url_for('edit_rate', id=id))
+        
+        old_order = prestation.get('order')
+
+        if new_order != old_order:
+            if new_order < old_order:
+                db.Prestations.update_many(
+                    {"order": {"$gte": new_order, "$lt": old_order}},
+                    {"$inc": {"order": 1}}
+                )
+            else:
+                db.Prestations.update_many(
+                    {"order": {"$gt": old_order, "$lte": new_order}},
+                    {"$inc": {"order": -1}}
+                )
 
         # Mettre à jour la prestation en base
         db.Prestations.update_one(
@@ -267,11 +295,12 @@ def edit_rate(id):
                 "category": category,
                 "name": name,
                 "description": description,
-                "price": price
+                "price": price,
+                "order": new_order
             }}
         )
         flash("Prestation mise à jour avec succès.", "success")
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('admin_dashboard') + '#renvoi-prestations')
 
     # GET: afficher le formulaire avec les données existantes
     return render_template('admin_edit_prestation.html', prestation=prestation)
@@ -283,6 +312,15 @@ def edit_rate(id):
 @admin_required
 def delete_prestation(id):
     db = mongo_db
-    db.Prestations.delete_one({"_id": ObjectId(id)})
-    flash("Prestation supprimée.", "success")
+    prestation = db.Prestations.find_one({"_id": ObjectId(id)})
+    if prestation and "order" in prestation:
+        deleted_order = int(prestation["order"])
+        db.Prestations.delete_one({"_id": ObjectId(id)})
+        db.Prestations.update_many(
+            {"order": {"$gt": deleted_order}},
+            {"$inc": {"order": -1}}
+        )
+        flash("Prestation supprimée.", "success")
+    else:
+        flash("Prestation introuvable ou ordre manquant.", "error")
     return redirect(url_for("admin_dashboard"))

@@ -71,16 +71,18 @@
       <th>Nom</th>
       <th>Description</th>
       <th>Prix</th>
+      <th>Ordre</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-      {% for p in prestations %}
+      {% for p in prestations | sort(attribute='order') %}
       <tr>
         <td>{{ p.category }}</td>
         <td>{{ p.name }}</td>
         <td>{{ p.description }}</td>
         <td>{{ p.price }}</td>
+        <td>{{ p.order if p.order is defined else '' }}</td>
         <td class="actions">
           <form action="{{ url_for('edit_rate', id=p._id) }}" method="GET" style="display:inline;">
             <button type="submit">✏️ Modifier</button>
@@ -95,20 +97,26 @@
 </table>
 
 <h3>Ajouter des prestations</h3>
-<form id="edit_prestation" method="POST">
-  <div>
-      <select id="category" name="category" required>
-        <option value="">--- Catégorie ---</option>
+<form id="add_prestation" method="POST">
+  <div class="form-container">
+    <div class="row">
+      <select name="category" required>
+        <option value="">Catégorie</option>
         <option value="Semi-permanent">Semi-permanent</option>
         <option value="Extension">Extension</option>
         <option value="Nail art">Nail art</option>
       </select>
       <input name="name" placeholder="Nom" required>
+    </div>
+    <div class="row">
       <input name="price" placeholder="Prix" required>
+      <input type="number" name="order" placeholder="Ordre" required min="1">
+    </div>
+    <textarea name="description" placeholder="Description" required rows="4"></textarea>
+    <button type="submit">Ajouter</button>
   </div>
-  <textarea name="description" placeholder="Description" required rows="4" style="resize: vertical;"></textarea>
-  <button type="submit">Ajouter</button>
 </form>
+
 
 
 <hr>

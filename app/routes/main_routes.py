@@ -55,3 +55,12 @@ def cgu():
 @app.route("/mentions")
 def mentions():
     return render_template("mentions.html")
+
+@app.route("/politique")
+def politique():
+    return render_template("politique_confidentialite.html")
+
+
+@app.route("/contact")
+def contact():
+    return render_template("contact_us.html")

@@ -26,6 +26,7 @@
                         <th>Nom</th>
                         <th>Description</th>
                         <th>Prix</th>
+                        <th>Ordre</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +40,9 @@
                         </td>
                         <td><input type="text" name="name" value="{{ prestation.name }}" required></td>
                         <td><input type="text" name="description" value="{{ prestation.description }}" required></td>
-                        <td><input type="number" name="price" step="0.01" value="{{ prestation.price }}" required></td>
+                        <td><input type="text" name="price" value="{{ prestation.price }}" required></td>
+                        <td><input type="number" name="order" value="{{ prestation.order }}" required></td>
+                        
                     </tr>
                 </tbody>
             </table>

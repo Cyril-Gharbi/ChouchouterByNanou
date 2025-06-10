@@ -71,59 +71,91 @@ font-size: 1.1rem;
 
 
 
-
-
-
-
-#edit_prestation {
-    width: 33vw !important;
-    min-width: 300px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    display: block !important;
+/* Centrage du formulaire dans la page */
+#add_prestation {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 1em;
 }
 
-/* Flexbox pour select + input sur une ligne */
-#edit_prestation > div {
+/* Conteneur intérieur limité à 30% */
+#add_prestation > .form-container {
+    width: 30%;
+    min-width: 300px;
+    max-width: 500px;
+    padding: 1.5em;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+}
+
+/* Lignes du formulaire */
+.form-container .row {
     display: flex;
     gap: 1em;
     margin-bottom: 1em;
 }
 
-#edit_prestation select {
-    flex: 1;
-    min-width: 100px;
-    height: 40px;
-    text-align: center;
-    font-size: 1.1em;
-}
-
-#edit_prestation input {
-    flex: 2;
-    height: 34px;
-    font-size: 1.2em;
-}
-
-/* textarea pleine largeur */
-#edit_prestation textarea {
+/* Uniformiser tous les champs */
+.form-container select,
+.form-container input {
     width: 100%;
+    height: 38px;
+    font-size: 1em;
+    padding: 0 0.8em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     box-sizing: border-box;
-    font-size: 1.2em;
-    padding: 0.3em 0.5em;
+    appearance: none;
+}
+
+/* Style spécifique du select pour éviter le décalage */
+.form-container select {
+    background-color: white;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%227%22%20viewBox%3D%220%200%2010%207%22%20fill%3D%22none%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M1%201L5%205L9%201%22%20stroke%3D%22%23666%22%20stroke-width%3D%222%22/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7em center;
+    background-size: 0.8em;
+    padding-right: 2em;
+}
+
+/* Zone de texte */
+.form-container textarea {
+    width: 100%;
+    font-size: 1em;
+    padding: 0.8em;
     font-family: inherit;
     resize: vertical;
     min-height: 6em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     margin-bottom: 1em;
+    box-sizing: border-box;
 }
 
-/* Bouton centré */
-#edit_prestation button {
+/* Bouton */
+.form-container button {
     display: block;
-    margin: 0 auto;
-    padding: 0.5em 1.5em;
+    margin: 1em auto 0;
+    padding: 10px 16px;
     font-size: 1em;
-    cursor: pointer;
+    background-color: white;
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s color 0.3s;
 }
+
+.form-container button:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+
 
 h3 {
     text-align: center;
@@ -154,7 +186,7 @@ table-layout: fixed;
 
 table:nth-of-type(2) th:nth-child(1), /* Catégorie */
 table:nth-of-type(2) td:nth-child(1) {
-width: 6%;
+width: 8%;
 }
 
 table:nth-of-type(2) th:nth-child(2), /* Nom */
@@ -164,16 +196,21 @@ width: 20%;
 
 table:nth-of-type(2) th:nth-child(3), /* Description */
 table:nth-of-type(2) td:nth-child(3) {
-width: 54%;
+width: 49%;
 word-wrap: break-word;
 }
 
 table:nth-of-type(2) th:nth-child(4), /* Prix */
 table:nth-of-type(2) th:nth-child(4) {
-width: 10%;
+width: 5%;
 }
 
-table:nth-of-type(2) th:nth-child(5), /* Actions */
-table:nth-of-type(2) td:nth-child(5) {
-width: 10%;
+table:nth-of-type(2) th:nth-child(5), /* Order */
+table:nth-of-type(2) th:nth-child(5) {
+width: 5%;
+}
+
+table:nth-of-type(2) th:nth-child(6), /* Actions */
+table:nth-of-type(2) td:nth-child(6) {
+width: 13%;
 }

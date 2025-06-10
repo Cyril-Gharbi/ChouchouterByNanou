@@ -1,0 +1,20 @@
+<!-- display of the home page -->
+
+{% extends "base.html" %}
+
+{% block title %}Accueil - Chouchouter By Nanou{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='contact_us.css') }}">
+{% endblock %}
+
+
+{% block content %}
+<p>Besoin de renseignements</p>
+<p>avant de réserver ?</p>
+<p>Besoin de modifier votre compte ?</p>
+<p>Vous pouvez me contacter</p>
+<p>par email : nanou_fabie@icloud.com</p>
+<p>par téléphone : 07.44.28.58.72</p>
+<p>N'hésitez pas !</p>
+{% endblock %}
