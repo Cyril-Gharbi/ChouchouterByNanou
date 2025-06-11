@@ -33,6 +33,7 @@
                 <th>Niveau fidélité</th>
                 <th>Email</th>
                 <th>Niveau du cycle</th>
+                <th>Date de création</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -46,6 +47,7 @@
                 <td>{{ user.fidelity_level }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.fidelity_cycle }}</td>
+                <td>{{ user.consent_date_formatted }}</td>
                 <td class="actions">
                     <form action="{{ url_for('admin_edit_user', user_id=user.id) }}" method="GET">
                         <button type="submit">✏️ Modifier</button>
@@ -122,9 +124,9 @@
 <hr>
 
 <div id="renvoi-photos">
-    <h2 class="photos-section">Gestion des photos</h2>
-        
 
+  <h2 class="photos-section">Gestion des photos</h2>
+        
   <div style="display:flex; flex-wrap: wrap; gap: 20px; margin-top:20px; justify-content: center;">
     {% for image in images %}
       <div style="border:1px solid #ccc; padding:10px; text-align:center;">
@@ -137,6 +139,7 @@
       <p>Aucune image trouvée.</p>
     {% endfor %}
   </div>
+  
   <h3>Ajouter une photo</h3>
           <div class="add_photo">
             <form method="POST" enctype="multipart/form-data">

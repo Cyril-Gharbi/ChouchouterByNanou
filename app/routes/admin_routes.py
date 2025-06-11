@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 from ..utils import generate_password_reset_token, verify_password_reset_token, send_discount_email, update_user_session
 from flask_mail import Message
 from bson import ObjectId
+from zoneinfo import ZoneInfo
 import os
 
 
@@ -44,6 +45,24 @@ def admin_login():
 def admin_dashboard():
     db = mongo_db
     users = User.query.all()
+
+    mois_fr = [
+        'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet',
+        'août', 'septembre', 'octobre', 'novembre', 'décembre'
+    ]
+    for user in users:
+        if user.consent_date:
+            paris_time = user.consent_date.astimezone(ZoneInfo("Europe/Paris"))
+            user.consent_date_formatted = (
+                f"{paris_time.day} {mois_fr[paris_time.month-1]} {paris_time.year} "
+                f"à {paris_time.hour}h{paris_time.minute:02d}"
+            )
+        else:
+            user.consent_date_formatted = "N/A"
+
+
+
+
     # Dossier contenant les images — chemin absolu
     folder = os.path.join(current_app.root_path, UPLOAD_FOLDER)
 

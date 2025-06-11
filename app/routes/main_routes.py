@@ -19,7 +19,13 @@ def portfolio():
         files = os.listdir(full_path)
     except FileNotFoundError:
         files = []
-    images = [f"{image_folder}/{f}" for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+    valid_images = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+
+    # Trier les fichiers par date de modification décroissante
+    valid_images.sort(key=lambda x: os.path.getmtime(os.path.join(full_path, x)), reverse=True)
+
+    # Générer les chemins relatifs
+    images = [f"{image_folder}/{f}" for f in valid_images]
     return render_template('portfolio.html', images=images)
 
 # Rates page route

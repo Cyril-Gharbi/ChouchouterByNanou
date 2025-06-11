@@ -48,6 +48,8 @@ class User(db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False)
     fidelity_level = db.Column(db.Integer, default=0)
     fidelity_cycle = db.Column(db.Integer, default=0)
+    consent_privacy = db.Column(db.Boolean, nullable=False, default=False)
+    consent_date = db.Column(db.DateTime, nullable=True)
 
     admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
     admin = db.relationship('Admin', backref=db.backref('users', lazy=True))
@@ -98,5 +100,5 @@ class FidelityRewardLog(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow)
     cycle_number = db.Column(db.Integer, nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('reward_logs', lazy=True))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    user = db.relationship('User', backref='fidelity_reward_logs', passive_deletes=True)

@@ -1,4 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from app import app, db
 from ..models import User, Admin
 
@@ -12,15 +14,23 @@ def register():
         firstname = request.form["firstname"]
         lastname = request.form["lastname"]
         email = request.form["email"]
+
+        if "consent_privacy" not in request.form:
+            flash("Vous devez accepter la politique de confidentialité pour créer un compte.", "error")
+            return redirect(url_for("registre"))
         
         if User.query.filter_by(username=username).first():
-            return "Nom d'utilisateur déjà utilisé"
+            flash("Nom d'utilisateur déjà utilisé", "error")
+            return redirect(url_for("register"))
         
-        user = User(username=username, firstname=firstname, lastname=lastname, email=email, fidelity_level=0, fidelity_cycle=0)
+        utc_now = datetime.now(timezone.utc)
+        
+        user = User(username=username, firstname=firstname, lastname=lastname, email=email, fidelity_level=0, fidelity_cycle=0, consent_privacy=True, consent_date=utc_now)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
 
+        
         # Log user in after registration
         session["user"] = {
             "username": user.username,
@@ -28,7 +38,9 @@ def register():
             "lastname": user.lastname,
             "email": user.email,
             "fidelity_level": user.fidelity_level,
-            "fidelity_cycle": user.fidelity_cycle
+            "fidelity_cycle": user.fidelity_cycle,
+            "consent_privacy": user.consent_privacy,
+            "consent_date": user.consent_date.isoformat()
         }
         return redirect(url_for("connection"))
     return render_template("register.html")
@@ -61,6 +73,7 @@ def login():
             return redirect(url_for("admin_dashboard"))
 
         # Invalid credentials
+        flash("Identifiants incorrects")
         return render_template("connection.html", error="Identifiants incorrects")
 
     next_page = request.args.get("next")
@@ -89,6 +102,7 @@ def delete_account():
             session.pop("user", None)
             return redirect(url_for("accueil"))
         else:
+            flash("Mot de passe incorrect")
             return render_template("delete_account.html", error="Mot de passe incorrect")
     
     return render_template("delete_account.html")

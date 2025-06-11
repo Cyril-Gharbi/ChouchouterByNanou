@@ -11,20 +11,19 @@
 
 {% block content %}
 <div class="container">
-   <div class="photo-container">
-   <img src="{{ url_for('static', filename='images/accueil_1.png')}}" alt="Chouchouter" class="image">
+   <div class="logo">
+      <img src="{{ url_for('static', filename='images/vernis.png') }}" class="logo-img">
    </div>
-   <div class="text">
-      <h2>✨ Sublimez vos mains avec passion et expertise ✨</h2>
-      <hr>
-      <p>Bienvenue chez <strong>Chouchouter by Nanou</strong>, votre espace beauté dédié à la prothésie ongulaire. Que vous soyez adepte d’un style naturel ou glamour, 
-      je mets mon savoir-faire au service de vos ongles pour révéler toute leur élégance.
-      💅 Semi-permanent, renfort, extension ou nail art – chaque prestation est réalisée avec minutie, dans une ambiance douce et cocooning.</p>
-      <hr>
-      <h3>🔗 Prenez rendez-vous et laissez vos mains parler de vous.</h3>
-   </div>
-   <div class="photo-container">
-   <img src="{{ url_for('static', filename='images/accueil_2.png')}}" alt="Chouchouter" class="image">
-   </div>
+      <h1>BIENVENUE CHEZ <br><span class="salon-name">"Chouchouter By Nanou"</span></h1>
+
+      <img src="{{ url_for('static', filename='images/ongles.png') }}" alt="Mains avec manucure élégante" class="hero-image"/>
+      <p class="description">
+        Spécialisée dans la beauté des ongles, je vous propose des prestations sur mesure :
+        pose de gel, nail art, manucure... dans un cadre chaleureux et cocooning ou à domicile.
+      </p>
+      <div class="buttons">
+         <a href="{{ url_for('portfolio') }}" class="btn btn-secondary">Voir les réalisations</a>
+         <a href="{{ url_for('rates') }}" class="btn btn-primary">Voir les prestations</a>
+      </div>
 </div>
 {% endblock %}

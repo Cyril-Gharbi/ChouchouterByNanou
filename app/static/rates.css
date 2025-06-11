@@ -23,21 +23,17 @@
     text-align: center;
     font-size: 1.2em;
     padding-top: 10px;
+    width: 100%;
   }
 
   
   .liste {
     width: 30%;
-    background-color: rgba(161, 82, 106, 0.8);
     padding: 10px 20px;
-    border: 2px solid #a488a4;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(1, 0, 3, 0.1);
     height: 100%;
-  }
-
-  .liste::-webkit-scrollbar {
-    display: none;
+    background: linear-gradient(rgba(164, 136, 164, 0.5), rgba(255, 255, 255), rgba(164, 136, 164, 0.5));
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 1, 3, 0.1);
   }
   
   .liste button {
@@ -59,7 +55,7 @@
   
   .description {
     flex: 1;  /* La description occupe le reste de l'espace */
-    padding: 40px 20px 20px 20px;
+    padding: 40px 120px 20px 20px;
   }
 
   .description p {
@@ -88,8 +84,8 @@
     padding: 12px 24px;
     font-size: 1em;
     font-weight: bold;
-    color: #000103;
-    background-color: rgba(161, 82, 106, 0.8);
+    color: #ffffff;
+    background-color: #a488a4;
     border: 2px solid #a488a4;
     border-radius: 8px;
     box-shadow: 4px 4px 10px rgba(1, 0, 3, 0.2);
@@ -100,6 +96,6 @@
   
   .description .btn:hover {
     background-color: #a9a075;
-    box-shadow: 6px 6px 12px rgba(1, 0, 3, 0.3);
+    box-shadow: 4px 4px 10px rgba(1, 0, 3, 0.3);
     transform: translateY(-2px);
   }
