@@ -1,34 +1,13 @@
-.hero {
-  padding: 40px 20px;
-  text-align: center;
-}
 
 .container {
-  max-width: 850px;
+  max-width: 900px;
   margin: auto;
   text-align: center;
 }
 
-.logo {
-  display: flex;
-  justify-content: center; /* centre horizontalement */
-}
-
-.logo-img {
-  width: 150px;  /* ou la taille souhaitée */
-  height: auto;
-}
-
-
 h1 {
   font-size: 2em;
   margin: 0 0 40px 0;
-}
-
-h2 {
-  font-size: 3.5em;
-  font-weight: 400;
-  margin: 30px 0;
 }
 
 .salon-name {
@@ -49,6 +28,7 @@ h2 {
   margin-bottom: 60px;
   margin-top: 20px;
   line-height: 1.6;
+  padding: 0 60px;
 }
 
 .buttons {
@@ -83,4 +63,3 @@ h2 {
   background-color: white;
   color: #a488a4;
 }
-

@@ -4,7 +4,7 @@
     margin: 0 auto; /* Centrer le conteneur */
     padding: 40px;
     background: #FFFFFF;
-    border-radius: 20px;
+    border-radius: 10px;
     box-shadow: 0 4px 20px rgba(1, 0, 3, 0.1);
     display: flex;
     flex-direction: column;

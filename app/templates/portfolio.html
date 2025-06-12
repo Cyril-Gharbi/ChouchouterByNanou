@@ -8,7 +8,6 @@
 
 {% block content %}
 
-
 <div class="photo-grid">
     {% for image_path in images %}
         <img class="photo" src="{{ url_for('static', filename=image_path) }}" alt="photo {{ loop.index }}">

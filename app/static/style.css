@@ -40,6 +40,7 @@ a:hover, button:hover {
 .nav-left img {
   width: 180px;
   height: auto;
+  padding-left: 40px;
 }
 
 .nav-right {
@@ -120,11 +121,11 @@ a:hover, button:hover {
 .vernis {
   background-image: url('/static/images/img_header.png');
   width: 100vw;
-  height: 20vh;
+  height: 18vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin-top: 220px;
+  margin-top: 180px;
   overflow: hidden;
 }
 

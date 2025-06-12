@@ -12,18 +12,17 @@
 {% block content %}
 <div class="container">
    <div class="logo">
-      <img src="{{ url_for('static', filename='images/vernis.png') }}" class="logo-img">
-   </div>
       <h1>BIENVENUE CHEZ <br><span class="salon-name">"Chouchouter By Nanou"</span></h1>
-
-      <img src="{{ url_for('static', filename='images/ongles.png') }}" alt="Mains avec manucure élégante" class="hero-image"/>
-      <p class="description">
-        Spécialisée dans la beauté des ongles, je vous propose des prestations sur mesure :
-        pose de gel, nail art, manucure... dans un cadre chaleureux et cocooning ou à domicile.
-      </p>
-      <div class="buttons">
-         <a href="{{ url_for('portfolio') }}" class="btn btn-secondary">Voir les réalisations</a>
-         <a href="{{ url_for('rates') }}" class="btn btn-primary">Voir les prestations</a>
-      </div>
+   </div>
+      
+   <img src="{{ url_for('static', filename='images/ongles.png') }}" alt="Mains avec manucure élégante" class="hero-image"/>
+   <p class="description">
+      Spécialisée dans la beauté des ongles, je vous propose des prestations sur mesure :
+      pose de gel, nail art, manucure... dans un cadre chaleureux et cocooning ou à domicile.
+   </p>
+   <div class="buttons">
+      <a href="{{ url_for('portfolio') }}" class="btn btn-secondary">Voir les réalisations</a>
+      <a href="{{ url_for('rates') }}" class="btn btn-primary">Voir les prestations</a>
+   </div>
 </div>
 {% endblock %}

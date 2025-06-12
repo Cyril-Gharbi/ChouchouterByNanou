@@ -17,10 +17,13 @@
             <input type="text" name="firstname" placeholder="Prénom" required>
             <input type="text" name="lastname" placeholder="Nom" required>
             <input type="text" name="email" placeholder="email" required>
-            <label class="consent">
-                <input type="checkbox" name="consent_privacy" required>
-                J'ai lu et j'accepte la <a href="/politique-confidentialite.html" target="_blank">politique de confidentialité</a>.
-            </label>
+            <div class="consent-wrapper">
+                <input type="checkbox" name="consent_privacy" id="consent" required>
+                <label for="consent">
+                    J'ai lu et j'accepte la <a href="/politique-confidentialite.html" target="_blank">politique de confidentialité</a>.
+                </label>
+            </div>
+
 
             <button type="submit">Créer mon compte</button>
         </form>

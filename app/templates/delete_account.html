@@ -1,16 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Confirmation de suppression{% endblock %}
+{% block title %}Confirmation de suppression - Chouchouter By Nanou{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='delete_account.css') }}">
+{% endblock %}
 
 {% block content %}
 <h2>Confirmer la suppression de votre compte</h2>
+<hr>
 <p>Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
-
-<form method="post">
-    <label for="password">Mot de passe :</label>
-    <input type="password" name="password" id="password" required>
-    <button type="submit">Confirmer la suppression</button>
-</form>
+<div class="login-box">
+    <form method="post" class="login-form">
+        <label for="password">Mot de passe :</label>
+        <input type="password" name="password" id="password" required>
+        <button type="submit">Confirmer la suppression</button>
+    </form>
+</div>
 
 {% if error %}
     <p style="color: red;">{{ error }}</p>

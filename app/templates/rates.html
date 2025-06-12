@@ -28,11 +28,13 @@
 
   
         <div class="description">
+            {% set first_id = (prestations | selectattr('order', 'equalto', 1) | list).0._id %}
             {% for prestation in prestations %}
-              <div id="prestation-{{ prestation._id }}" class="contenu{% if loop.first %} actif{% endif %}">
+              <div id="prestation-{{ prestation._id }}" class="contenu{% if prestation._id == first_id %} actif{% endif %}">
                 <h2>{{ prestation.name }}</h2>
                 <hr>
                 <p>{{ prestation.description }}</p>
+                <p><B>{{ prestation.price }} €</B></p>
               </div>
             {% endfor %}
 
