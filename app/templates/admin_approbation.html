@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Demande de crétion de compte - Chouchouter By Nanou</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_approbation.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Panneau d'administration</h1>
+            <div class="button-container">
+                <a href="{{ url_for('accueil') }}" class="retour">Retour au site</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="button">Retour au dashboard</a>
+            </div>
+    </header>
+    <main>
+        <h2>Décision de la demande de création de compte</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom d'utilisateur</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <form method="POST" action="{{ url_for('process_user_request', user_id=user.id) }}">
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.lastname }}</td>
+                            <td>{{ user.firstname }}</td>
+                            <td>{{ user.email }}</td>
+                            <td class="actions">
+                                <button type="submit" name="action" value="approve">✅ Valider</button>
+                                <button type="submit" name="action" value="refuse" onclick="return confirm('Refuser et supprimer cet utilisateur ?');">❌ Refuser</button>
+                            </td>
+                        </form>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </main>
+
+</body>
+</html>

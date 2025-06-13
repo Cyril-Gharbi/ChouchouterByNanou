@@ -1,5 +1,6 @@
 from itsdangerous import URLSafeTimedSerializer
-from flask import current_app
+from flask import current_app, session
+from .models import User
 
 
 # Generates a password reset token that expires after a given time (default: 1 hour)
@@ -34,17 +35,23 @@ def send_discount_email(user, level):
         recipients=[user.email],
         body=f"""Bonjour {user.firstname},
 
-Bravo ! Vous avez atteint le niveau {level} de fidélité.
-Vous bénéficiez de {discount}% de réduction sur votre prochaine séance !
+        Bravo ! Vous avez atteint le niveau {level} de fidélité.
+        Vous bénéficiez de {discount}% de réduction sur votre prochaine séance !
 
-À très bientôt ✨
-L'équipe Chouchouter""",
+        À très bientôt ✨
+        L'équipe Chouchouter""",
         sender=current_app.config.get("MAIL_DEFAULT_SENDER")
     )
     mail.send(msg)
 
-
-from flask import session
+def send_email(subject, recipients, body):
+    msg = Message(
+        subject=subject,
+        recipients=recipients,
+        body=body,
+        sender=current_app.config.get("MAIL_DEFAULT_SENDER")
+    )
+    mail.send(msg)
 
 # Stores the user's information in the Flask session
 def update_user_session(user):
@@ -55,3 +62,7 @@ def update_user_session(user):
         "email": user.email,
         "fidelity_level": user.fidelity_level
     }
+
+
+def is_existing_user(email):
+    return User.query.filter_by(email=email).first() is not None

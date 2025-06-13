@@ -8,7 +8,7 @@ form { display: inline; }
 .actions { white-space: nowrap; text-align: center; }
 .actions form { display: inline-block;}
 .button-container { text-align: center; margin-bottom: 2rem; }
-.button, .retour {
+.button, .retour, .btn {
     display: inline-block;
     padding: 10px 16px;
     background-color: white;
@@ -19,16 +19,24 @@ form { display: inline; }
     font-weight: bold;
     transition: background-color 0.3s, color 0.3s;
 }
-.retour {
-    border-color: red;
-    color: red;
-}
 .button:hover {
     background-color: #4CAF50;
     color: white;
 }
+.retour {
+    border-color: red;
+    color: red;
+}
 .retour:hover {
     background-color: red;
+    color: white;
+}
+.btn {
+    border-color: darkblue;
+    color: darkblue;
+}
+.btn:hover {
+    background-color: darkblue;
     color: white;
 }
 header {

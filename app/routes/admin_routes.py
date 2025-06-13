@@ -3,11 +3,12 @@ from app import app, db, mail, mongo_db
 from ..models import User, Admin
 from functools import wraps
 from werkzeug.utils import secure_filename
-from ..utils import generate_password_reset_token, verify_password_reset_token, send_discount_email, update_user_session
+from ..utils import generate_password_reset_token, verify_password_reset_token, send_email
 from flask_mail import Message
 from bson import ObjectId
 from zoneinfo import ZoneInfo
 import os
+import textwrap
 
 
 
@@ -31,8 +32,8 @@ def admin_login():
             session["admin_id"] = admin.id
             return redirect(url_for("admin_dashboard"))
         else:
-            return render_template("admin_login.html", error="Identifiants invalides")
-    return render_template("admin_login.html")
+            return render_template("connection.html", error="Identifiants invalides")
+    return render_template("connection.html")
 
 
 
@@ -44,7 +45,7 @@ def admin_login():
 @admin_required
 def admin_dashboard():
     db = mongo_db
-    users = User.query.all()
+    users = User.query.filter_by(is_approved=True).all()
 
     mois_fr = [
         'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet',
@@ -343,3 +344,63 @@ def delete_prestation(id):
     else:
         flash("Prestation introuvable ou ordre manquant.", "error")
     return redirect(url_for("admin_dashboard"))
+
+
+
+
+
+@app.route("/admin/pending_users")
+@admin_required
+def pending_users():
+    users = User.query.filter_by(is_approved=False).all()
+    return render_template("admin_approbation.html", users=users)
+
+
+@app.route("/admin/process_user_request/<int:user_id>", methods=["POST"])
+@admin_required
+def process_user_request(user_id):
+    user = User.query.get_or_404(user_id)
+    action = request.form.get("action")
+
+    if action == "approve":
+        user.is_approved = True
+        db.session.commit()
+        send_email(
+            subject="Acceptation de votre demande de création de compte",
+            recipients=[user.email],
+            body=textwrap.dedent(f"""\
+            Félicitations {user.firstname} !
+
+            Votre demande de création de compte a été acceptée. Nous sommes ravis de vous compter parmi nos clients.
+
+            Vous pouvez dès à présent vous connecter à votre espace personnel.
+
+            À très bientôt,
+            L'équipe Chouchouter""")
+        )
+        flash(f"Utilisateur {user.username} validé avec succès.", "success")
+
+    elif action == "refuse":
+        db.session.delete(user)
+        db.session.commit()
+        send_email(
+            subject="Refus de votre demande de création de compte",
+            recipients=[user.email],
+            body=textwrap.dedent(f"""\
+            Bonjour {user.firstname},
+            
+            Nous vous remercions pour votre intérêt.
+
+            Malheureusement, nous ne pouvons donner suite à votre demande de création de compte.
+            
+            Celui-ci est réservé exclusivement à notre clientèle, dans le cadre du suivi personnalisé, du programme de fidélité, et de la possibilité de partager un retour d'expérience sur nos prestations.
+
+            Nous serions ravis de vous compter prochainement parmi nos clients fidèles.
+
+            À très bientôt,
+            L'équipe Chouchouter""")
+        )
+        flash(f"Utilisateur {user.username} supprimé.", "info")
+
+    return redirect(url_for("pending_users"))
+

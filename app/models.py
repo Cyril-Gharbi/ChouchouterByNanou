@@ -50,6 +50,7 @@ class User(db.Model):
     fidelity_cycle = db.Column(db.Integer, default=0)
     consent_privacy = db.Column(db.Boolean, nullable=False, default=False)
     consent_date = db.Column(db.DateTime, nullable=True)
+    is_approved = db.Column(db.Boolean, default=False)
 
     admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
     admin = db.relationship('Admin', backref=db.backref('users', lazy=True))
