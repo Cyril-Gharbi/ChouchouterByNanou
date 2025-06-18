@@ -4,12 +4,11 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 import os
 from flask_mail import Mail
-
 mail = Mail()
 
 load_dotenv()
 
-from .models import db, create_app
+from .models import db, create_app, login_manager
 
 
 app = create_app()

@@ -12,6 +12,7 @@
 <p>Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
 <div class="login-box">
     <form method="post" class="login-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label for="password">Mot de passe :</label>
         <input type="password" name="password" id="password" required>
         <button type="submit">Confirmer la suppression</button>

@@ -11,7 +11,8 @@
     <div class="login-box">
         <p>Créer un compte</p>
 
-        <form method="post" action="/register" class="login-form">
+        <form method="POST" action="/register" class="login-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="text" name="username" placeholder="Nom d'utilisateur" required>
             <input type="password" name="password" placeholder="Mot de passe" required>
             <input type="text" name="firstname" placeholder="Prénom" required>

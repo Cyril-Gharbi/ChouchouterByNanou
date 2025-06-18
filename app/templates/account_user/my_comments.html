@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Mes commentaires - Chouchouter By Nanou{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='comments.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="comments-section">
+  <h2>Mes commentaires</h2>
+  <hr>
+
+  {% if comments %}
+    <div class="comments-list">
+      {% for comment in comments %}
+        <div class="comment" id="comment-{{ comment.id }}">
+          <p class="content" id="content-{{ comment.id }}">{{ comment.content }}</p>
+          <p class="date">{{ comment.date | localdatetime }}</p>
+          
+          <div class="actions" id="actions-{{ comment.id }}">
+            <button type="button" onclick="showEdit('{{ comment.id }}')">Modifier</button>
+            <button type="button" onclick="showDeleteConfirm('{{ comment.id }}')">Supprimer</button>
+          </div>
+
+          <!-- Formulaire édition (hidden par défaut) -->
+          <form method="POST" action="{{ url_for('edit_comment') }}" class="edit-form" id="edit-form-{{ comment.id }}" style="display:none;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+            <textarea name="content" required>{{ comment.content }}</textarea>
+            <button type="submit">Enregistrer</button>
+            <button type="button" onclick="cancelEdit('{{ comment.id }}')">Annuler</button>
+          </form>
+
+          <!-- Formulaire suppression (hidden par défaut) -->
+          <form method="POST" action="{{ url_for('delete_comment') }}" class="delete-form" id="delete-form-{{ comment.id }}" style="display:none;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+            <button type="button" onclick="submitDelete('{{ comment.id }}')">Confirmer suppression</button>
+            <button type="button" onclick="cancelDelete('{{ comment.id }}')">Annuler</button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Vous n'avez pas encore laissé de commentaires.</p>
+  {% endif %}
+
+  <!-- Formulaire pour laisser un nouveau commentaire -->
+  {% if current_user.is_authenticated %}
+  <div class="comment-form" style="margin-top:2rem;">
+    <h3>Laissez un commentaire</h3>
+    <form method="POST" action="{{ url_for('add_comment') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <textarea name="content" placeholder="Votre commentaire..." required></textarea>
+      <button type="submit">Envoyer</button>
+    </form>
+  </div>
+  {% else %}
+  <div class="login-prompt" style="margin-top:2rem;">
+    <p>Vous devez être <a href="{{ url_for('connection') }}">connecté(e)</a> pour laisser un commentaire.</p>
+  </div>
+  {% endif %}
+</section>
+
+<script>
+function showEdit(id) {
+  document.getElementById('content-' + id).style.display = 'none';
+  document.getElementById('actions-' + id).style.display = 'none';
+  document.getElementById('edit-form-' + id).style.display = 'block';
+  document.getElementById('delete-form-' + id).style.display = 'none';
+}
+
+function cancelEdit(id) {
+  document.getElementById('content-' + id).style.display = 'block';
+  document.getElementById('actions-' + id).style.display = 'block';
+  document.getElementById('edit-form-' + id).style.display = 'none';
+}
+
+function showDeleteConfirm(id) {
+  document.getElementById('delete-form-' + id).style.display = 'block';
+  document.getElementById('actions-' + id).style.display = 'none';
+  document.getElementById('content-' + id).style.display = 'none';
+}
+
+function cancelDelete(id) {
+  document.getElementById('content-' + id).style.display = 'block';
+  document.getElementById('actions-' + id).style.display = 'block';
+  document.getElementById('delete-form-' + id).style.display = 'none';
+}
+
+function submitDelete(id) {
+  if (confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?")) {
+    document.getElementById('delete-form-' + id).submit();
+  }
+}
+</script>
+{% endblock %}

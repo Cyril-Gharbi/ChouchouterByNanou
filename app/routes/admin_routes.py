@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, current_app, flash
 from app import app, db, mail, mongo_db
-from ..models import User, Admin
+from ..models import User, Admin, Comment
 from functools import wraps
 from werkzeug.utils import secure_filename
 from ..utils import generate_password_reset_token, verify_password_reset_token, send_email
@@ -17,6 +17,7 @@ def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if "admin_id" not in session:
+            flash("Vous devez être connecté en tant qu'administrateur.")
             return redirect(url_for("admin_login"))
         return f(*args, **kwargs)
     return decorated
@@ -32,8 +33,8 @@ def admin_login():
             session["admin_id"] = admin.id
             return redirect(url_for("admin_dashboard"))
         else:
-            return render_template("connection.html", error="Identifiants invalides")
-    return render_template("connection.html")
+            return render_template("account_user/connection.html", error="Identifiants invalides")
+    return render_template("account_user/connection.html")
 
 
 
@@ -45,23 +46,7 @@ def admin_login():
 @admin_required
 def admin_dashboard():
     db = mongo_db
-    users = User.query.filter_by(is_approved=True).all()
-
-    mois_fr = [
-        'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet',
-        'août', 'septembre', 'octobre', 'novembre', 'décembre'
-    ]
-    for user in users:
-        if user.consent_date:
-            paris_time = user.consent_date.astimezone(ZoneInfo("Europe/Paris"))
-            user.consent_date_formatted = (
-                f"{paris_time.day} {mois_fr[paris_time.month-1]} {paris_time.year} "
-                f"à {paris_time.hour}h{paris_time.minute:02d}"
-            )
-        else:
-            user.consent_date_formatted = "N/A"
-
-
+    users = User.query.filter_by(is_approved=True, deleted_at=None).all()
 
 
     # Dossier contenant les images — chemin absolu
@@ -139,7 +124,9 @@ def admin_dashboard():
             p['order'] = 9999
         p['_id'] = str(p['_id'])
 
-    return render_template("admin_dashboard.html", users=users, images=images, prestations=prestations)
+    
+    comments = Comment.query.order_by(Comment.date.desc()).limit(50).all()
+    return render_template("admin/admin_dashboard.html", users=users, images=images, prestations=prestations, comments=comments)
 
 
 
@@ -160,10 +147,11 @@ def admin_edit_user(user_id):
         db.session.commit()
         flash("Utilisateur modifié.")
         return redirect(url_for("admin_dashboard"))
-    return render_template("admin_edit_user.html", user=user)
+    return render_template("admin/admin_edit_user.html", user=user)
 
 # Admin logout route
 @app.route("/admin/logout")
+@admin_required
 def admin_logout():
     session.pop("admin_id", None)
     return redirect(url_for("admin_login"))
@@ -207,8 +195,8 @@ def admin_delete_photo(filename):
 
 
 # Request password reset: send email with reset token
-@app.route('/reset_password', methods=['GET', 'POST'])
-def reset_request():
+@app.route('/admin/reset_password', methods=['GET', 'POST'])
+def admin_reset_request():
     if request.method == 'POST':
         email = request.form.get('email')
         admin = Admin.query.filter_by(email=email).first()
@@ -222,10 +210,10 @@ def reset_request():
                 email = user.email
             else:
                 flash("Aucun compte associé à cet email.")
-                return redirect(url_for('reset_request'))
+                return redirect(url_for('admin_reset_request'))
 
-        token = generate_password_reset_token(email, user_type, current_app.config["SECRET_KEY"])
-        reset_url = url_for('reset_token', token=token, _external=True)
+        token = generate_password_reset_token(email, user_type)
+        reset_url = url_for('admin_reset_token', token=token, _external=True)
         msg = Message("Réinitialisation de votre mot de passe",
                       sender=os.getenv('MAIL_USERNAME'),
                       recipients=[email])
@@ -235,15 +223,15 @@ def reset_request():
         return redirect(url_for('login'))
 
     # GET : on affiche juste le formulaire, pas de flash d'erreur
-    return render_template('reset_password_request.html')
+    return render_template('account_user/reset_password_request.html')
 
 
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_token(token):
+@app.route('/admin/reset_token/<token>', methods=['GET', 'POST'])
+def admin_reset_token(token):
     result = verify_password_reset_token(token, current_app.config["SECRET_KEY"])
     if not result:
         flash("Le lien de réinitialisation est invalide ou a expiré.")
-        return redirect(url_for('reset_request'))
+        return redirect(url_for('admin_reset_request'))
 
     email, user_type = result
 
@@ -254,20 +242,20 @@ def reset_token(token):
 
     if not user:
         flash("Utilisateur non trouvé.")
-        return redirect(url_for('reset_request'))
+        return redirect(url_for('admin_reset_request'))
 
     if request.method == 'POST':
         new_password = request.form.get('password')
         if not new_password:
             flash("Le mot de passe ne peut pas être vide.")
-            return redirect(url_for('reset_token', token=token))
+            return redirect(url_for('admin_reset_token', token=token))
 
         user.set_password(new_password)
         db.session.commit()
         flash("Votre mot de passe a été mis à jour.")
         return redirect(url_for('login'))
 
-    return render_template('reset_password_form.html')
+    return render_template('account_user/reset_password_form.html')
 
 
 
@@ -323,7 +311,7 @@ def edit_rate(id):
         return redirect(url_for('admin_dashboard') + '#renvoi-prestations')
 
     # GET: afficher le formulaire avec les données existantes
-    return render_template('admin_edit_prestation.html', prestation=prestation)
+    return render_template('admin/admin_edit_prestation.html', prestation=prestation)
 
 
 
@@ -353,7 +341,7 @@ def delete_prestation(id):
 @admin_required
 def pending_users():
     users = User.query.filter_by(is_approved=False).all()
-    return render_template("admin_approbation.html", users=users)
+    return render_template("admin/admin_approbation.html", users=users)
 
 
 @app.route("/admin/process_user_request/<int:user_id>", methods=["POST"])
@@ -404,3 +392,23 @@ def process_user_request(user_id):
 
     return redirect(url_for("pending_users"))
 
+
+
+@app.route('/admin/comment/toggle/<int:comment_id>', methods=['POST'])
+@admin_required
+def admin_toggle_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    comment.is_visible = not comment.is_visible
+    db.session.commit()
+    flash("Statut du commentaire modifié.", "success")
+    return redirect(url_for('admin_dashboard') + '#renvoi-commentaires')
+
+
+@app.route('/admin/comment/delete/<int:comment_id>', methods=['POST'])
+@admin_required
+def admin_delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Commentaire supprimé.", "info")
+    return redirect(url_for('admin_dashboard') + '#renvoi-commentaires')

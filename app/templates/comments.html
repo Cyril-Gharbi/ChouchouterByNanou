@@ -14,31 +14,20 @@
     <!-- Liste des commentaires existants -->
     <div class="comments-list">
         {% for comment in comments %}
-            <div class="comment">
-                <p class="author">{{ comment.author }} a écrit :</p>
+            <div class="comment {% if not comment.user or comment.user.deleted_at %}deleted-user{% endif %}">
+                <p class="author">
+                    {% if comment.user and not comment.user.deleted_at %}
+                        {{ comment.user.username }} a écrit :
+                    {% else %}
+                        Compte supprimé a écrit :
+                    {% endif %}
+                </p>
                 <p class="content">{{ comment.content }}</p>
-                <p class="date">{{ comment.date.strftime('%d/%m/%Y à %H:%M') }}</p>
+                <p class="date">{{ comment.date | localdatetime }}</p>
             </div>
         {% else %}
             <p>Aucun commentaire pour le moment.</p>
         {% endfor %}
     </div>
-
-
-
-    <!-- Formulaire ou message selon connexion -->
-    {% if session.get("user") %}
-        <div class="comment-form">
-            <h3>Laissez un commentaire</h3>
-            <form method="POST" action="{{ url_for('add_comment') }}">
-                <textarea name="content" placeholder="Votre commentaire..." required></textarea>
-                <button type="submit">Envoyer</button>
-            </form>
-        </div>
-    {% else %}
-        <div class="login-prompt">
-            <p>Vous devez être <a href="{{ url_for('connection') }}">connecté(e)</a> pour laisser un commentaire.</p>
-        </div>
-    {% endif %}
 </section>
 {% endblock %}

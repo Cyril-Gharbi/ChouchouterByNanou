@@ -222,3 +222,8 @@ table:nth-of-type(2) th:nth-child(6), /* Actions */
 table:nth-of-type(2) td:nth-child(6) {
 width: 13%;
 }
+
+.comment-masque {
+    background-color: #fdd;
+    opacity: 0.6;
+}

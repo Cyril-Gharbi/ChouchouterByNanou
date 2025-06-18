@@ -41,7 +41,8 @@
                 </button>
                 <div class="nav-menu" id="connexion-menu">
                     <ul>
-                        <li><a href="{{ url_for('connection') }}">Ma carte fidélité</a></li>
+                        <li><a href="{{ url_for('my_comments') }}">Mes commentaires</a></li>
+                        <li><a href="{{ url_for('connection') }}">Mon espace</a></li>
                         <li><a href="{{ url_for('logout') }}">Déconnexion</a></li> <!-- lien logout -->
                     </ul>
                 </div>
@@ -130,6 +131,21 @@
         document.querySelectorAll('.nav-toggle').forEach(button => button.setAttribute('aria-expanded', 'false'));
       }
     });
+
+    // active automatic token for all templates
+    document.addEventListener('DOMContentLoaded', function() {
+  const csrfToken = "{{ csrf_token() }}";
+  document.querySelectorAll('form[method="post"]').forEach(form => {
+    if (!form.querySelector('input[name="csrf_token"]')) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'csrf_token';
+      input.value = csrfToken;
+      form.prepend(input);
+    }
+  });
+});
+
   </script>
 </body>
 </html>

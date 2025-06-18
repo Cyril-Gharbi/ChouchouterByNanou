@@ -15,6 +15,7 @@
             <a href="#renvoi-liste" class="button">Liste des utilisateurs</a>
             <a href="#renvoi-prestations" class="button">Liste des prestations</a>
             <a href="#renvoi-photos" class="button">Gestion des photos</a>
+            <a href="#renvoi-commentaires" class="button">Modération des commentaires</a>
             <a href="{{ url_for('pending_users') }}" class="btn">Demande de création de compte</a>
         </div>
     </header>
@@ -48,13 +49,14 @@
                 <td>{{ user.fidelity_level }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.fidelity_cycle }}</td>
-                <td>{{ user.consent_date_formatted }}</td>
+                <td>{{ user.consent_date | localdatetime_fr }}</td>
                 <td class="actions">
                     <form action="{{ url_for('admin_edit_user', user_id=user.id) }}" method="GET">
                         <button type="submit">✏️ Modifier</button>
                     </form>
                     <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Supprimer cet utilisateur ?');">
-                        <button type="submit">🗑 Supprimer</button>
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit">🗑 Supprimer</button>
                     </form>
                 </td>
             </tr>
@@ -91,6 +93,7 @@
             <button type="submit">✏️ Modifier</button>
           </form>
           <form action="{{ url_for('delete_prestation', id=p._id) }}" method="POST" onsubmit="return confirm('Supprimer cette prestation ?');" style="display:inline;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit">🗑 Supprimer</button>
           </form>
         </td>
@@ -101,6 +104,7 @@
 
 <h3>Ajouter des prestations</h3>
 <form id="add_prestation" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div class="form-container">
     <div class="row">
       <select name="category" required>
@@ -133,6 +137,7 @@
       <div style="border:1px solid #ccc; padding:10px; text-align:center;">
         <img src="{{ url_for('static', filename='images/realisations/' ~ image) }}" alt="{{ image }}" style="max-width:150px; max-height:150px; display:block; margin-bottom:10px;">
         <form action="{{ url_for('admin_delete_photo', filename=image) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette photo ?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" style="background-color:#e74c3c; color:white; border:none; padding:5px 10px; cursor:pointer;">Supprimer</button>
         </form>
       </div>
@@ -144,13 +149,56 @@
   <h3>Ajouter une photo</h3>
           <div class="add_photo">
             <form method="POST" enctype="multipart/form-data">
-            <label for="photo">Choisir une photo :</label>
-            <input type="file" id="photo" name="photo" accept="image/*" required>
-            <button type="submit">Importer</button>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <label for="photo">Choisir une photo :</label>
+              <input type="file" id="photo" name="photo" accept="image/*" required>
+              <button type="submit">Importer</button>
             </form>
           </div>
 </div>
 
+<hr>
+<h2 id="renvoi-commentaires">Modération des commentaires</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Utilisateur</th>
+      <th>Contenu</th>
+      <th>Date</th>
+      <th>Statut</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for comment in comments %}
+    <tr class="{% if not comment.is_visible %}comment-masque{% endif %}">
+      <td>
+        {% if comment.user and not comment.user.deleted_at %}
+          {{ comment.user.username }}
+        {% else %}
+          <em>Compte supprimé</em>
+        {% endif %}
+      </td>
+      <td>{{ comment.content }}</td>
+      <td>{{ comment.date | localdatetime }}</td>
+      <td>{{ "Visible" if comment.is_visible else "Masqué" }}</td>
+      <td class="actions">
+        <form action="{{ url_for('admin_toggle_comment', comment_id=comment.id) }}" method="POST" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit">
+            {{ "Masquer" if comment.is_visible else "Afficher" }}
+          </button>
+        </form>
+        <form action="{{ url_for('admin_delete_comment', comment_id=comment.id) }}" method="POST" onsubmit="return confirm('Supprimer ce commentaire ?');" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit">🗑 Supprimer</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
     </main>
 
@@ -164,9 +212,9 @@
             const rows = document.querySelectorAll('table tbody tr')
 
             rows.forEach(row => {
+                const username = row.cells[3].textContent.toLowerCase();
                 const lastname = row.cells[1].textContent.toLowerCase();
                 const firstname = row.cells[2].textContent.toLowerCase();
-                const username = row.cells[3].textContent.toLowerCase();
                 const email = row.cells[5].textContent.toLowerCase();
 
                 const match = lastname.includes(searchTerm) || firstname.includes(searchTerm) || username.includes(searchTerm) || email.includes(searchTerm);

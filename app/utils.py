@@ -4,13 +4,15 @@ from .models import User
 
 
 # Generates a password reset token that expires after a given time (default: 1 hour)
-def generate_password_reset_token(email, user_type, secret_key, expires_sec=3600):
+def generate_password_reset_token(email, user_type):
+    secret_key = current_app.config['SECRET_KEY']
     s = URLSafeTimedSerializer(secret_key)
     data = {"email": email, "type": user_type}
     return s.dumps(data, salt='password-reset-salt')
 
 # Verifies a password reset token and returns the user's email if valid
-def verify_password_reset_token(token, secret_key, expires_sec=3600):
+def verify_password_reset_token(token, expires_sec=3600):
+    secret_key = current_app.config['SECRET_KEY']
     s = URLSafeTimedSerializer(secret_key)
     try:
         # Try to load the email from the token; check if token has expired

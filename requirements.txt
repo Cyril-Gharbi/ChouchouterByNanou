@@ -3,6 +3,8 @@ flask
 flask_sqlalchemy
 flask_wtf
 flask_migrate
+flask-login
+flask-mail
 python-dotenv
 gunicorn
 
@@ -28,7 +30,8 @@ tqdm
 pydantic
 tabulate
 rich
-pymango
+pymongo
+pytz
 
 # 🧪 Tests
 pytest

@@ -7,10 +7,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="login-box {% if session.get('user') %}connecte{% endif %}">
-    {% if not session.get("user") %}
+<div class="login-box {% if user_logged_in %}connecte{% endif %}">
+    {% if not current_user.is_authenticated %}
         <p>Connexion</p>
-        <form action="{{ url_for('login') }}" method="post" class="login-form">
+        <form action="{{ url_for('login') }}" method="POST" class="login-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="text" name="username" placeholder="Nom d'utilisateur" required>
             <input type="password" name="password" placeholder="Mot de passe" required>
 
@@ -21,14 +22,14 @@
 
             <button type="submit">Connexion</button>
         </form>
-        <a href="{{ url_for('reset_request') }}">Mot de passe oublié ?</a>
+        <a href="{{ url_for('reset_user_request') }}">Mot de passe oublié ?</a>
         <a href="{{ url_for('register') }}">Créer un compte</a>
 
     {% elif request.args.get("scan_success") %}
         <div class="welcome">
             <p>Voici votre nouveau niveau :</p>
 
-            {% set level = session["user"]["fidelity_level"] %}
+            {% set level = current_user.fidelity_level %}
 
             {% if 0 <= level <= 10 %}
                 <p><img class="points" src="{{ url_for('static', filename='images/fidelite/carte_' ~ level ~ '.png') }}" alt="Carte {{ level }} prestations" width="600"></p>
@@ -44,9 +45,9 @@
 
     {% else %}
         <div class="welcome">
-            <p><span>Bonjour {{ session["user"]["firstname"] }}</span> !</p>
+            <p><span>Bonjour {{ current_user.firstname }}</span> !</p>
 
-            {% set level = session["user"]["fidelity_level"] %}
+            {% set level = current_user.fidelity_level %}
 
             {% if 0 <= level <= 10 %}
                 <p><img class="points" src="{{ url_for('static', filename='images/fidelite/carte_' ~ level ~ '.png') }}" alt="Carte {{ level }} prestations" width="600"></p>
