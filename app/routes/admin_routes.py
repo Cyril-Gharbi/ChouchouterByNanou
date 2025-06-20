@@ -331,7 +331,7 @@ def delete_prestation(id):
         flash("Prestation supprimée.", "success")
     else:
         flash("Prestation introuvable ou ordre manquant.", "error")
-    return redirect(url_for("admin_dashboard"))
+    return redirect(url_for("admin_dashboard") + '#renvoi-prestations')
 
 
 
