@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}CGU - Chouchouter By Nanou{% endblock %}
+{% block title %}Politique de confidentialité - Chouchouter By Nanou{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='politique_confidentialite.css') }}">
@@ -30,27 +30,23 @@
 
     <section>
         <h2>2. Données collectées</h2>
-        <p>
-            Lors de la création de votre compte, nous collectons les données suivantes :
-            <ul>
-                <li>Nom</li>
-                <li>Prénom</li>
-                <li>Nom d’utilisateur</li>
-                <li>Adresse e-mail</li>
-                <li>Mot de passe (crypté)</li>
-            </ul>
-        </p>
+        <p>Lors de la création de votre compte, nous collectons les données suivantes :</p>
+        <ul>
+            <li>Nom</li>
+            <li>Prénom</li>
+            <li>Nom d’utilisateur</li>
+            <li>Adresse e-mail</li>
+            <li>Mot de passe (crypté)</li>
+        </ul>
     </section>
 
     <section>
         <h2>3. Finalités de la collecte</h2>
-        <p>
-            Vos données personnelles sont collectées pour les finalités suivantes :
-            <ul>
-                <li>Création et gestion de votre compte utilisateur</li>
-                <li>Envoi d’informations et d’offres relatives à nos services par e-mail</li>
-            </ul>
-        </p>
+        <p>Vos données personnelles sont collectées pour les finalités suivantes :</p>
+        <ul>
+            <li>Création et gestion de votre compte utilisateur</li>
+            <li>Envoi d’informations et d’offres relatives à nos services par e-mail</li>
+        </ul>
     </section>
 
     <section>
@@ -76,14 +72,14 @@
 
     <section>
         <h2>7. Vos droits</h2>
+        <p>Conformément à la réglementation, vous disposez des droits suivants :</p>
+        <ul>
+            <li>Droit d’accès à vos données</li>
+            <li>Droit de rectification</li>
+            <li>Droit de suppression</li>
+            <li>Droit d’opposition et de limitation du traitement</li>
+        </ul>
         <p>
-            Conformément à la réglementation, vous disposez des droits suivants :
-            <ul>
-                <li>Droit d’accès à vos données</li>
-                <li>Droit de rectification</li>
-                <li>Droit de suppression</li>
-                <li>Droit d’opposition et de limitation du traitement</li>
-            </ul>
             Pour exercer ces droits, il vous suffit de nous contacter à l’adresse suivante : <strong>[Adresse email de contact]</strong>.
         </p>
     </section>
@@ -96,9 +92,24 @@
     </section>
 
     <section>
-        <h2>9. Modification de la politique de confidentialité</h2>
+        <h2>9. Modération et gestion des données</h2>
+        <p>
+            Les contenus et données fournis par les utilisateurs, notamment via les commentaires ou formulaires, sont modérés par les administrateurs du site. Cette modération vise à garantir le respect des règles, la sécurité des utilisateurs et la qualité des échanges.
+        </p>
+        <p>
+            Les administrateurs peuvent supprimer, masquer ou éditer les contenus non conformes. Les utilisateurs ont la possibilité de demander la suppression de leurs données personnelles en contactant directement l’administration via <strong>[Adresse email de contact]</strong>.
+        </p>
+        <p>
+            Les données modérées sont conservées dans le respect de la législation en vigueur, en assurant la confidentialité et la sécurité des informations.
+        </p>
+    </section>
+
+    <section>
+        <h2>10. Modification de la politique de confidentialité</h2>
         <p>
             Nous nous réservons le droit de modifier la présente politique de confidentialité à tout moment. Toute modification sera publiée sur cette page.
         </p>
     </section>
+
+</section>
 {% endblock %}
