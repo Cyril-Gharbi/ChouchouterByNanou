@@ -1,7 +1,6 @@
-.container {
+.container-fluid {
     display: flex;
     padding: 0px 50px;
-    margin-top: 60px;
     gap: 100px;
   }
 

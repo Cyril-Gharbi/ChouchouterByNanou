@@ -1,7 +1,9 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fff8f2; /* ton crème chaleureux */
   color: #333;
+}
+
+.container {
+  margin-top: 80px;
 }
 
 p {
@@ -11,7 +13,7 @@ p {
   line-height: 1.6;
 }
 
-p:nth-child(5), p:nth-child(6) {
+p:nth-child(4), p:nth-child(5) {
   font-weight: bold;
   color: #a488a4;
 }

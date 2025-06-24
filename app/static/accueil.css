@@ -1,13 +1,5 @@
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  text-align: center;
-}
-
-h1 {
-  font-size: 2em;
-  margin: 0 0 40px 0;
+body {
+  overflow-x: hidden;
 }
 
 .salon-name {
@@ -16,50 +8,61 @@ h1 {
 }
 
 .hero-image {
-  width: 100%;
-  max-width: 800px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  margin: 40px 0;
 }
 
 .description {
-  font-size: 1.8em;
-  margin-bottom: 60px;
-  margin-top: 20px;
+  max-width: 800px;
+  margin: 20px auto 0;
+  font-size: 1.7rem;
   line-height: 1.6;
-  padding: 0 60px;
-}
-
-.buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 12px 24px;
-  border: 2px solid #a488a4;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: all 0.3s ease;
+  padding: 0 10px;
 }
 
 .btn-primary {
   background-color: #a488a4;
-  color: #ffffff;
+  border-color: #a488a4;
+  color: #fff;
 }
 
-.btn:hover {
+.btn-primary:hover,
+.btn-outline-secondary:hover {
   background-color: #a9a075;
-  color: #ffffff;
-  box-shadow: 4px 4px 10px rgba(1, 0, 3, 0.3);
-  transform: translateY(-2px);
+  border-color: #a488a4;
+  color: #fff;
 }
 
-.btn-secondary {
-  background-color: white;
+.btn-outline-secondary {
   color: #a488a4;
+  border-color: #a488a4;
+}
+
+
+
+/* <=768px (sm) */
+@media (max-width: 768px) {
+  .description {
+    font-size: 1.4rem;
+  }
+}
+
+/* <=992px (md) */
+@media (max-width: 992px) {
+  .description {
+    font-size: 1.6rem;
+  }
+  .salon-name {
+    font-size: 1.6em;
+  }
+}
+
+/* <=1200px (lg) */
+@media (max-width: 1200px) {
+  .description {
+    font-size: 1.7rem;
+  }
+  .salon-name {
+    font-size: 1.8em;
+  }
 }
