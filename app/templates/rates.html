@@ -3,70 +3,109 @@
 {% block title %}Prestations et réservations - Chouchouter By Nanou{% endblock %}
 
 {% block head %}
-   <link rel="stylesheet" href="{{ url_for('static', filename='rates.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='rates.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<div class="container-fluid">
-        <div class="liste">
+  <div class="container-fluid py-5">
+    <div class="row g-4">
+      <!-- Classic prestation list -->
+      <div class="col-xl-4 d-none d-xl-block">
+        <div class="p-4 rounded shadow liste bg-gradient">
           {% set categories = prestations | map(attribute='category') | unique | list %}
-          
           {% for category in categories %}
-            <h5>{{ category }}</h5>
+            <h5 class="text-center">{{ category }}</h5>
             {% set cat_prestations = prestations | selectattr('category', 'equalto', category) | list %}
             {% set cat_prestations = cat_prestations | sort(attribute='order') %}
             {% if cat_prestations %}
               {% for prestation in cat_prestations %}
-                <button onclick='afficher("prestation-{{ prestation._id }}")'>{{ prestation.name }}</button>
+                <button class="btn w-100 my-2 text-start btn-prestation" onclick='afficher("prestation-{{ prestation._id }}")'>{{ prestation.name }}</button>
               {% endfor %}
             {% else %}
               <p>Aucune prestation dans cette catégorie.</p>
             {% endif %}
           {% endfor %}
         </div>
+      </div>
 
-  
-        <div class="description">
-            {% set first_id = (prestations | selectattr('order', 'equalto', 1) | list).0._id %}
-            {% for prestation in prestations %}
-              <div id="prestation-{{ prestation._id }}" class="contenu{% if prestation._id == first_id %} actif{% endif %}">
-                <h2>{{ prestation.name }}</h2>
-                <hr>
-                <p>{{ prestation.description }}</p>
-                <p><B>{{ prestation.price }} €</B></p>
-              </div>
-            {% endfor %}
-
-            <a target="_blank" href="https://chouchouter-by-nanou2.reservio.com/services" class="btn">Réserver</a>
+      <!-- Mobile prestation list (hidden desktop) -->
+      <div class="col-xl-4 d-xl-none">
+        <div class="p-4 rounded shadow liste-dropdown">
+          {% for category in categories %}
+            <details class="category-dropdown mb-3">
+              <summary>{{ category }}</summary>
+              {% set cat_prestations = prestations | selectattr('category', 'equalto', category) | list %}
+              {% set cat_prestations = cat_prestations | sort(attribute='order') %}
+              {% for prestation in cat_prestations %}
+                <button class="btn w-100 my-1 text-start btn-prestation" onclick='afficher("prestation-{{ prestation._id }}")'>{{ prestation.name }}</button>
+              {% endfor %}
+            </details>
+          {% endfor %}
         </div>
-</div>
+      </div>
 
-<!-- display of content after clicking on the link -->
-<script>
-  function afficher(id) {
-    const contenus = document.querySelectorAll('.contenu');
-    contenus.forEach(c => c.classList.remove('actif'));
+      <!-- Description list -->
+      <div class="col-lg-8">
+        <div class="description">
+          {% set first_id = (prestations | selectattr('order', 'equalto', 1) | list).0._id %}
+          {% for prestation in prestations %}
+            <div id="prestation-{{ prestation._id }}" class="contenu{% if prestation._id == first_id %} actif{% endif %}">
+              <h2>{{ prestation.name }}</h2>
+              <hr>
+              <p>{{ prestation.description }}</p>
+              <p><strong>{{ prestation.price }} €</strong></p>
+            </div>
+          {% endfor %}
+          <a target="_blank" href="https://chouchouter-by-nanou2.reservio.com/services" class="btn-custom" id="btn-reserver">Réserver</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    const element = document.getElementById(id);
-    if (element) {
-      element.classList.add('actif');
+  <!-- display of content after clicking on the link -->
+  <script>
+    function afficher(id) {
+      const contenus = document.querySelectorAll('.contenu');
+      contenus.forEach(c => c.classList.remove('actif'));
 
-      // Définir l'offset en pixels (hauteur du header)
-      const topOffset = 280;
+      const element = document.getElementById(id);
+      if (element) {
+        element.classList.add('actif');
 
-      // Calculer la position de la description par rapport à la page
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        // Show button Book on mobile or desktop
+        const btnReserver = document.getElementById('btn-reserver');
+        if (btnReserver) {
+          btnReserver.style.display = 'block';
+        }
 
-      // Position finale à scroller
-      const offsetPosition = elementPosition - topOffset;
+        // Set the offset in pixels (header height)
+        const topOffset = 280;
 
-      // Scroll en douceur vers la description
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+        // Calculate the position of the description in relation to the page
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+
+        // Final position to scroll
+        const offsetPosition = elementPosition - topOffset;
+
+        // Scroll smoothly to the description
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }
-  }
-</script>
+    // Upon loading, remove .active if screen <= 1199px
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.innerWidth <= 1199) {
+        // Hide active content when the page loads
+        document.querySelectorAll('.contenu.actif').forEach(el => el.classList.remove('actif'));
+        // Hide bonton Book
+        const btnReserver = document.getElementById('btn-reserver');
+        if (btnReserver) {
+          btnReserver.style.display = 'none';
+        }
+      }
+    });
+  </script>
 {% endblock %}

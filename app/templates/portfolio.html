@@ -7,63 +7,68 @@
 {% endblock %}
 
 {% block content %}
-
-<div class="photo-grid">
-    {% for image_path in images %}
-        <img class="photo" src="{{ url_for('static', filename=image_path) }}" alt="photo {{ loop.index }}">
-    {% else %}
+  <!-- Main container for the portfolio grid -->
+  <div class="container py-5 mt-5">
+    <div class="row g-4 justify-content-center">
+      {% for image_path in images %}
+        <!-- Display each image in a responsive column -->
+        <div class="col-12 col-sm-6">
+          <img class="img-fluid rounded shadow photo" src="{{ url_for('static', filename=image_path) }}" alt="photo {{ loop.index }}">
+        </div>
+      {% else %}
         <p>Aucune image disponible pour le moment.</p>
-    {% endfor %}
-</div>
-
-<!-- Lightbox HTML -->
-<div class="lightbox-overlay" id="lightbox">
-  <button class="lightbox-close" id="lightbox-close">&times;</button>
-  <div class="lightbox-content">
-    <img src="" alt="Photo agrandie" id="lightbox-img">
+      {% endfor %}
+    </div>
   </div>
-</div>
 
-<script>
-  (() => {
-    const images = [...document.querySelectorAll('.photo-grid .photo')];
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const closeBtn = document.getElementById('lightbox-close');
+  <!-- Lightbox overlay for enlarged images -->
+  <div class="lightbox-overlay" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close">&times;</button>
+    <div class="lightbox-content">
+      <img src="" alt="Photo agrandie" id="lightbox-img">
+    </div>
+  </div>
 
-    function showLightbox(index) {
-      lightboxImg.src = images[index].src;
-      lightbox.classList.add('visible');
-    }
+  <!-- Lightbox JavaScript for interactivity -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const images = [...document.querySelectorAll('.photo')];
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const closeBtn = document.getElementById('lightbox-close');
 
-    function hideLightbox() {
-      lightbox.classList.remove('visible');
-      lightboxImg.src = '';
-    }
-
-    // Click sur une photo pour ouvrir la lightbox
-    images.forEach((img, idx) => {
-      img.addEventListener('click', () => showLightbox(idx));
-    });
-
-    // Bouton fermeture
-    closeBtn.addEventListener('click', hideLightbox);
-
-    // Fermer la lightbox si clic en dehors de l'image
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) {
-        hideLightbox();
+      function showLightbox(index) {
+        lightboxImg.src = images[index].src;
+        lightbox.classList.add('visible');
       }
-    });
 
-    // Fermeture clavier (touche Échap)
-    document.addEventListener('keydown', (e) => {
-      if (!lightbox.classList.contains('visible')) return;
-      if (e.key === 'Escape') {
-        hideLightbox();
+      function hideLightbox() {
+        lightbox.classList.remove('visible');
+        lightboxImg.src = '';
       }
-    });
-  })();
-</script>
 
+      // Open lightbox when image is clicked
+      images.forEach((img, idx) => {
+        img.addEventListener('click', () => showLightbox(idx));
+      });
+
+      // Close lightbox when clicking the close button
+      closeBtn.addEventListener('click', hideLightbox);
+
+      // Close lightbox when clicking outside the image
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+          hideLightbox();
+        }
+      });
+
+      // Close lightbox with Escape key
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('visible')) return;
+        if (e.key === 'Escape') {
+          hideLightbox();
+        }
+      });
+    });
+  </script>
 {% endblock %}
