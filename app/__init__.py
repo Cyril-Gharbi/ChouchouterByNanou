@@ -1,15 +1,16 @@
-from flask import Flask
-from flask_migrate import Migrate
-from dotenv import load_dotenv
-from pymongo import MongoClient
+# flake8: noqa: E402
 import os
+
+from dotenv import load_dotenv
 from flask_mail import Mail
+from flask_migrate import Migrate
+from pymongo import MongoClient
+
+from .models import create_app, db
+
 mail = Mail()
 
 load_dotenv()
-
-from .models import db, create_app, login_manager
-
 
 app = create_app()
 mail.init_app(app)
@@ -21,4 +22,9 @@ mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri)
 mongo_db = client["chouchouter"]
 
-from app.routes import main_routes, admin_routes, comment_routes, account_routes, qr_routes, reset_password_routes
+from app.routes import account_routes  # noqa: F401
+from app.routes import admin_routes  # noqa: F401
+from app.routes import comment_routes  # noqa: F401
+from app.routes import main_routes  # noqa: F401
+from app.routes import qr_routes  # noqa: F401
+from app.routes import reset_password_routes  # noqa: F401
