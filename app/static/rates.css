@@ -82,6 +82,12 @@ h5 {
   box-shadow: 4px 4px 10px rgba(1, 0, 3, 0.3);
 }
 
+#btn-reserver {
+  display: inline-block; /* forcer comportement inline */
+  width: auto;            /* éviter qu'il prenne 100% */
+  max-width: 300px;       /* ou la taille que tu veux */
+}
+
 .liste-dropdown {
   padding: 0 15px;
 }

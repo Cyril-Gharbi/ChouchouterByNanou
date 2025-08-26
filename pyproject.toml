@@ -10,3 +10,23 @@ multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chouchouter_by_nanou"
+version = "0.1.0"
+description = "Projet Flask pour CHOUCHOUTER_BY_NANOU"
+authors = [
+  { name = "Cyril" }
+]
+dependencies = [
+  "Flask>=2.3",
+  "SQLAlchemy>=2.0",
+  "pytest>=7.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["app"]

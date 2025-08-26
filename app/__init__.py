@@ -1,30 +1,89 @@
 # flake8: noqa: E402
 import os
+from datetime import datetime, timezone
 
+import pytz
 from dotenv import load_dotenv
-from flask_mail import Mail
-from flask_migrate import Migrate
-from pymongo import MongoClient
-
-from .models import create_app, db
-
-mail = Mail()
+from flask import Flask
+from flask_login import current_user
+from flask_wtf.csrf import generate_csrf
 
 load_dotenv()
 
-app = create_app()
-mail.init_app(app)
+from .extensions import csrf, db, login_manager, mail
 
-migrate = Migrate(app, db)
 
-# Connect to MongoDB using URI from environment variables
-mongo_uri = os.getenv("MONGO_URI")
-client = MongoClient(mongo_uri)
-mongo_db = client["chouchouter"]
+def create_app(config=None):
+    app = Flask(__name__)
 
-from app.routes import account_routes  # noqa: F401
-from app.routes import admin_routes  # noqa: F401
-from app.routes import comment_routes  # noqa: F401
-from app.routes import main_routes  # noqa: F401
-from app.routes import qr_routes  # noqa: F401
-from app.routes import reset_password_routes  # noqa: F401
+    # Configuration par défaut
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    # Flask-Mail (sera initialisé dans app.py)
+    app.config["MAIL_SERVER"] = "smtp.mail.me.com"
+    app.config["MAIL_PORT"] = 587
+    app.config["MAIL_USE_TLS"] = True
+    app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+    app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+    app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_USERNAME")
+
+    # Applique configuration spécifique (tests, dev)
+    if config:
+        app.config.update(config)
+
+    # Initialisation des extensions
+    db.init_app(app)
+    login_manager.init_app(app)
+    login_manager.login_view = "login"
+    csrf.init_app(app)
+
+    from .models import User
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.filter_by(id=int(user_id), deleted_at=None).first()
+
+    @app.context_processor
+    def inject_user_logged_in():
+        return dict(
+            user_logged_in=current_user.is_authenticated, csrf_token=generate_csrf
+        )
+
+    # Filtres pour templates
+    @app.template_filter("localdatetime")
+    def localdatetime_filter(dt):
+        if dt is None:
+            return ""
+        local_tz = pytz.timezone("Europe/Paris")
+        if dt.tzinfo is None:
+            dt = pytz.UTC.localize(dt)
+        local_dt = dt.astimezone(local_tz)
+        return local_dt.strftime("%d/%m/%Y à %H:%M")
+
+    @app.template_filter("localdatetime_fr")
+    def localdatetime_fr_filter(dt):
+        if dt is None:
+            return ""
+        mois_fr = [
+            "janvier",
+            "février",
+            "mars",
+            "avril",
+            "mai",
+            "juin",
+            "juillet",
+            "août",
+            "septembre",
+            "octobre",
+            "novembre",
+            "décembre",
+        ]
+        local_tz = pytz.timezone("Europe/Paris")
+        if dt.tzinfo is None:
+            dt = pytz.UTC.localize(dt)
+        local_dt = dt.astimezone(local_tz)
+        return f"{local_dt.day} {mois_fr[local_dt.month-1]} {local_dt.year} à {local_dt.hour}h{local_dt.minute:02d}"
+
+    return app

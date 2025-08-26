@@ -2,7 +2,8 @@ from flask import current_app, session
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 
-from . import mail
+from app.extensions import mail
+
 from .models import User
 
 
