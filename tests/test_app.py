@@ -3,9 +3,9 @@ def test_app_is_created(app):
 
 
 def test_app_has_testing_config(app):
-    assert app.config["TESTING"] is True
+    assert app.config.get("TESTING") is True
 
 
 def test_index_route(client):
-    response = client.get("/")
-    assert response.status_code in (200, 302)
+    resp = client.get("/")
+    assert resp.status_code in (200, 302)
