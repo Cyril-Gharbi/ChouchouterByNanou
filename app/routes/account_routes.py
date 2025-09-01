@@ -170,7 +170,7 @@ def init_routes(app):
                     next_page = request.form.get("next")
                     return redirect(next_page or url_for("connection"))
                 else:
-                    flash("Mot de passe incorrect.", "error")
+                    flash("Mot de passe incorrect", "error")
                     return render_template(
                         "account_user/connection.html", error="Mot de passe incorrect"
                     )

@@ -48,7 +48,12 @@
       <!-- Description list -->
       <div class="col-lg-8">
         <div class="description">
-          {% set first_id = (prestations | selectattr('order', 'equalto', 1) | list).0._id %}
+          {% set first = (prestations | selectattr('order', 'equalto', 1) | list) %}
+          {% if first %}
+              {% set first_id = first[0]._id %}
+          {% else %}
+              {% set first_id = None %}
+          {% endif %}
           {% for prestation in prestations %}
             <div id="prestation-{{ prestation._id }}" class="contenu{% if prestation._id == first_id %} actif{% endif %}">
               <h2>{{ prestation.name }}</h2>

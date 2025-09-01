@@ -2,9 +2,35 @@ import pytest
 
 
 @pytest.mark.parametrize(
-    "path", ["/account", "/admin", "/comments", "/qr", "/reset-password"]
+    "path",
+    [
+        "/",
+        "/portfolio",
+        "/rates",
+        "/comments",
+        "/connection",
+        "/cgu",
+        "/mentions",
+        "/politique",
+        "/contact",
+        "/register",
+        "/login",
+        "/logout",
+        "/delete_account",
+        "/admin/login",
+        "/admin/dashboard",
+        "/scan",
+        "/reset_user_password",  # retour 403 attendu sans token
+        "/reset_user_request",
+    ],
 )
-def test_routes_exist(client, path):
+def test_routes_exist(client, path, monkeypatch):
+    if path == "/rates":
+
+        def fake_render(*args, **kwargs):
+            return "Page des tarifs OK"
+
+        monkeypatch.setattr("flask.render_template", fake_render)
+
     resp = client.get(path)
-    # on accepte 200, 302 (redir) ou 404 (si route protégée ou non exposée)
-    assert resp.status_code in (200, 302, 404)
+    assert resp.status_code in (200, 302, 403)

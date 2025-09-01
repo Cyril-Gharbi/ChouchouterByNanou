@@ -1,6 +1,7 @@
 import pytest
 
 from app import create_app
+from app.models import Admin
 from app.models import db as _db
 
 
@@ -61,3 +62,29 @@ def client(app):
 @pytest.fixture()
 def db(app):
     return _db
+
+
+@pytest.fixture()
+def admin_client(app):
+    client = app.test_client()
+    # crée un admin si non existant
+    admin = Admin.query.filter_by(username="admin").first()
+    if not admin:
+        admin = Admin(username="admin", email="admin@example.com")
+        admin.set_password("Admin123!")
+        _db.session.add(admin)
+        _db.session.commit()
+    # connexion admin
+    resp = client.post(
+        "/admin/login",
+        data={"username": "admin", "password": "Admin123!"},
+        follow_redirects=False,
+    )
+    assert resp.status_code in (302, 303)
+    return client
+
+
+@pytest.fixture(autouse=True)
+def mail_mock(monkeypatch):
+    # Empêche l'envoi réel d'emails pendant les tests
+    monkeypatch.setattr("app.utils.mail.send", lambda msg: None)
