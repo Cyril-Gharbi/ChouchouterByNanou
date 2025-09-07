@@ -8,7 +8,7 @@ flask-mail
 python-dotenv
 gunicorn
 
-# 🛢️ Base de données
+# 🛢️ database
 psycopg2-binary      # PostgreSQL
 mysqlclient          # MySQL
 sqlalchemy
@@ -19,9 +19,9 @@ numpy
 matplotlib
 seaborn
 scikit-learn
-openpyxl             # pour lire/écrire du Excel
+openpyxl
 
-# 🔧 Outils généraux
+# 🔧 general tools
 requests
 beautifulsoup4
 lxml
@@ -40,8 +40,8 @@ pytest
 ipython
 ipdb
 
-# 🧱 Environnements
+# 🧱 environments
 virtualenv
 
-# Sécurité
+# security
 werkzeug

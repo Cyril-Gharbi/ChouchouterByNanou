@@ -2,7 +2,7 @@ import app.utils as utils
 
 
 def test_utils_functions_exist():
-    # On vérifie l'existence de fonctions RÉELLEMENT présentes
+    # We check the existence of actually present functions
     assert any(
         [
             hasattr(utils, "send_email"),

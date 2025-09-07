@@ -25,9 +25,10 @@ def init_routes(app):
             return redirect(url_for("reset_user_password") + f"?token={token}")
 
         email, user_type = verify_password_reset_token(token)
-        if not email or not user_type:
-            flash("Lien invalide ou expiré.")
-            return redirect(url_for("reset_user_request"))
+
+        if email is None:
+            flash("Lien invalide ou expiré", "error")
+            return redirect(url_for("reset_password_request"))
 
         if user_type == "admin":
             user = Admin.query.filter_by(email=email).first()

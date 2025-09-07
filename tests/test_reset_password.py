@@ -3,7 +3,7 @@ from app.utils import generate_password_reset_token
 
 
 def test_reset_password_flow(client, db):
-    # Crée un user approuvé
+    # Create an approved user
     u = User(
         username="resetuser",
         firstname="Re",
@@ -15,12 +15,12 @@ def test_reset_password_flow(client, db):
     db.session.add(u)
     db.session.commit()
 
-    # Génère un token et ouvre la page de reset
+    # Generate a token and open the reset page
     token = generate_password_reset_token("reset@example.com", "user")
     resp = client.get(f"/reset_user_password?token={token}")
     assert resp.status_code in (200, 302)
 
-    # Envoie le nouveau mot de passe sur la même URL
+    # Send the new password on the same URL
     resp = client.post(
         f"/reset_user_password?token={token}",
         data={"password": "NewPassword123!"},
@@ -28,7 +28,7 @@ def test_reset_password_flow(client, db):
     )
     assert resp.status_code in (302, 303, 200)
 
-    # Vérifie qu'on peut se connecter avec le nouveau mot de passe
+    # Check that we can log in with the new password
     resp = client.post(
         "/login",
         data={"username": "resetuser", "password": "NewPassword123!"},

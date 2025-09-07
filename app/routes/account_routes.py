@@ -12,11 +12,11 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_user, logout_user
+from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
-
-from ..models import Admin, User
-from ..utils import send_email
+from app.models import Admin, User
+from app.utils import send_email, verifier_email
 
 
 def init_routes(app):
@@ -29,6 +29,12 @@ def init_routes(app):
             firstname = request.form["firstname"]
             lastname = request.form["lastname"]
             email = request.form["email"]
+
+            try:
+                verifier_email(email)
+            except ValueError as e:
+                flash(str(e), "error")
+                return redirect(url_for("register"))
 
             if "consent_privacy" not in request.form:
                 flash(
@@ -66,7 +72,12 @@ def init_routes(app):
                     user.consent_privacy = True
                     user.consent_date = datetime.now(timezone.utc)
                     user.is_approved = False
-                    db.session.commit()
+                    try:
+                        db.session.commit()
+                    except IntegrityError:
+                        db.session.rollback()
+                        flash("Une erreur est survenue : doublon détecté.", "error")
+                        return redirect(url_for("register"))
 
                     flash(
                         "Votre compte a été réactivé avec succès. "
@@ -114,8 +125,13 @@ def init_routes(app):
                 is_approved=False,
             )
             user.set_password(password)
-            db.session.add(user)
-            db.session.commit()
+            try:
+                db.session.add(user)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                flash("Une erreur est survenue : email ou pseudo déjà utilisé", "error")
+                return redirect(url_for("register"))
 
             flash(
                 "Votre demande de création de compte a bien été prise en compte.\n\n"
@@ -126,8 +142,9 @@ def init_routes(app):
                 subject="Nouvelle demande d'inscription",
                 recipients=[current_app.config.get("MAIL_USERNAME")],
                 body=(
-                    f"Nouvelle demande de compte pour :{firstname} {lastname}, {email}."
-                    "\n\nValidez-la depuis l'interface admin.",
+                    "Nouvelle demande de compte pour : "
+                    f"{firstname} {lastname}, {email}.\n\n"
+                    "Validez-la depuis l'interface admin."
                 ),
             )
             send_email(
@@ -214,13 +231,13 @@ def init_routes(app):
                     comment.user_id = None
 
                 anonym_suffix = hashlib.sha256(
-                    str(datetime.utcnow()).encode()
+                    str(datetime.now(timezone.utc)).encode()
                 ).hexdigest()[:6]
                 user.username = f"deleted_user_{user.id}_{anonym_suffix}"
                 user.email = (
                     f"deleted_user_{user.id}_{secrets.token_hex(4)}@example.com"
                 )
-                user.deleted_at = datetime.utcnow()
+                user.deleted_at = datetime.now(timezone.utc)
                 user.is_anonymized = True
 
                 db.session.commit()

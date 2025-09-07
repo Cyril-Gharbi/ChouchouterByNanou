@@ -16,7 +16,7 @@
             <input type="password" name="password" placeholder="Mot de passe" required>
 
             {% if next %}
-                <!-- Champ caché pour rediriger vers /scan après login -->
+                <!-- Hidden field to redirect to /scan after login -->
                 <input type="hidden" name="next" value="{{ next }}">
             {% endif %}
 
@@ -38,7 +38,7 @@
             {% endif %}
 
             {% if request.args.get("scan_success") %}
-                <!-- Affiche le message flash si scan_success est présent -->
+                <!-- Display the flash message if scan_success is present -->
                 <p class="merci-message">Merci de votre fidélité ❤️ !</p>
             {% endif %}
         </div>

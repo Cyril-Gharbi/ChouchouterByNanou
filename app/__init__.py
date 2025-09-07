@@ -16,12 +16,12 @@ from .extensions import csrf, db, login_manager, mail
 def create_app(config=None):
     app = Flask(__name__)
 
-    # Configuration par défaut
+    # default configuration
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # Flask-Mail (sera initialisé dans app.py)
+    # Flask-Mail (will be initialized in app.py)
     app.config["MAIL_SERVER"] = "smtp.mail.me.com"
     app.config["MAIL_PORT"] = 587
     app.config["MAIL_USE_TLS"] = True
@@ -29,11 +29,11 @@ def create_app(config=None):
     app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
     app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_USERNAME")
 
-    # Applique configuration spécifique (tests, dev)
+    # Apply specific configuration (tests, dev)
     if config:
         app.config.update(config)
 
-    # Initialisation des extensions
+    # Initialization of extensions
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = "login"
@@ -51,7 +51,7 @@ def create_app(config=None):
             user_logged_in=current_user.is_authenticated, csrf_token=generate_csrf
         )
 
-    # Filtres pour templates
+    # Filters for templates
     @app.template_filter("localdatetime")
     def localdatetime_filter(dt):
         if dt is None:

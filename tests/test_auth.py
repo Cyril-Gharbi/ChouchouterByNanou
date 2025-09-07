@@ -29,7 +29,7 @@ def test_register_missing_consent_redirects(client):
             "lastname": "Consent",
             "email": "bad@example.com",
             "password": "Password123!",
-            # pas de consent_privacy
+            # no consent_privacy
         },
         follow_redirects=False,
     )
@@ -37,7 +37,7 @@ def test_register_missing_consent_redirects(client):
 
 
 def test_login_success(client, db):
-    # Crée un utilisateur approuvé
+    # Create a trusted user
     u = User(
         username="loginuser",
         firstname="Login",
@@ -54,7 +54,7 @@ def test_login_success(client, db):
         data={"username": "loginuser", "password": "Password123!"},
         follow_redirects=False,
     )
-    # devrait rediriger vers /connection
+    # should redirect to /connection
     assert resp.status_code in (302, 303)
     assert "/connection" in (resp.location or "")
 
@@ -77,6 +77,6 @@ def test_login_wrong_password(client, db):
         follow_redirects=False,
     )
 
-    # L’appli redirige vers /connection
+    # The app redirects to /connection
     assert resp.status_code == 302
     assert "/connection" in resp.headers["Location"]

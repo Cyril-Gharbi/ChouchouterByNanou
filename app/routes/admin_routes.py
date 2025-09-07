@@ -93,7 +93,7 @@ def init_routes(app, mongo_db=None):
             order_str = request.form.get("order")
 
             try:
-                order = int(order_str)
+                order = int(order_str) if order_str is not None else 1
                 if order < 1:
                     flash("L'ordre doit être un entier positif.", "error")
                     return redirect(url_for("admin_dashboard"))
@@ -151,7 +151,10 @@ def init_routes(app, mongo_db=None):
         if request.method == "POST":
             user.firstname = request.form["firstname"]
             user.lastname = request.form["lastname"]
-            user.fidelity_level = int(request.form["fidelity_level"])
+            fidelity_str = request.form.get("fidelity_level")
+            user.fidelity_level = (
+                int(request.form["fidelity_str"]) if fidelity_str is not None else 0
+            )
             user.email = request.form["email"]
             db.session.commit()
             flash("Utilisateur modifié.")
@@ -283,7 +286,8 @@ def init_routes(app, mongo_db=None):
             name = request.form.get("name")
             description = request.form.get("description")
             price = request.form.get("price")
-            new_order = int(request.form.get("order"))
+            order_str = request.form.get("order")
+            new_order = int(order_str) if order_str is not None else 1
 
             if not category or not name or not description or not price:
                 flash("Tous les champs sont obligatoires.", "error")
@@ -331,7 +335,7 @@ def init_routes(app, mongo_db=None):
         db = mongo_db
         prestation = db.Prestations.find_one({"_id": ObjectId(id)})
         if prestation and "order" in prestation:
-            deleted_order = int(prestation["order"])
+            deleted_order = int(prestation["order"] or 0)
             db.Prestations.delete_one({"_id": ObjectId(id)})
             db.Prestations.update_many(
                 {"order": {"$gt": deleted_order}}, {"$inc": {"order": -1}}
@@ -383,7 +387,7 @@ def init_routes(app, mongo_db=None):
                     "votre demande de création de compte.\n\n"
                     "Celui-ci est réservé exclusivement à notre clientèle, dans le "
                     "cadre du suivi personnalisé, du programme de fidélité, et de la "
-                    "possibilité de partager un retour d'expérience sur"
+                    "possibilité de partager un retour d'expérience sur "
                     "nos prestations.\n\n"
                     "Nous serions ravis de vous compter prochainement "
                     "parmi nos clients fidèles.\n\n"

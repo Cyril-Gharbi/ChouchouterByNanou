@@ -11,6 +11,23 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+
+[tool.mypy]
+python_version = "3.13"
+check_untyped_defs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+warn_return_any = true
+warn_unused_ignores = true
+strict_optional = true
+exclude = [
+  "migrations/",
+  "tests/"
+]
+
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"

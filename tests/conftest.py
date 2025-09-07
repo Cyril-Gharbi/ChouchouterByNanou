@@ -5,8 +5,8 @@ from app.models import Admin
 from app.models import db as _db
 
 
-# --- Enregistrement des routes pour les tests ---
-# On fabrique un mini "mongo_db" factice qui répond à .Prestations.find()
+# --- Recording of routes for tests ---
+# We make a fake mini "mongo_db" that meets .Prestations.find()
 class _FakePrestations:
     def find(self, *args, **kwargs):
         return []
@@ -16,7 +16,7 @@ class _FakeMongo:
     Prestations = _FakePrestations()
 
 
-# Import des modules de routes et enregistrement sur l'app
+# Import of route modules and recording on the app
 def _register_routes(app):
     from app.routes import (
         account_routes,
@@ -43,7 +43,7 @@ def app():
             "TESTING": True,
             "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-            # désactive CSRF pour simplifier les posts éventuels en test
+            # disable CSRF to simplify potential posts in test
             "WTF_CSRF_ENABLED": False,
         }
     )
@@ -67,14 +67,14 @@ def db(app):
 @pytest.fixture()
 def admin_client(app):
     client = app.test_client()
-    # crée un admin si non existant
+    # create an admin if not existing
     admin = Admin.query.filter_by(username="admin").first()
     if not admin:
         admin = Admin(username="admin", email="admin@example.com")
         admin.set_password("Admin123!")
         _db.session.add(admin)
         _db.session.commit()
-    # connexion admin
+    # admin login
     resp = client.post(
         "/admin/login",
         data={"username": "admin", "password": "Admin123!"},
@@ -86,5 +86,5 @@ def admin_client(app):
 
 @pytest.fixture(autouse=True)
 def mail_mock(monkeypatch):
-    # Empêche l'envoi réel d'emails pendant les tests
+    # Prevents the actual sending of emails during tests
     monkeypatch.setattr("app.utils.mail.send", lambda msg: None)

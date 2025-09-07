@@ -7,6 +7,12 @@ from app.extensions import mail
 from .models import User
 
 
+def verifier_email(email):
+    """Checks that the email contains a '@'."""
+    if "@" not in email:
+        raise ValueError("Email invalide")
+
+
 # Generates a password reset token that expires after a given time (default: 1 hour)
 def generate_password_reset_token(email, user_type):
     secret_key = current_app.config["SECRET_KEY"]

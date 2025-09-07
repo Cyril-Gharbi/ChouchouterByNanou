@@ -11,7 +11,7 @@
     <h2>Commentaires des clients</h2>
     <hr>
 
-    <!-- Liste des commentaires existants -->
+    <!-- List of existing comments -->
     <div class="comments-list">
         {% for comment in comments %}
             <div class="comment {% if not comment.user or comment.user.deleted_at %}deleted-user{% endif %}">

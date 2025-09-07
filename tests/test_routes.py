@@ -20,7 +20,7 @@ import pytest
         "/admin/login",
         "/admin/dashboard",
         "/scan",
-        "/reset_user_password",  # retour 403 attendu sans token
+        "/reset_user_password",  # return 403 expected without token
         "/reset_user_request",
     ],
 )

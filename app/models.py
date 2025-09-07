@@ -51,7 +51,6 @@ class Comment(db.Model):
     username_at_time = db.Column(db.String(250), nullable=False)
     is_visible = db.Column(db.Boolean, default=True)
 
-    # Lien avec l'utilisateur
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     user = db.relationship("User", backref=db.backref("comments", lazy=True))
 
@@ -79,7 +78,7 @@ class Admin(db.Model):
 
 class FidelityRewardLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    level_reached = db.Column(db.Integer, nullable=False)  # 4 ou 9
+    level_reached = db.Column(db.Integer, nullable=False)  # 4 or 9
     date = db.Column(
         db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

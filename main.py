@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from flask_migrate import Migrate
 
-# Import des routes
+# Import of routes
 import app.routes.account_routes as account_routes
 import app.routes.admin_routes as admin_routes
 import app.routes.comment_routes as comment_routes
@@ -13,15 +13,15 @@ from app.extensions import db, init_mongo, mail
 
 load_dotenv()
 
-# Création de l'application Flask
+# Creation of the Flask application
 flask_app = create_app()
 
-# Déclaration des extensions spécifiques
+# Declaration of specific extensions
 mail.init_app(flask_app)
 migrate = Migrate(flask_app, db)
 mongo_db = init_mongo()
 
-# Enregistrement des routes
+# Recording of roads
 main_routes.init_routes(flask_app, mongo_db)
 account_routes.init_routes(flask_app)
 admin_routes.init_routes(flask_app, mongo_db)
@@ -29,6 +29,6 @@ comment_routes.init_routes(flask_app)
 qr_routes.init_routes(flask_app)
 reset_password_routes.init_routes(flask_app)
 
-# Point d'entrée
+# entry point
 if __name__ == "__main__":
     flask_app.run(host="0.0.0.0", port=5000, debug=True)
