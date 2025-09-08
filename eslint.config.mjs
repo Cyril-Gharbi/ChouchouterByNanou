@@ -29,10 +29,10 @@ export default [
       "no-unused-vars": "warn",   // avertissement pour variables inutilisées
       "no-console": "off",        // autorise console.log
       "no-undef": "error",        // erreur si variable non déclarée
-      "semi": ["warn", "always"], // points-virgules obligatoires
+      "semi": ["error", "always"], // points-virgules obligatoires
       "indent": ["warn", 2],      // indentation 2 espaces
       "object-curly-spacing": ["warn", "always"], // espaces dans accolades
-      "quotes": ["warn", "single"],               // quotes simples
+      "quotes": ["error", "single"],               // quotes simples
       "no-redeclare": "error",     // pas de redéclaration de variables
       "eqeqeq": ["warn", "always"], // préférer === à ==
       "no-empty": ["warn"],        // avertissement pour blocs vides
