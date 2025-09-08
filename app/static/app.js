@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     email.addEventListener('input', () => {
       email.setCustomValidity(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) ? '' : 'Adresse e-mail invalide');
       email.reportValidity();
-    });
+    })
   }
 
   // Password robustness indicator
