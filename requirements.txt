@@ -1,4 +1,4 @@
-# 🌐 Web (Flask + outils)
+# --- Production requirements ---
 flask
 flask_sqlalchemy
 flask_wtf
@@ -7,41 +7,6 @@ flask-login
 flask-mail
 python-dotenv
 gunicorn
-
-# 🛢️ database
-psycopg2-binary      # PostgreSQL
-mysqlclient          # MySQL
+psycopg2-binary
 sqlalchemy
-
-# 📊 Data / Analyse
-pandas
-numpy
-matplotlib
-seaborn
-scikit-learn
-openpyxl
-
-# 🔧 general tools
-requests
-beautifulsoup4
-lxml
-python-dateutil
-tqdm
-pydantic
-tabulate
-rich
-pymongo
-pytz
-
-# 🧪 Tests
-pytest
-
-# 🔍 Dev/debug
-ipython
-ipdb
-
-# 🧱 environments
-virtualenv
-
-# security
 werkzeug

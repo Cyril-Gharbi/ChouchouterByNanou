@@ -1,38 +1,46 @@
-# Virtual environments
+# --- Virtual environments ---
 venv/
 env/
+.venv/
 
-# Compiled Python files
+# --- Compiled Python files ---
 __pycache__/
-*.__pyc
+*.pyc
+*.pyo
+*.pyd
 
-# Log files
+# --- Logs ---
 *.log
 
-# Environment variables file (contains sensitive info)
+# --- Environment variables ---
 .env
 
-# Local configuration files (for Flask)
+# --- Flask instance config ---
 instance/
 
-# Sensitive script to exclude
+# --- Sensitive / local scripts ---
 create_admin.py
+setup_env.bat   # script Windows local
+setup.sh        # facultatif si tu veux le garder local aussi
 
-# MongoDB dumps (backup files, ignore if any)
+# --- Database dumps ---
 dump/
 *.bson
 *.json
+*.sql
+*.dump
 
-# Local database files (SQLite)
+# --- Local databases (SQLite) ---
 *.db
 *.SQLite3
 
-# IDE/editor settings
+# --- Editor / IDE ---
 .vscode/
 .idea/
 
-# System files
+# --- System files ---
 .DS_Store
 Thumbs.db
 
+# --- Node.js (si jamais tu ajoutes du front) ---
 node_modules/

@@ -1,0 +1,35 @@
+# Dev dependencies (extends production requirements)
+-r requirements.txt
+
+# Database extras
+mysqlclient
+pymongo
+
+# Data manipulation
+pandas
+numpy
+openpyxl
+python-dateutil
+pytz
+
+# Data viz
+matplotlib
+seaborn
+
+# Machine learning
+scikit-learn
+
+# Web scraping
+requests
+beautifulsoup4
+lxml
+
+# Dev tools
+tqdm
+pydantic
+tabulate
+rich
+pytest
+ipython
+ipdb
+virtualenv
