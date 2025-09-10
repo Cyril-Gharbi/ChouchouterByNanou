@@ -1,3 +1,5 @@
+import tempfile
+
 import pytest
 
 from app import create_app
@@ -22,6 +24,7 @@ def app():
             "SQLALCHEMY_TRACK_MODIFICATIONS": False,
             "WTF_CSRF_ENABLED": False,
             "SECRET_KEY": "secret",
+            "UPLOAD_FOLDER": tempfile.mkdtemp(),
         }
     )
 

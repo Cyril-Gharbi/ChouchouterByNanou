@@ -1,5 +1,6 @@
 import os
 import sys
+import tempfile
 
 import mongomock
 import pytest
@@ -53,6 +54,7 @@ def pg_app(request):
             "SQLALCHEMY_TRACK_MODIFICATIONS": False,
             "WTF_CSRF_ENABLED": False,
             "SECRET_KEY": "secret",
+            "UPLOAD_FOLDER": tempfile.mkdtemp(),
         }
     )
 
