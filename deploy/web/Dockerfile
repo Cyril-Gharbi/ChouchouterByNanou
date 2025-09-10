@@ -1,23 +1,22 @@
-# Utiliser Python 3.13 slim
-FROM python:3.13-slim
+FROM python:3.11-slim
 
-# Dossier de travail
 WORKDIR /app
 
-# Installer dépendances système
+# Installer dépendances système (PostgreSQL + MySQL + utils)
 RUN apt-get update && apt-get install -y \
-    gcc libpq-dev curl && \
-    rm -rf /var/lib/apt/lists/*
+    gcc \
+    libpq-dev \
+    default-libmysqlclient-dev \
+    pkg-config \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copier requirements.txt et installer dépendances
-COPY ../../requirements.txt .
+# Installer dépendances Python
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le code source de l’app Flask
-COPY ../../ .
+# Copier tout le projet
+COPY . .
 
-# Exposer le port Flask
-EXPOSE 5000
-
-# Lancer Flask via Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+# Lancer Flask avec Gunicorn
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "main:flask_app", "--chdir", "/app"]
