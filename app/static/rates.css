@@ -4,28 +4,28 @@ main {
 
 /* Colonne de gauche : liste des prestations */
 .liste {
-  background: linear-gradient(rgba(164, 136, 164, 0.5), rgba(255, 255, 255), rgba(164, 136, 164, 0.5), rgba(255, 255, 255), rgba(164, 136, 164, 0.5)) !important;
+  background: linear-gradient(rgb(164 136 164 / 50%), rgb(255 255 255), rgb(164 136 164 / 50%), rgb(255 255 255), rgb(164 136 164 / 50%)) !important;
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 1, 3, 0.1);
+  box-shadow: 0 4px 20px rgb(0 1 3 / 10%);
   padding: 20px;
 }
 
 /* Titre de catégorie */
 h5 {
-  margin-bottom: 20px;
-  text-align: center;
   font-size: 1.2em;
+  margin-bottom: 20px;
   padding-top: 10px;
+  text-align: center;
 }
 
 /* Boutons des prestations */
 .btn-prestation {
-  background-color: rgba(164, 136, 164, 0.9);
-  border-radius: 10px;
+  background-color: rgb(164 136 164 / 90%);
   border: 1px solid #a488a4;
+  border-radius: 10px;
   color: #000103;
+  font-family: Lora, serif;
   font-size: 1em;
-  font-family: "Lora", serif;
   margin-bottom: 10px;
   padding: 10px 15px;
   text-align: left;
@@ -38,20 +38,20 @@ h5 {
 
 /* Colonne de droite : description */
 .description {
-  padding: 20px 0px 20px 80px;
+  padding: 20px 0 20px 80px;
   text-align: center;
 }
 
 .description h2 {
-  margin-bottom: 20px;
   font-size: 2em;
+  margin-bottom: 20px;
   text-align: start;
 }
 
 .description p {
-  text-align: justify;
-  margin: 20px 0;
   font-size: 1.2em;
+  margin: 20px 0;
+  text-align: justify;
 }
 
 /* Contenu actif / masqué */
@@ -67,25 +67,25 @@ h5 {
 .btn-custom {
   background-color: #a488a4;
   border: 1px solid #a488a4;
-  color: white;
   border-radius: 8px;
-  box-shadow: 4px 4px 10px rgba(1, 0, 3, 0.2);
+  box-shadow: 4px 4px 10px rgb(1 0 3 / 20%);
+  color: white;
+  font-size: 1em;
   padding: 10px 20px;
   text-decoration: none;
-  font-size: 1em;
   transition: all 0.3s ease;
 }
 
 .btn-custom:hover {
   background-color: #a9a075;
   border: 1px solid #a488a4;
-  box-shadow: 4px 4px 10px rgba(1, 0, 3, 0.3);
+  box-shadow: 4px 4px 10px rgb(1 0 3 / 30%);
 }
 
 #btn-reserver {
   display: inline-block; /* forcer comportement inline */
-  width: auto;            /* éviter qu'il prenne 100% */
   max-width: 300px;       /* ou la taille que tu veux */
+  width: auto;            /* éviter qu'il prenne 100% */
 }
 
 .liste-dropdown {
@@ -93,8 +93,7 @@ h5 {
 }
 
 /* --- RESPONSIVE --- */
-@media (max-width: 1199.98px) {
-
+@media (width <= 1199.98px) {
   main {
     padding: 40px 15px;
   }
@@ -111,10 +110,10 @@ h5 {
   }
 
   .description {
-    padding: 20px 15px;
+    align-items: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    padding: 20px 15px;
     width: 100%;
   }
 

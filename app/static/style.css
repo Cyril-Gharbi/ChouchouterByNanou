@@ -1,16 +1,15 @@
-/* RESET & BASE */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 html, body {
-  height: 100%;
-  font-family: "Lora", serif;
+  font-family: Lora, serif;
   font-optical-sizing: auto;
-  font-weight: normal;
   font-style: normal;
+  font-weight: normal;
+  height: 100%;
 }
 
 body {
@@ -21,7 +20,7 @@ body {
 
 /* HEADER */
 .nav-container {
-  background: linear-gradient(to top, rgba(255, 255, 255), rgba(164, 136, 164, 0.9));
+  background: linear-gradient(to top, rgb(255 255 255), rgb(164 136 164 / 90%));
   padding: 20px 40px;
 }
 
@@ -29,24 +28,24 @@ body {
   max-width: 150px;
 }
 
-#mainNav {
+#main-nav {
   font-size: 1.1rem;
 }
 
 .nav-link:hover {
-  color: #000103;
-  background-color: rgba(164, 136, 164, 0.5);
+  background-color: rgb(164 136 164 / 50%);
   border-radius: 2px;
+  color: #000103;
 }
 
 .nav-toggle {
-  text-decoration: none;
-  color: #000103;
   background: none !important;
   border: none !important;
-  font-weight: bold;
-  font-size: 1.1em;
+  color: #000103;
   cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .nav-toggle:hover {
@@ -54,14 +53,92 @@ body {
 }
 
 .nav-toggle:focus {
+  background: #fff !important;
   color: #a9a075;
-  background: #ffffff !important;
 }
+
+/* VERNIS */
+.vernis {
+  background-image: url('/static/images/img_header.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 18vh;
+  margin-top: 180px;
+  overflow: hidden;
+  width: 100vw;
+}
+
+/* MAIN */
+main {
+  background: linear-gradient(rgb(255 255 255), rgb(164 136 164 / 50%), rgb(255 255 255));
+  color: #000103;
+  flex: 1;
+}
+
+
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+/* FOOTER */
+footer {
+  background: linear-gradient(to bottom, rgb(255 255 255 / 90%), rgb(164 136 164 / 90%));
+  color: #000103;
+  font-size: 1em;
+  font-weight: 500;
+  padding: 10px 0 0;
+}
+
+.footer-left,
+.footer-right {
+  flex: 2;
+  padding: 0 40px;
+}
+
+.footer-center {
+  display: flex;
+  flex: 6;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+}
+
+.footer-center a {
+  white-space: nowrap;
+}
+
+.footer-right {
+  text-align: right;
+}
+
+.footer-link {
+  color: rgb(0 0 0 / 55%);
+  padding: 10px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  background-color: rgb(164 136 164 / 50%);
+  border-radius: 2px;
+  color: rgb(0 0 0 / 90%);
+}
+
+.footer-content img {
+  transition: transform 0.2s ease;
+}
+
+.footer-content img:hover {
+  transform: scale(1.1);
+}
+
 
 /* Container du bouton + menu */
 .custom-dropdown {
-  position: relative;
   display: inline-block;
+  position: relative;
 }
 
 /* Le bouton */
@@ -72,17 +149,17 @@ body {
 
 /* Le sous-menu (masqué par défaut) */
 .custom-dropdown .dropdown-list {
-  display: none; /* ← Cache par défaut */
-  position: absolute;
-  top: 100%;
-  right: 0;
   background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+  display: none; /* ← Cache par défaut */
   list-style: none;
   margin: 0;
   padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 100%;
   z-index: 999;
-  border-radius: 4px;
 }
 
 /* Pour un affichage horizontal */
@@ -99,94 +176,18 @@ body {
 
 /* Liens du menu */
 .custom-dropdown .dropdown-list li a {
+  color: black;
   padding: 8px 5px;
   text-decoration: none;
-  color: black;
 }
 
 /* Survol des liens */
 .custom-dropdown .dropdown-list li a:hover {
-  background-color: rgba(164, 136, 164, 0.5);
+  background-color: rgb(164 136 164 / 50%);
   border-radius: 2px;
 }
 
-/* VERNIS */
-.vernis {
-  background-image: url('/static/images/img_header.png');
-  width: 100vw;
-  height: 18vh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  margin-top: 180px;
-  overflow: hidden;
-}
 
-/* MAIN */
-main {
-  background: linear-gradient(rgba(255, 255, 255), rgba(164, 136, 164, 0.5), rgba(255, 255, 255));
-  color: #000103;
-  flex: 1;
-}
-
-/* FOOTER */
-footer {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(164, 136, 164, 0.9));
-  font-size: 1em;
-  font-weight: 500;
-  padding: 10px 0 0;
-  color: #000103;
-}
-
-.footer-left,
-.footer-right {
-  flex: 2;
-  padding: 0 40px;
-}
-
-.footer-center {
-  flex: 6;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  text-align: center;
-}
-
-.footer-center a {
-  white-space: nowrap;
-}
-
-.footer-right {
-  text-align: right;
-}
-
-.footer-link {
-  text-decoration: none;
-  color: rgba(0, 0, 0, 0.55);
-  padding: 10px;
-  transition: color 0.3s ease;
-}
-
-.footer-link:hover {
-  color: rgba(0, 0, 0, 0.9);
-  background-color: rgba(164, 136, 164, 0.5);
-  border-radius: 2px;
-}
-
-.footer-content img {
-  transition: transform 0.2s ease;
-}
-
-.footer-content img:hover {
-  transform: scale(1.1);
-}
-
-
-
-img {
-  max-width: 100%;
-  height: auto;
-}
 
 /* === RESPONSIVE BREAKPOINTS === */
 
@@ -194,55 +195,63 @@ img {
 html {
   font-size: 16px; /* taille normale */
 }
+
 .container {
   padding: 10px; /* exemple d’espacement généreux */
 }
 
 /* Écran ≤ 1200px */
-@media (max-width: 1200px) {
+@media (width <= 1200px) {
   html {
     font-size: 15px;
   }
+
   .nav-left img.logo-img {
     max-width: 140px;
   }  
 }
 
 /* Écran ≤ 992px */
-@media (max-width: 992px) {
+@media (width <= 992px) {
   html {
     font-size: 14px;
   }
+
   .nav-left img.logo-img {
     max-width: 130px;
   }
+
   .footer-content {
-    flex-direction: column;
     align-items: center;
+    flex-direction: column;
   }
+
   .footer-center {
     flex-direction: column;
   }
 }
 
 /* Écran ≤ 768px */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   html {
     font-size: 13px;
   }
+
   .nav-left img.logo-img {
     max-width: 120px;
   }
+
   .nav-toggle {
     font-size: 1em;
   }
 }
 
 /* Écran ≤ 576px */
-@media (max-width: 576px) {
+@media (width <= 576px) {
   html {
     font-size: 12px;
   }
+
   .nav-left img.logo-img {
     max-width: 100px;
   }

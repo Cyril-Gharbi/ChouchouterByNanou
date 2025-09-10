@@ -2,12 +2,13 @@ import os
 
 from flask import current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user
+from pymongo.database import Database
 
 from app.extensions import db
 from app.models import Comment
 
 
-def init_routes(app, mongo_db=None):
+def init_routes(app, mongo_db: Database):
     # Home page route
     @app.route("/")
     def accueil():

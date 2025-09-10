@@ -28,6 +28,7 @@ class User(db.Model, UserMixin):
     admin_id = db.Column(db.Integer, db.ForeignKey("admin.id"))
     admin = db.relationship("Admin", backref=db.backref("users", lazy=True))
 
+    @property
     def is_active(self):
         return self.deleted_at is None
 

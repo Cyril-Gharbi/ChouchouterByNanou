@@ -50,7 +50,7 @@ def init_routes(app):
         if request.method == "POST":
             email = request.form.get("email")
             user = User.query.filter_by(email=email).first()
-            if not user:
+            if not user or not email:
                 flash("Aucun compte utilisateur associé à cet email.")
                 return redirect(url_for("reset_user_request"))
 

@@ -20,6 +20,9 @@ def create_app(config=None):
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["UPLOAD_FOLDER"] = os.path.join(
+        app.root_path, "static", "images", "realisations"
+    )
 
     # Flask-Mail (will be initialized in app.py)
     app.config["MAIL_SERVER"] = "smtp.mail.me.com"
@@ -36,7 +39,7 @@ def create_app(config=None):
     # Initialization of extensions
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = "login"
+    login_manager.login_view = "login"  # pyright: ignore[reportAttributeAccessIssue]
     csrf.init_app(app)
 
     from .models import User

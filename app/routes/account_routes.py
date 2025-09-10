@@ -53,7 +53,7 @@ def init_routes(app):
                 if user.deleted_at is not None:
                     username_taken = User.query.filter(
                         User.username == username,
-                        User.deleted_at is None,
+                        User.deleted_at.is_(None),
                         User.id != user.id,
                     ).first()
                     if username_taken:

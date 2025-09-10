@@ -12,6 +12,7 @@ from flask import (
     url_for,
 )
 from flask_mail import Message
+from pymongo.database import Database
 from werkzeug.utils import secure_filename
 
 from app.extensions import db, mail
@@ -23,7 +24,7 @@ from app.utils import (
 )
 
 
-def init_routes(app, mongo_db=None):
+def init_routes(app, mongo_db: Database):
     # Decorator to require admin login for protected routes
     def admin_required(f):
         @wraps(f)
@@ -62,7 +63,7 @@ def init_routes(app, mongo_db=None):
         users = User.query.filter_by(is_approved=True, deleted_at=None).all()
 
         # Dossier contenant les images — chemin absolu
-        folder = os.path.join(current_app.root_path, UPLOAD_FOLDER)
+        folder = current_app.config["UPLOAD_FOLDER"]
 
         if request.method == "POST" and "photo" in request.files:
             photo = request.files["photo"]
@@ -75,7 +76,7 @@ def init_routes(app, mongo_db=None):
                 return redirect(url_for("admin_dashboard"))
 
             # Sécurisation du nom de fichier
-            filename = secure_filename(photo.filename)
+            filename = secure_filename(str(photo.filename))
             save_path = os.path.join(folder, filename)
 
             # Sauvegarde
@@ -172,7 +173,10 @@ def init_routes(app, mongo_db=None):
     @app.route("/admin/user/delete/<int:user_id>", methods=["POST"])
     @admin_required
     def admin_delete_user(user_id):
-        admin = Admin.query.get(session["admin_id"])
+        admin = Admin.query.get(session.get("admin_id"))
+        if not admin:
+            flash("Admin introuvable ou non connecté.", "error")
+            return redirect(url_for("admin_dashboard"))
         success = admin.delete_user(user_id)
         if success:
             flash("Utilisateur supprimé.")
@@ -182,7 +186,6 @@ def init_routes(app, mongo_db=None):
 
     # Photo upload and delete for admin
     ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-    UPLOAD_FOLDER = "static/images/realisations"  # adapte si besoin
 
     def allowed_file(filename):
         return (
@@ -192,9 +195,7 @@ def init_routes(app, mongo_db=None):
     @app.route("/admin/delete_photo/<filename>", methods=["POST"])
     @admin_required
     def admin_delete_photo(filename):
-        image_folder = os.path.join(
-            current_app.root_path, "static", "images", "realisations"
-        )
+        image_folder = current_app.config["UPLOAD_FOLDER"]
         file_path = os.path.join(image_folder, filename)
         if os.path.exists(file_path):
             os.remove(file_path)

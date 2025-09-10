@@ -1,27 +1,27 @@
 .login-box {
+    align-items: center;
+    background: linear-gradient(rgb(164 136 164 / 50%), rgb(255 255 255), rgb(164 136 164 / 50%));
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgb(0 1 3 / 10%);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px 30px;
-    background: linear-gradient(rgba(164, 136, 164, 0.5), rgba(255, 255, 255), rgba(164, 136, 164, 0.5));
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 1, 3, 0.1);
-    width: 100%;
-    max-width: 400px;
     margin: auto;
     margin-top: 150px;
+    max-width: 400px;
+    padding: 20px 30px;
+    width: 100%;
 }
 
 .login-box.connecte {
-    max-width: 800px;
     font-size: 1.5em;
+    max-width: 800px;
 }
 
 .login-box p {
-    font-weight: bold;
-    font-size: 1.2em;
-    margin-bottom: 20px;
     color: #000103;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
 
 .login-form {
@@ -32,40 +32,40 @@
 }
 
 .login-form input {
-    padding: 10px;
-    border-radius: 6px;
     border: 1px solid #ccc;
+    border-radius: 6px;
     font-size: 1em;
+    padding: 10px;
     width: 100%;
 }
 
 .login-form button {
-    background-color: rgba(164, 136, 164, 0.9);
-    color: white;
-    padding: 10px;
+    background-color: rgb(164 136 164 / 90%);
     border: 2px solid #a488a4;
     border-radius: 8px;
+    color: white;
     cursor: pointer;
-    margin-top: 10px;
-    font-weight: bold;
     font-size: 1em;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 10px;
     transition: all 0.3s ease;
     width: 100%;
 }
 
 .login-form button:hover {
     background-color: #a9a075;
-    box-shadow: 4px 4px 10px rgba(1, 0, 3, 0.3);
+    box-shadow: 4px 4px 10px rgb(1 0 3 / 30%);
     transform: translateY(-2px);
 }
 
 .login-box a {
-    font-size: 1em;
-    text-decoration: underline;
     color: #000103;
-    margin-top: 20px;
     display: block;
+    font-size: 1em;
+    margin-top: 20px;
     text-align: center; /* Centrer le lien */
+    text-decoration: underline;
 }
 
 .login-box a:hover {
@@ -73,14 +73,15 @@
 }
 
 .welcome {
-    margin-top: 20px;
     font-size: 1em;
     font-weight: bold;
+    margin-top: 20px;
     text-align: center;
 }
+
 .points {
     border-radius: 20px;
-    margin: 10px 0px;
+    margin: 10px 0;
 }
 
 span {
@@ -88,6 +89,6 @@ span {
 }
 
 .login-box.connecte a {
-    font-weight: 200;
     font-size: 0.8em;
+    font-weight: 200;
 }
