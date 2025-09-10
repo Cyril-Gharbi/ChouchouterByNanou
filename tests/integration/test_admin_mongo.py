@@ -4,8 +4,8 @@ from app import create_app
 from app.models import Admin
 from app.models import db as _db
 
-# On réutilise la fixture mongo_db fournie
-# par tests/integration/conftest_mongo.py (mongomock)
+# We reuse the provided mongo_db fixture
+# by tests/integration/conftest_mongo.py (mongomock)
 
 
 @pytest.fixture(scope="function")
@@ -17,11 +17,11 @@ def app_mongo(mongo_db):
             "TESTING": True,
             "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-            "WTF_CSRF_ENABLED": False,  # simplifie les POST de login
+            "WTF_CSRF_ENABLED": False,  # simplifies the login POST
         }
     )
 
-    # Enregistrement des routes avec le mongo_db simulé
+    # Recording of routes with the simulated mongo_db
     from app.routes import (
         account_routes,
         admin_routes,
@@ -41,7 +41,7 @@ def app_mongo(mongo_db):
 
         _db.create_all()
 
-        # Création d'un admin pour le login
+        # Creation of an admin for the login
         admin = Admin(username="admin", email="admin@example.com")
         admin.set_password("Admin123!")
         _db.session.add(admin)
@@ -60,22 +60,22 @@ def client_mongo(app_mongo):
 @pytest.mark.integration
 def test_admin_dashboard_access_and_mongo_usage(client_mongo, mongo_db, monkeypatch):
     """
-    Vérifie qu'un admin connecté peut accéder à /admin/dashboard
-    et que la route utilise bien MongoDB.
-    On insère un doc dans mongo_db.Prestations
-    et on s'assure que la route ne plante pas.
+    Verify that a connected admin can access /admin/dashboard
+    and that the route uses MongoDB well.
+    We insert a doc in mongo_db.Services
+    and we make sure that the road does not crash.
     """
 
-    # Évite les dépendances aux templates Jinja :
-    # on remplace render_template par une fonction simple
+    # Avoid dependencies on Jinja templates :
+    # we replace render_template with a simple function
     def fake_render_template(*args, **kwargs):
         return "OK"
 
     monkeypatch.setattr("flask.render_template", fake_render_template)
-    # Évite l'envoi d'e-mails
+    # Avoids sending emails
     monkeypatch.setattr("app.utils.mail.send", lambda msg: None)
 
-    # Préparer des données Mongo (Prestation)
+    # Prepare Mongo data (Prestation)
     mongo_db.Prestations.insert_one(
         {
             "category": "Extension",
@@ -94,6 +94,6 @@ def test_admin_dashboard_access_and_mongo_usage(client_mongo, mongo_db, monkeypa
     )
     assert resp.status_code in (302, 303)
 
-    # Accès au dashboard
+    # access to the dashboard
     resp = client_mongo.get("/admin/dashboard")
     assert resp.status_code == 200

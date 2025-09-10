@@ -1,6 +1,14 @@
 import os
 
-from flask import current_app, flash, redirect, render_template, request, url_for
+from flask import (
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 from flask_login import current_user
 from pymongo.database import Database
 
@@ -99,3 +107,12 @@ def init_routes(app, mongo_db: Database):
     @app.route("/contact")
     def contact():
         return render_template("contact_us.html")
+
+    # Deploiement
+    @app.route("/robots.txt")
+    def robots():
+        return send_from_directory(app.static_folder, "robots.txt")
+
+    @app.route("/sitemap.xml")
+    def sitemap():
+        return send_from_directory(app.static_folder, "sitemap.xml")

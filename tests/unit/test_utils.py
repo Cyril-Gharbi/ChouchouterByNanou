@@ -2,13 +2,13 @@ import app.utils as utils
 
 
 def test_utils_functions_exist():
-    # We check the existence of actually present functions
-    assert any(
-        [
-            hasattr(utils, "send_email"),
-            hasattr(utils, "generate_password_reset_token"),
-            hasattr(utils, "verify_password_reset_token"),
-            hasattr(utils, "update_user_session"),
-            hasattr(utils, "send_discount_email"),
-        ]
-    )
+    expected_functions = [
+        "send_email",
+        "generate_password_reset_token",
+        "verify_password_reset_token",
+        "update_user_session",
+        "send_discount_email",
+    ]
+
+    for func in expected_functions:
+        assert hasattr(utils, func), f"Function {func} is missing in utils.py"

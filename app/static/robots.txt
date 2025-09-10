@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://chouchout-by-nanou.com/sitemap.xml

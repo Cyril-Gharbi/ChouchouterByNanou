@@ -3,7 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Chouchouter By Nanou{% endblock %}</title>
+
+  <!-- SEO -->
+  <title>{% block title %}Chouchouter By Nanou - Prothésiste ongulaire à Sartrouville{% endblock %}</title>
+  <meta name="description" content="Chouchouter by Nanou à Sartrouville : prothésiste ongulaire spécialisée en manucure, pose de faux ongles et soins des mains. Prenez rendez-vous pour des ongles parfaits.">
+  <meta name="keywords" content="prothésiste ongulaire Sartrouville, manucure Sartrouville, pose ongles, faux ongles, nail art, Chouchouter by Nanou">
+  <meta name="author" content="Chouchouter by Nanou">
+
+  <!-- Open Graph (Facebook + Instagram + WhatsApp + LinkedIn) -->
+  <meta property="og:title" content="Chouchouter by Nanou - Prothésiste ongulaire à Sartrouville">
+  <meta property="og:description" content="Manucure, pose de faux ongles et soins des mains à Sartrouville. Réservez chez Chouchouter by Nanou.">
+  <meta property="og:image" content="{{ url_for('static', filename='images/logo.png', _external=True) }}">
+  <meta property="og:url" content="{{ request.url_root }}">
+  <meta property="og:type" content="website">
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
