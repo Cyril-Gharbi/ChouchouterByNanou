@@ -154,7 +154,10 @@ def init_routes(app, mongo_db: Database):
             user.firstname = request.form["firstname"]
             user.lastname = request.form["lastname"]
             fidelity_str = request.form.get("fidelity_level")
-            user.fidelity_level = int("fidelity_str") if fidelity_str else 0
+            try:
+                user.fidelity_level = int("fidelity_level") if fidelity_str else 0
+            except ValueError:
+                user.fidelity_level = 0
             user.email = request.form["email"]
             db.session.commit()
             flash("Utilisateur modifié.")
