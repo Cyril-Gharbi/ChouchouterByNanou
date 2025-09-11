@@ -97,7 +97,7 @@ def create_app(config=None):
             try:
                 msg = Message(
                     subject="✅ Test Mail iCloud",
-                    recipients=["tonmail@icloud.com"],  # <-- ton mail iCloud ici
+                    recipients=["cyril.gharbi@gmail.com"],  # <-- ton mail iCloud ici
                     body="Ceci est un email de test depuis Railway 🚀",
                     sender=app.config.get("MAIL_DEFAULT_SENDER"),  # défini dans Railway
                 )
