@@ -91,21 +91,19 @@ def create_app(config=None):
         local_dt = dt.astimezone(local_tz)
         return f"{local_dt.day} {mois_fr[local_dt.month-1]} {local_dt.year} à {local_dt.hour}h{local_dt.minute:02d}"
 
-        @app.route("/testmail")
-        def test_mail():
+    @app.route("/testmail")
+    def test_mail():
 
-            try:
-                msg = Message(
-                    subject="✅ Test Mail iCloud",
-                    recipients=["cyril.gharbi@gmail.com"],  # <-- ton mail iCloud ici
-                    body="Ceci est un email de test depuis Railway 🚀",
-                    sender=app.config.get("MAIL_DEFAULT_SENDER"),  # défini dans Railway
-                )
-                mail.send(msg)
-                return jsonify({"status": "success", "message": "Mail envoyé 🎉"})
-            except Exception as e:
-                return jsonify({"status": "error", "message": str(e)})
-
-        return app
+        try:
+            msg = Message(
+                subject="✅ Test Mail iCloud",
+                recipients=["cyril.gharbi@gmail.com"],  # <-- ton mail iCloud ici
+                body="Ceci est un email de test depuis Railway 🚀",
+                sender=app.config.get("MAIL_DEFAULT_SENDER"),  # défini dans Railway
+            )
+            mail.send(msg)
+            return jsonify({"status": "success", "message": "Mail envoyé 🎉"})
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)})
 
     return app
