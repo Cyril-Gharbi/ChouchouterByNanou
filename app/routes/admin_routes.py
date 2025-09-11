@@ -62,7 +62,7 @@ def init_routes(app, mongo_db: Database):
         prestations = list(mdb.Prestations.find())
         users = User.query.filter_by(is_approved=True, deleted_at=None).all()
 
-        # Dossier contenant les images — chemin absolu
+        # Folder containing the images - absolute path
         folder = current_app.config["UPLOAD_FOLDER"]
 
         if request.method == "POST" and "photo" in request.files:
@@ -75,11 +75,11 @@ def init_routes(app, mongo_db: Database):
                 flash("Extension de fichier non autorisée.", "error")
                 return redirect(url_for("admin_dashboard"))
 
-            # Sécurisation du nom de fichier
+            # Securing the file name
             filename = secure_filename(str(photo.filename))
             save_path = os.path.join(folder, filename)
 
-            # Sauvegarde
+            # save
             photo.save(save_path)
             flash("Photo ajoutée avec succès.", "success")
             return redirect(url_for("admin_dashboard"))
@@ -228,7 +228,7 @@ def init_routes(app, mongo_db: Database):
             reset_url = url_for("admin_reset_token", token=token, _external=True)
             msg = Message(
                 "Réinitialisation de votre mot de passe",
-                sender=os.getenv("MAIL_USERNAME"),
+                sender=current_app.config.get("MAIL_DEFAULT_SENDER"),
                 recipients=[email],
             )
             msg.body = (
@@ -238,53 +238,41 @@ def init_routes(app, mongo_db: Database):
             flash("Un email de réinitialisation a été envoyé à votre adresse.")
             return redirect(url_for("login"))
 
-        # GET : on affiche juste le formulaire, pas de flash d'erreur
+        # GET : we just display the form, no flash of error
         return render_template("account_user/reset_password_request.html")
 
-    @app.route("/admin/reset_token/<token>", methods=["GET", "POST"])
+    @app.route("/admin/reset_password/<token>", methods=["GET", "POST"])
     def admin_reset_token(token):
-        result = verify_password_reset_token(token, current_app.config["SECRET_KEY"])
-        if not result:
-            flash("Le lien de réinitialisation est invalide ou a expiré.")
+        email, user_type = verify_password_reset_token(token)
+
+        if not email or user_type != "admin":
+            flash("Le lien est invalide ou a expiré.", "danger")
             return redirect(url_for("admin_reset_request"))
 
-        email, user_type = result
-
-        if user_type == "admin":
-            user = Admin.query.filter_by(email=email).first()
-        else:
-            user = User.query.filter_by(email=email).first()
-
-        if not user:
-            flash("Utilisateur non trouvé.")
-            return redirect(url_for("admin_reset_request"))
+        user = User.query.filter_by(email=email).first_or_404()
 
         if request.method == "POST":
-            new_password = request.form.get("password")
-            if not new_password:
-                flash("Le mot de passe ne peut pas être vide.")
-                return redirect(url_for("admin_reset_token", token=token))
-
-            user.set_password(new_password)
+            password = request.form.get("password")
+            user.set_password(password)
             db.session.commit()
-            flash("Votre mot de passe a été mis à jour.")
+            flash("Votre mot de passe a été réinitialisé.", "success")
             return redirect(url_for("login"))
 
-        return render_template("account_user/reset_password_form.html")
+        return render_template("admin/admin_reset_token.html")
 
     # Edit rates
     @app.route("/admin/rate/edit/<id>", methods=["GET", "POST"])
     @admin_required
     def edit_rate(id):
         mdb = mongo_db
-        # Récupérer la prestation existante
+        # Retrieve the existing service
         prestation = mdb.Prestations.find_one({"_id": ObjectId(id)})
         if not prestation:
             flash("Prestation introuvable.", "error")
             return redirect(url_for("admin_dashboard"))
 
         if request.method == "POST":
-            # Récupérer les données du formulaire
+            # Retrieve the form data
             category = request.form.get("category")
             name = request.form.get("name")
             description = request.form.get("description")
@@ -310,7 +298,7 @@ def init_routes(app, mongo_db: Database):
                         {"$inc": {"order": -1}},
                     )
 
-            # Mettre à jour la prestation en base
+            # Update the service in base
             mdb.Prestations.update_one(
                 {"_id": ObjectId(id)},
                 {
@@ -326,7 +314,7 @@ def init_routes(app, mongo_db: Database):
             flash("Prestation mise à jour avec succès.", "success")
             return redirect(url_for("admin_dashboard") + "#renvoi-prestations")
 
-        # GET: afficher le formulaire avec les données existantes
+        # GET: display the form with the existing data
         return render_template(
             "admin/admin_edit_prestation.html", prestation=prestation
         )

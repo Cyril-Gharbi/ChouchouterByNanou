@@ -140,7 +140,7 @@ def init_routes(app):
             )
             send_email(
                 subject="Nouvelle demande d'inscription",
-                recipients=[current_app.config.get("MAIL_USERNAME")],
+                recipients=[current_app.config.get("MAIL_DEFAULT_SENDER")],
                 body=(
                     "Nouvelle demande de compte pour : "
                     f"{firstname} {lastname}, {email}.\n\n"
