@@ -25,12 +25,13 @@ def create_app(config=None):
     )
 
     # Flask-Mail (will be initialized in app.py)
-    app.config["MAIL_SERVER"] = "smtp.mail.me.com"
-    app.config["MAIL_PORT"] = 587
-    app.config["MAIL_USE_TLS"] = True
+    app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER", "smtp.mail.me.com")
+    app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", 587))
+    app.config["MAIL_USE_TLS"] = os.getenv("MAIL_USE_TLS", "True") == "True"
+    app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL", "False") == "False"
     app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
     app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
-    app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_USERNAME")
+    app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 
     # Apply specific configuration (tests, dev)
     if config:
