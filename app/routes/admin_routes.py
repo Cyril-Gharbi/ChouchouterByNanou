@@ -110,16 +110,16 @@ def init_routes(app, mongo_db: Database):
                 "order": order,
             }
 
-            db.Prestations.update_many(
+            mdb.Prestations.update_many(
                 {"order": {"$gte": order}}, {"$inc": {"order": 1}}
             )
-            db.Prestations.insert_one(new_prestation)
+            mdb.Prestations.insert_one(new_prestation)
             flash("Prestation ajoutée.", "success")
             return redirect(url_for("admin_dashboard"))
 
         category_order = ["Semi-permanent", "Extension", "Nail art"]
 
-        prestations = list(mongo_db.Prestations.find({}))
+        prestations = list(mdb.Prestations.find({}))
         prestations.sort(
             key=lambda p: (
                 (
@@ -274,9 +274,9 @@ def init_routes(app, mongo_db: Database):
     @app.route("/admin/rate/edit/<id>", methods=["GET", "POST"])
     @admin_required
     def edit_rate(id):
-        db = mongo_db
+        mdb = mongo_db
         # Récupérer la prestation existante
-        prestation = db.Prestations.find_one({"_id": ObjectId(id)})
+        prestation = mdb.Prestations.find_one({"_id": ObjectId(id)})
         if not prestation:
             flash("Prestation introuvable.", "error")
             return redirect(url_for("admin_dashboard"))
@@ -298,18 +298,18 @@ def init_routes(app, mongo_db: Database):
 
             if new_order != old_order:
                 if new_order < old_order:
-                    db.Prestations.update_many(
+                    mdb.Prestations.update_many(
                         {"order": {"$gte": new_order, "$lt": old_order}},
                         {"$inc": {"order": 1}},
                     )
                 else:
-                    db.Prestations.update_many(
+                    mdb.Prestations.update_many(
                         {"order": {"$gt": old_order, "$lte": new_order}},
                         {"$inc": {"order": -1}},
                     )
 
             # Mettre à jour la prestation en base
-            db.Prestations.update_one(
+            mdb.Prestations.update_one(
                 {"_id": ObjectId(id)},
                 {
                     "$set": {
@@ -333,12 +333,12 @@ def init_routes(app, mongo_db: Database):
     @app.route("/admin/delete/<id>", methods=["POST"])
     @admin_required
     def delete_prestation(id):
-        db = mongo_db
-        prestation = db.Prestations.find_one({"_id": ObjectId(id)})
+        mdb = mongo_db
+        prestation = mdb.Prestations.find_one({"_id": ObjectId(id)})
         if prestation and "order" in prestation:
             deleted_order = int(prestation["order"] or 0)
-            db.Prestations.delete_one({"_id": ObjectId(id)})
-            db.Prestations.update_many(
+            mdb.Prestations.delete_one({"_id": ObjectId(id)})
+            mdb.Prestations.update_many(
                 {"order": {"$gt": deleted_order}}, {"$inc": {"order": -1}}
             )
             flash("Prestation supprimée.", "success")
