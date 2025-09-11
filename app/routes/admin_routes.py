@@ -155,7 +155,7 @@ def init_routes(app, mongo_db: Database):
             user.lastname = request.form["lastname"]
             fidelity_str = request.form.get("fidelity_level")
             try:
-                user.fidelity_level = int("fidelity_level") if fidelity_str else 0
+                user.fidelity_level = int(fidelity_str) if fidelity_str else 0
             except ValueError:
                 user.fidelity_level = 0
             user.email = request.form["email"]
