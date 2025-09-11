@@ -33,3 +33,4 @@ pytest
 ipython
 ipdb
 virtualenv
+mongomock

@@ -73,7 +73,7 @@ def test_admin_dashboard_access_and_mongo_usage(client_mongo, mongo_db, monkeypa
 
     monkeypatch.setattr("flask.render_template", fake_render_template)
     # Avoids sending emails
-    monkeypatch.setattr("app.utils.mail.send", lambda msg: None)
+    monkeypatch.setattr("app.utils.send_email", lambda *a, **k: None)
 
     # Prepare Mongo data (Prestation)
     mongo_db.Prestations.insert_one(

@@ -69,7 +69,7 @@ def test_user_reset_token_and_flow(client, monkeypatch):
     assert verify_password_reset_token(t) == ("b@example.com", "user")
 
     # mock send mail
-    monkeypatch.setattr("app.utils.mail.send", lambda msg: None)
+    monkeypatch.setattr("app.utils.send_email", lambda *a, **k: None)
 
     # request reset
     resp = client.post(
@@ -91,7 +91,7 @@ def test_admin_reset_token_and_flow(client, monkeypatch):
     t = generate_password_reset_token("a@example.com", "admin")
     assert verify_password_reset_token(t) == ("a@example.com", "admin")
 
-    monkeypatch.setattr("app.utils.mail.send", lambda msg: None)
+    monkeypatch.setattr("app.utils.send_email", lambda *a, **k: None)
 
     resp = client.post(
         "/admin/reset_password", data={"email": "a@example.com"}, follow_redirects=False
@@ -99,7 +99,7 @@ def test_admin_reset_token_and_flow(client, monkeypatch):
     assert resp.status_code in (200, 302, 303)
 
     resp = client.post(
-        "/admin/reset_token/" + t,
+        "/admin/reset_password/" + t,
         data={"password": "AdminNew123!"},
         follow_redirects=False,
     )

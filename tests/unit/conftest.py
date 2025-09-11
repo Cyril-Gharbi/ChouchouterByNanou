@@ -105,7 +105,7 @@ def admin_client(client, db):
 @pytest.fixture(autouse=True)
 def mail_mock(monkeypatch):
     # Empêche l'envoi réel d'e-mails
-    monkeypatch.setattr("app.utils.mail.send", lambda msg: None)
+    monkeypatch.setattr("app.utils.send_email", lambda *a, **k: None)
 
 
 @pytest.fixture

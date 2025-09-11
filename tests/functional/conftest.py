@@ -59,4 +59,4 @@ def db(app):
 @pytest.fixture(autouse=True)
 def no_mail(monkeypatch):
     """Empêche Flask-Mail d'envoyer de vrais mails pendant les tests"""
-    monkeypatch.setattr("app.utils.mail.send", lambda msg: None)
+    monkeypatch.setattr("app.utils.send_email", lambda *a, **k: None)

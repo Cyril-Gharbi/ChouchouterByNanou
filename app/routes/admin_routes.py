@@ -11,11 +11,10 @@ from flask import (
     session,
     url_for,
 )
-from flask_mail import Message
 from pymongo.database import Database
 from werkzeug.utils import secure_filename
 
-from app.extensions import db, mail
+from app.extensions import db
 from app.models import Admin, Comment, User
 from app.utils import (
     generate_password_reset_token,
@@ -226,19 +225,31 @@ def init_routes(app, mongo_db: Database):
 
             token = generate_password_reset_token(email, user_type)
             reset_url = url_for("admin_reset_token", token=token, _external=True)
-            msg = Message(
-                "Réinitialisation de votre mot de passe",
-                sender=current_app.config.get("MAIL_DEFAULT_SENDER"),
-                recipients=[email],
+
+            subject = "Réinitialisation de votre mot de passe"
+            text_body = (
+                f"Pour réinitialiser votre mot de passe, cliquez ici : {reset_url}"
             )
-            msg.body = (
-                f"Pour réinitialiser votre mot de passe, cliquez ici: {reset_url}"
+            html_body = f"""
+            <p>Pour réinitialiser votre mot de passe, cliquez ici :</p>
+            <p><a href="{reset_url}">{reset_url}</a></p>
+            """
+
+            ok = send_email(
+                subject=subject, recipients=[email], body=text_body, html=html_body
             )
-            mail.send(msg)
-            flash("Un email de réinitialisation a été envoyé à votre adresse.")
+
+            if ok:
+                flash("Un email de réinitialisation a été envoyé à votre adresse.")
+            else:
+                flash(
+                    "Votre demande est enregistrée, mais l'email n'a pas pu être envoyé"
+                    " pour le moment."
+                )
+
             return redirect(url_for("login"))
 
-        # GET : we just display the form, no flash of error
+        # GET : afficher le formulaire
         return render_template("account_user/reset_password_request.html")
 
     @app.route("/admin/reset_password/<token>", methods=["GET", "POST"])

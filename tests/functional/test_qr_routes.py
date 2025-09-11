@@ -62,7 +62,7 @@ def test_scan_requires_login_then_increments_level(client, monkeypatch):
     client.post("/login", data={"username": "bob", "password": "Secret123!"})
 
     # patch email envoi
-    monkeypatch.setattr("app.utils.mail.send", lambda msg: None)
+    monkeypatch.setattr("app.utils.send_email", lambda *a, **k: None)
 
     # scan
     resp = client.get("/scan")

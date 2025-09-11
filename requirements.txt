@@ -12,3 +12,4 @@ sqlalchemy
 werkzeug
 pytz
 pymongo
+requests
