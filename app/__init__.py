@@ -4,8 +4,9 @@ from datetime import datetime, timezone
 
 import pytz
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, jsonify
 from flask_login import current_user
+from flask_mail import Message
 from flask_wtf.csrf import generate_csrf
 
 load_dotenv()
@@ -24,7 +25,7 @@ def create_app(config=None):
         app.root_path, "static", "images", "realisations"
     )
 
-    # Flask-Mail (will be initialized in app.py)
+    # Flask-Mail (will be initialized in main.py)
     app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER", "smtp.mail.me.com")
     app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", 587))
     app.config["MAIL_USE_TLS"] = os.getenv("MAIL_USE_TLS", "True") == "True"
@@ -89,5 +90,22 @@ def create_app(config=None):
             dt = pytz.UTC.localize(dt)
         local_dt = dt.astimezone(local_tz)
         return f"{local_dt.day} {mois_fr[local_dt.month-1]} {local_dt.year} à {local_dt.hour}h{local_dt.minute:02d}"
+
+        @app.route("/testmail")
+        def test_mail():
+
+            try:
+                msg = Message(
+                    subject="✅ Test Mail iCloud",
+                    recipients=["tonmail@icloud.com"],  # <-- ton mail iCloud ici
+                    body="Ceci est un email de test depuis Railway 🚀",
+                    sender=app.config.get("MAIL_DEFAULT_SENDER"),  # défini dans Railway
+                )
+                mail.send(msg)
+                return jsonify({"status": "success", "message": "Mail envoyé 🎉"})
+            except Exception as e:
+                return jsonify({"status": "error", "message": str(e)})
+
+        return app
 
     return app
