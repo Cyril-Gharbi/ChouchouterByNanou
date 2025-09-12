@@ -1,44 +1,36 @@
 import tempfile
 
 import pytest
+from mongomock import MongoClient
 
 from app import create_app
 from app import db as _db
-from app.extensions import init_mongo, mail
-from app.routes import (
-    account_routes,
-    admin_routes,
-    comment_routes,
-    main_routes,
-    qr_routes,
-    reset_password_routes,
-)
+
+
+class _FakeMongo:
+    """Wrapper Mongo factice basé sur mongomock."""
+
+    def __init__(self):
+        self.client = MongoClient()
+        self.db = self.client["chouchouter"]
+
+    def __getattr__(self, name):
+        return getattr(self.db, name)
 
 
 @pytest.fixture(scope="session")
 def app():
+    """Application Flask configurée pour les tests fonctionnels."""
     app = create_app(
         {
             "TESTING": True,
             "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             "SQLALCHEMY_TRACK_MODIFICATIONS": False,
             "WTF_CSRF_ENABLED": False,
-            "SECRET_KEY": "secret",
+            "SECRET_KEY": "secret-test",
             "UPLOAD_FOLDER": tempfile.mkdtemp(),
         }
     )
-
-    # init extensions
-    mail.init_app(app)
-    mongo_db = init_mongo()
-
-    # register routes
-    main_routes.init_routes(app, mongo_db)
-    account_routes.init_routes(app)
-    admin_routes.init_routes(app, mongo_db)
-    comment_routes.init_routes(app)
-    qr_routes.init_routes(app)
-    reset_password_routes.init_routes(app)
 
     with app.app_context():
         _db.create_all()
@@ -46,17 +38,32 @@ def app():
         _db.drop_all()
 
 
+@pytest.fixture(scope="function")
+def db(app):
+    """Fixture DB SQLAlchemy (rollback après chaque test)."""
+    yield _db
+    _db.session.rollback()
+
+
+@pytest.fixture(scope="session")
+def mongo_db():
+    """Fixture Mongo factice pour tests fonctionnels."""
+    fake_mongo = _FakeMongo()
+    return fake_mongo.db
+
+
 @pytest.fixture()
 def client(app):
     return app.test_client()
 
 
-@pytest.fixture()
-def db(app):
-    return _db
+@pytest.fixture(scope="function")
+def client_mongo(app, mongo_db):
+    """Client Flask avec Mongo dispo."""
+    return app.test_client()
 
 
 @pytest.fixture(autouse=True)
 def no_mail(monkeypatch):
-    """Empêche Flask-Mail d'envoyer de vrais mails pendant les tests"""
+    """Empêche l'envoi réel d'e-mails pendant les tests."""
     monkeypatch.setattr("app.utils.send_email", lambda *a, **k: None)

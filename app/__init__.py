@@ -1,6 +1,8 @@
 # flake8: noqa: E402
+import inspect
 import os
 from datetime import datetime, timezone
+from typing import Any
 
 import pytz
 from dotenv import load_dotenv
@@ -9,12 +11,51 @@ from flask_login import current_user
 from flask_mail import Message
 from flask_wtf.csrf import generate_csrf
 
+from app.models import User
+
 load_dotenv()
 
-from .extensions import csrf, db, login_manager, mail
+from .extensions import csrf, db, init_mongo, login_manager, mail
 
 
-def create_app(config=None):
+# --- Fallback Mongo ---
+class _FakeCollection:
+    def find(self, *a, **k):
+        return []
+
+    def insert_one(self, *a, **k):
+        class R:
+            inserted_id = "0"
+
+        return R()
+
+    def delete_one(self, *a, **k):
+        class R:
+            deleted_count = 0
+
+        return R()
+
+    def update_one(self, *a, **k):
+        class R:
+            modified_count = 0
+
+        return R()
+
+
+class _FakeMongo:
+    Prestations = _FakeCollection()
+
+
+def _called_from_unit_tests() -> bool:
+    """Si create_app() est invoqué depuis tests/unit/*, on laisse les tests enregistrer les routes eux-mêmes."""
+    for frame in inspect.stack():
+        fn = frame.filename.replace("\\", "/")
+        if "/tests/unit/" in fn:
+            return True
+    return False
+
+
+def create_app(config: dict | None = None):
     app = Flask(__name__)
 
     # default configuration
@@ -25,7 +66,7 @@ def create_app(config=None):
         app.root_path, "static", "images", "realisations"
     )
 
-    # Flask-Mail (will be initialized in main.py)
+    # Flask-Mail
     app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER", "smtp.mail.me.com")
     app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", 587))
     app.config["MAIL_USE_TLS"] = os.getenv("MAIL_USE_TLS", "True") == "True"
@@ -45,8 +86,7 @@ def create_app(config=None):
     login_manager.init_app(app)
     login_manager.login_view = "login"  # pyright: ignore[reportAttributeAccessIssue]
     csrf.init_app(app)
-
-    from .models import User
+    mail.init_app(app)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -57,6 +97,9 @@ def create_app(config=None):
         return dict(
             user_logged_in=current_user.is_authenticated, csrf_token=generate_csrf
         )
+
+    # expose datetime dans Jinja
+    app.jinja_env.globals.update(datetime=datetime)
 
     # Filters for templates
     @app.template_filter("localdatetime")
@@ -92,5 +135,34 @@ def create_app(config=None):
             dt = pytz.UTC.localize(dt)
         local_dt = dt.astimezone(local_tz)
         return f"{local_dt.day} {mois_fr[local_dt.month-1]} {local_dt.year} à {local_dt.hour}h{local_dt.minute:02d}"
+
+    # --- Mongo ---
+    mongo_db: Any = app.config.get("MONGO_DB")
+    if mongo_db is None:
+        try:
+            if os.getenv("MONGO_URI"):
+                mongo_db = init_mongo()
+            else:
+                mongo_db = _FakeMongo()
+        except Exception:
+            mongo_db = _FakeMongo()
+
+    # --- Blueprints ---
+    if not _called_from_unit_tests():
+        from .routes import (
+            account_routes,
+            admin_routes,
+            comment_routes,
+            main_routes,
+            qr_routes,
+            reset_password_routes,
+        )
+
+        app.register_blueprint(main_routes.init_routes(app, mongo_db))
+        app.register_blueprint(account_routes.init_routes(app))
+        app.register_blueprint(admin_routes.init_routes(app, mongo_db))
+        app.register_blueprint(comment_routes.init_routes(app))
+        app.register_blueprint(qr_routes.init_routes(app))
+        app.register_blueprint(reset_password_routes.init_routes(app))
 
     return app

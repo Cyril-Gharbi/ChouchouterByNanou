@@ -11,12 +11,12 @@
     <header>
     <h1>Panneau d'administration</h1>
         <div class="button-container">
-            <a href="{{ url_for('accueil') }}" class="retour">Déconnexion</a>
+            <a href="{{ url_for('main.accueil') }}" class="retour">Déconnexion</a>
             <a href="#renvoi-liste" class="button">Liste des utilisateurs</a>
             <a href="#renvoi-prestations" class="button">Liste des prestations</a>
             <a href="#renvoi-photos" class="button">Gestion des photos</a>
             <a href="#renvoi-commentaires" class="button">Modération des commentaires</a>
-            <a href="{{ url_for('pending_users') }}" class="btn">Demande de création de compte</a>
+            <a href="{{ url_for('admin.pending_users') }}" class="btn">Demande de création de compte</a>
         </div>
     </header>
     <main>
@@ -51,10 +51,10 @@
                 <td>{{ user.fidelity_cycle }}</td>
                 <td>{{ user.consent_date | localdatetime_fr }}</td>
                 <td class="actions">
-                    <form action="{{ url_for('admin_edit_user', user_id=user.id) }}" method="GET">
+                    <form action="{{ url_for('admin.admin_edit_user', user_id=user.id) }}" method="GET">
                         <button type="submit">✏️ Modifier</button>
                     </form>
-                    <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                    <form action="{{ url_for('admin.admin_delete_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Supprimer cet utilisateur ?');">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                       <button type="submit">🗑 Supprimer</button>
                     </form>
@@ -89,10 +89,10 @@
         <td>{{ p.price }}</td>
         <td>{{ p.order if p.order is defined else '' }}</td>
         <td class="actions">
-          <form action="{{ url_for('edit_rate', id=p._id) }}" method="GET" style="display:inline;">
+          <form action="{{ url_for('admin.edit_rate', id=p._id) }}" method="GET" style="display:inline;">
             <button type="submit">✏️ Modifier</button>
           </form>
-          <form action="{{ url_for('delete_prestation', id=p._id) }}" method="POST" onsubmit="return confirm('Supprimer cette prestation ?');" style="display:inline;">
+          <form action="{{ url_for('admin.delete_prestation', id=p._id) }}" method="POST" onsubmit="return confirm('Supprimer cette prestation ?');" style="display:inline;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit">🗑 Supprimer</button>
           </form>
@@ -136,7 +136,7 @@
     {% for image in images %}
       <div style="border:1px solid #ccc; padding:10px; text-align:center;">
         <img src="{{ url_for('static', filename='images/realisations/' ~ image) }}" alt="{{ image }}" style="max-width:150px; max-height:150px; display:block; margin-bottom:10px;">
-        <form action="{{ url_for('admin_delete_photo', filename=image) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette photo ?');">
+        <form action="{{ url_for('admin.admin_delete_photo', filename=image) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette photo ?');">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" style="background-color:#e74c3c; color:white; border:none; padding:5px 10px; cursor:pointer;">Supprimer</button>
         </form>
@@ -184,13 +184,13 @@
       <td>{{ comment.date | localdatetime }}</td>
       <td>{{ "Visible" if comment.is_visible else "Masqué" }}</td>
       <td class="actions">
-        <form action="{{ url_for('admin_toggle_comment', comment_id=comment.id) }}" method="POST" style="display:inline;">
+        <form action="{{ url_for('admin.admin_toggle_comment', comment_id=comment.id) }}" method="POST" style="display:inline;">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit">
             {{ "Masquer" if comment.is_visible else "Afficher" }}
           </button>
         </form>
-        <form action="{{ url_for('admin_delete_comment', comment_id=comment.id) }}" method="POST" onsubmit="return confirm('Supprimer ce commentaire ?');" style="display:inline;">
+        <form action="{{ url_for('admin.admin_delete_comment', comment_id=comment.id) }}" method="POST" onsubmit="return confirm('Supprimer ce commentaire ?');" style="display:inline;">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit">🗑 Supprimer</button>
         </form>

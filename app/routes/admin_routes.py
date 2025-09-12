@@ -3,6 +3,7 @@ from functools import wraps
 
 from bson import ObjectId
 from flask import (
+    Blueprint,
     current_app,
     flash,
     redirect,
@@ -24,19 +25,21 @@ from app.utils import (
 
 
 def init_routes(app, mongo_db: Database):
+    admin_bp = Blueprint("admin", __name__)
+
     # Decorator to require admin login for protected routes
     def admin_required(f):
         @wraps(f)
         def decorated(*args, **kwargs):
             if "admin_id" not in session:
                 flash("Vous devez être connecté en tant qu'administrateur.")
-                return redirect(url_for("admin_login"))
+                return redirect(url_for("admin.admin_login"))
             return f(*args, **kwargs)
 
         return decorated
 
     # Admin login route
-    @app.route("/admin/login", methods=["GET", "POST"])
+    @admin_bp.route("/admin/login", methods=["GET", "POST"], endpoint="admin_login")
     def admin_login():
         if request.method == "POST":
             username = request.form["username"]
@@ -44,7 +47,7 @@ def init_routes(app, mongo_db: Database):
             admin = Admin.query.filter_by(username=username).first()
             if admin and admin.check_password(password):
                 session["admin_id"] = admin.id
-                return redirect(url_for("admin_dashboard"))
+                return redirect(url_for("admin.admin_dashboard"))
             else:
                 return render_template(
                     "account_user/connection.html", error="Identifiants invalides"
@@ -52,7 +55,9 @@ def init_routes(app, mongo_db: Database):
         return render_template("account_user/connection.html")
 
     # Admin dashboard showing all users
-    @app.route("/admin/dashboard", methods=["GET", "POST"])
+    @admin_bp.route(
+        "/admin/dashboard", methods=["GET", "POST"], endpoint="admin_dashboard"
+    )
     @admin_required
     def admin_dashboard():
         if mongo_db is None:
@@ -68,11 +73,11 @@ def init_routes(app, mongo_db: Database):
             photo = request.files["photo"]
             if photo.filename == "":
                 flash("Aucun fichier sélectionné.", "error")
-                return redirect(url_for("admin_dashboard"))
+                return redirect(url_for("admin.admin_dashboard"))
 
             if not allowed_file(photo.filename):
                 flash("Extension de fichier non autorisée.", "error")
-                return redirect(url_for("admin_dashboard"))
+                return redirect(url_for("admin.admin_dashboard"))
 
             # Securing the file name
             filename = secure_filename(str(photo.filename))
@@ -81,7 +86,7 @@ def init_routes(app, mongo_db: Database):
             # save
             photo.save(save_path)
             flash("Photo ajoutée avec succès.", "success")
-            return redirect(url_for("admin_dashboard"))
+            return redirect(url_for("admin.admin_dashboard"))
 
         images = [f for f in sorted(os.listdir(folder)) if allowed_file(f)]
 
@@ -96,10 +101,10 @@ def init_routes(app, mongo_db: Database):
                 order = int(order_str) if order_str is not None else 1
                 if order < 1:
                     flash("L'ordre doit être un entier positif.", "error")
-                    return redirect(url_for("admin_dashboard"))
+                    return redirect(url_for("admin.admin_dashboard"))
             except (ValueError, TypeError):
                 flash("Ordre invalide. Veuillez entrer un entier.", "error")
-                return redirect(url_for("admin_dashboard"))
+                return redirect(url_for("admin.admin_dashboard"))
 
             new_prestation = {
                 "category": category,
@@ -114,7 +119,7 @@ def init_routes(app, mongo_db: Database):
             )
             mdb.Prestations.insert_one(new_prestation)
             flash("Prestation ajoutée.", "success")
-            return redirect(url_for("admin_dashboard"))
+            return redirect(url_for("admin.admin_dashboard"))
 
         category_order = ["Semi-permanent", "Extension", "Nail art"]
 
@@ -144,7 +149,11 @@ def init_routes(app, mongo_db: Database):
         )
 
     # Admin edits user details (GET shows form, POST updates data)
-    @app.route("/admin/user/edit/<int:user_id>", methods=["GET", "POST"])
+    @admin_bp.route(
+        "/admin/user/edit/<int:user_id>",
+        methods=["GET", "POST"],
+        endpoint="admin_edit_user",
+    )
     @admin_required
     def admin_edit_user(user_id):
         user = User.query.get_or_404(user_id)
@@ -160,30 +169,34 @@ def init_routes(app, mongo_db: Database):
             user.email = request.form["email"]
             db.session.commit()
             flash("Utilisateur modifié.")
-            return redirect(url_for("admin_dashboard"))
+            return redirect(url_for("admin.admin_dashboard"))
         return render_template("admin/admin_edit_user.html", user=user)
 
     # Admin logout route
-    @app.route("/admin/logout")
+    @admin_bp.route("/admin/logout", endpoint="admin_logout")
     @admin_required
     def admin_logout():
         session.pop("admin_id", None)
-        return redirect(url_for("admin_login"))
+        return redirect(url_for("admin.admin_login"))
 
     # Admin deletes a user by user ID
-    @app.route("/admin/user/delete/<int:user_id>", methods=["POST"])
+    @admin_bp.route(
+        "/admin/user/delete/<int:user_id>",
+        methods=["POST"],
+        endpoint="admin_delete_user",
+    )
     @admin_required
     def admin_delete_user(user_id):
         admin = Admin.query.get(session.get("admin_id"))
         if not admin:
             flash("Admin introuvable ou non connecté.", "error")
-            return redirect(url_for("admin_dashboard"))
+            return redirect(url_for("admin.admin_dashboard"))
         success = admin.delete_user(user_id)
         if success:
             flash("Utilisateur supprimé.")
         else:
             flash("Utilisateur introuvable.")
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin.admin_dashboard"))
 
     # Photo upload and delete for admin
     ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
@@ -193,7 +206,11 @@ def init_routes(app, mongo_db: Database):
             "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
         )
 
-    @app.route("/admin/delete_photo/<filename>", methods=["POST"])
+    @admin_bp.route(
+        "/admin/delete_photo/<filename>",
+        methods=["POST"],
+        endpoint="admin_delete_photo",
+    )
     @admin_required
     def admin_delete_photo(filename):
         image_folder = current_app.config["UPLOAD_FOLDER"]
@@ -203,10 +220,12 @@ def init_routes(app, mongo_db: Database):
             flash(f"L'image {filename} a été supprimée.")
         else:
             flash("Image introuvable.")
-        return redirect(url_for("admin_dashboard") + "#renvoi-photos")
+        return redirect(url_for("admin.admin_dashboard") + "#renvoi-photos")
 
     # Request password reset: send email with reset token
-    @app.route("/admin/reset_password", methods=["GET", "POST"])
+    @admin_bp.route(
+        "/admin/reset_password", methods=["GET", "POST"], endpoint="admin_reset_request"
+    )
     def admin_reset_request():
         if request.method == "POST":
             email = request.form.get("email")
@@ -221,10 +240,10 @@ def init_routes(app, mongo_db: Database):
                     email = user.email
                 else:
                     flash("Aucun compte associé à cet email.")
-                    return redirect(url_for("admin_reset_request"))
+                    return redirect(url_for("admin.admin_reset_request"))
 
             token = generate_password_reset_token(email, user_type)
-            reset_url = url_for("admin_reset_token", token=token, _external=True)
+            reset_url = url_for("admin.admin_reset_token", token=token, _external=True)
 
             subject = "Réinitialisation de votre mot de passe"
             text_body = (
@@ -247,32 +266,38 @@ def init_routes(app, mongo_db: Database):
                     " pour le moment."
                 )
 
-            return redirect(url_for("login"))
+            return redirect(url_for("account.login"))
 
         # GET : afficher le formulaire
         return render_template("account_user/reset_password_request.html")
 
-    @app.route("/admin/reset_password/<token>", methods=["GET", "POST"])
+    @admin_bp.route(
+        "/admin/reset_password/<token>",
+        methods=["GET", "POST"],
+        endpoint="admin_reset_token",
+    )
     def admin_reset_token(token):
         email, user_type = verify_password_reset_token(token)
 
         if not email or user_type != "admin":
             flash("Le lien est invalide ou a expiré.", "danger")
-            return redirect(url_for("admin_reset_request"))
+            return redirect(url_for("admin.admin_reset_request"))
 
-        user = User.query.filter_by(email=email).first_or_404()
+        admin = Admin.query.filter_by(email=email).first_or_404()
 
         if request.method == "POST":
             password = request.form.get("password")
-            user.set_password(password)
+            admin.set_password(password)
             db.session.commit()
             flash("Votre mot de passe a été réinitialisé.", "success")
-            return redirect(url_for("login"))
+            return redirect(url_for("account.login"))
 
         return render_template("admin/admin_reset_token.html")
 
     # Edit rates
-    @app.route("/admin/rate/edit/<id>", methods=["GET", "POST"])
+    @admin_bp.route(
+        "/admin/rate/edit/<id>", methods=["GET", "POST"], endpoint="edit_rate"
+    )
     @admin_required
     def edit_rate(id):
         mdb = mongo_db
@@ -280,7 +305,7 @@ def init_routes(app, mongo_db: Database):
         prestation = mdb.Prestations.find_one({"_id": ObjectId(id)})
         if not prestation:
             flash("Prestation introuvable.", "error")
-            return redirect(url_for("admin_dashboard"))
+            return redirect(url_for("admin.admin_dashboard"))
 
         if request.method == "POST":
             # Retrieve the form data
@@ -293,7 +318,7 @@ def init_routes(app, mongo_db: Database):
 
             if not category or not name or not description or not price:
                 flash("Tous les champs sont obligatoires.", "error")
-                return redirect(url_for("edit_rate", id=id))
+                return redirect(url_for("admin.edit_rate", id=id))
 
             old_order = prestation.get("order")
 
@@ -323,7 +348,7 @@ def init_routes(app, mongo_db: Database):
                 },
             )
             flash("Prestation mise à jour avec succès.", "success")
-            return redirect(url_for("admin_dashboard") + "#renvoi-prestations")
+            return redirect(url_for("admin.admin_dashboard") + "#renvoi-prestations")
 
         # GET: display the form with the existing data
         return render_template(
@@ -331,7 +356,9 @@ def init_routes(app, mongo_db: Database):
         )
 
     # Delete rates
-    @app.route("/admin/delete/<id>", methods=["POST"])
+    @admin_bp.route(
+        "/admin/delete/<id>", methods=["POST"], endpoint="delete_prestation"
+    )
     @admin_required
     def delete_prestation(id):
         mdb = mongo_db
@@ -345,15 +372,19 @@ def init_routes(app, mongo_db: Database):
             flash("Prestation supprimée.", "success")
         else:
             flash("Prestation introuvable ou ordre manquant.", "error")
-        return redirect(url_for("admin_dashboard") + "#renvoi-prestations")
+        return redirect(url_for("admin.admin_dashboard") + "#renvoi-prestations")
 
-    @app.route("/admin/pending_users")
+    @admin_bp.route("/admin/pending_users", endpoint="pending_users")
     @admin_required
     def pending_users():
         users = User.query.filter_by(is_approved=False).all()
         return render_template("admin/admin_approbation.html", users=users)
 
-    @app.route("/admin/process_user_request/<int:user_id>", methods=["POST"])
+    @admin_bp.route(
+        "/admin/process_user_request/<int:user_id>",
+        methods=["POST"],
+        endpoint="process_user_request",
+    )
     @admin_required
     def process_user_request(user_id):
         user = User.query.get_or_404(user_id)
@@ -398,22 +429,32 @@ def init_routes(app, mongo_db: Database):
             )
             flash(f"Utilisateur {user.username} supprimé.", "info")
 
-        return redirect(url_for("pending_users"))
+        return redirect(url_for("admin.pending_users"))
 
-    @app.route("/admin/comment/toggle/<int:comment_id>", methods=["POST"])
+    @admin_bp.route(
+        "/admin/comment/toggle/<int:comment_id>",
+        methods=["POST"],
+        endpoint="admin_toggle_comment",
+    )
     @admin_required
     def admin_toggle_comment(comment_id):
         comment = Comment.query.get_or_404(comment_id)
         comment.is_visible = not comment.is_visible
         db.session.commit()
         flash("Statut du commentaire modifié.", "success")
-        return redirect(url_for("admin_dashboard") + "#renvoi-commentaires")
+        return redirect(url_for("admin.admin_dashboard") + "#renvoi-commentaires")
 
-    @app.route("/admin/comment/delete/<int:comment_id>", methods=["POST"])
+    @admin_bp.route(
+        "/admin/comment/delete/<int:comment_id>",
+        methods=["POST"],
+        endpoint="admin_delete_comment",
+    )
     @admin_required
     def admin_delete_comment(comment_id):
         comment = Comment.query.get_or_404(comment_id)
         db.session.delete(comment)
         db.session.commit()
         flash("Commentaire supprimé.", "info")
-        return redirect(url_for("admin_dashboard") + "#renvoi-commentaires")
+        return redirect(url_for("admin.admin_dashboard") + "#renvoi-commentaires")
+
+    return admin_bp

@@ -11,7 +11,7 @@
     <header>
         <h1>Panneau d'administration</h1>
         <div class="button-container">
-            <a href="{{ url_for('accueil') }}" class="retour">Déconnexion</a>
+            <a href="{{ url_for('main.accueil') }}" class="retour">Déconnexion</a>
         </div>
     </header>
 
@@ -50,7 +50,7 @@
 
             <div class="button-container">
                 <button type="submit" class="button">✅ Valider</button>
-                {% set dashboard_url = url_for('admin_dashboard') %}
+                {% set dashboard_url = url_for('admin.admin_dashboard') %}
                 <button type="button" class="button" onclick="window.location.href='{{ dashboard_url }}'">❌ Annuler</button>
             </div>
         </form>

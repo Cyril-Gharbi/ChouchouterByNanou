@@ -9,6 +9,16 @@ from app import create_app
 from app.models import Admin
 from app.models import db as _db
 
+# Import des modules de routes
+from app.routes import (
+    account_routes,
+    admin_routes,
+    comment_routes,
+    main_routes,
+    qr_routes,
+    reset_password_routes,
+)
+
 # --- ensure project root on sys.path ---
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if ROOT not in sys.path:
@@ -25,25 +35,6 @@ class _FakeMongo:
     Prestations = _FakePrestations()
 
 
-def _register_routes(app):
-    from app.routes import (
-        account_routes,
-        admin_routes,
-        comment_routes,
-        main_routes,
-        qr_routes,
-        reset_password_routes,
-    )
-
-    fake_mongo: Any = _FakeMongo()
-    main_routes.init_routes(app, fake_mongo)
-    account_routes.init_routes(app)
-    admin_routes.init_routes(app, fake_mongo)
-    comment_routes.init_routes(app)
-    qr_routes.init_routes(app)
-    reset_password_routes.init_routes(app)
-
-
 @pytest.fixture(scope="session")
 def app():
     app = create_app(
@@ -56,7 +47,16 @@ def app():
         }
     )
     with app.app_context():
-        _register_routes(app)
+        fake_mongo: Any = _FakeMongo()
+
+        # register blueprints via init_routes
+        app.register_blueprint(main_routes.init_routes(app, fake_mongo))
+        app.register_blueprint(account_routes.init_routes(app))
+        app.register_blueprint(admin_routes.init_routes(app, fake_mongo))
+        app.register_blueprint(comment_routes.init_routes(app))
+        app.register_blueprint(qr_routes.init_routes(app))
+        app.register_blueprint(reset_password_routes.init_routes(app))
+
         _db.create_all()
         yield app
         _db.drop_all()

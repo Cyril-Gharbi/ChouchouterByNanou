@@ -1,6 +1,7 @@
 import os
 
 from flask import (
+    Blueprint,
     current_app,
     flash,
     redirect,
@@ -17,13 +18,15 @@ from app.models import Comment
 
 
 def init_routes(app, mongo_db: Database):
+    main_bp = Blueprint("main", __name__)
+
     # Home page route
-    @app.route("/")
+    @main_bp.route("/", endpoint="accueil")
     def accueil():
         return render_template("accueil.html")
 
     # Portfolio page route
-    @app.route("/portfolio")
+    @main_bp.route("/portfolio", endpoint="portfolio")
     def portfolio():
         image_folder = "images/realisations"  # dossier dans /static/
         full_path = os.path.join(current_app.root_path, "static", image_folder)
@@ -45,7 +48,7 @@ def init_routes(app, mongo_db: Database):
         return render_template("portfolio.html", images=images)
 
     # Rates page route
-    @app.route("/rates")
+    @main_bp.route("/rates", endpoint="rates")
     def rates():
         if mongo_db is None:
             return "MongoDB non configuré"
@@ -56,12 +59,12 @@ def init_routes(app, mongo_db: Database):
         return render_template("rates.html", prestations=prestations)
 
     # Display all comments, ordered by most recent
-    @app.route("/comments", methods=["GET", "POST"])
+    @main_bp.route("/comments", methods=["GET", "POST"], endpoint="comments")
     def comments():
         if request.method == "POST":
             if not current_user.is_authenticated:
                 flash("Vous devez être connecté pour poster un commentaire.", "warning")
-                return redirect(url_for("login"))
+                return redirect(url_for("account.login"))
 
             content = request.form.get("content", "").strip()
             if not content:
@@ -75,7 +78,7 @@ def init_routes(app, mongo_db: Database):
                 db.session.add(new_comment)
                 db.session.commit()
                 flash("Commentaire publié avec succès.", "success")
-            return redirect(url_for("comments"))
+            return redirect(url_for("main.comments"))
 
         comments = (
             Comment.query.filter_by(is_visible=True)
@@ -86,33 +89,35 @@ def init_routes(app, mongo_db: Database):
         return render_template("comments.html", comments=comments)
 
     # User connection page, requires user to be logged in
-    @app.route("/connection")
+    @main_bp.route("/connection", endpoint="connection")
     def connection():
         return render_template("account_user/connection.html", user=current_user)
 
     # Terms and conditions page route
-    @app.route("/cgu")
+    @main_bp.route("/cgu", endpoint="cgu")
     def cgu():
         return render_template("rgpd/cgu.html")
 
     # Legal mentions page route
-    @app.route("/mentions")
+    @main_bp.route("/mentions", endpoint="mentions")
     def mentions():
         return render_template("rgpd/mentions.html")
 
-    @app.route("/politique")
+    @main_bp.route("/politique", endpoint="politique")
     def politique():
         return render_template("rgpd/politique_confidentialite.html")
 
-    @app.route("/contact")
+    @main_bp.route("/contact", endpoint="contact")
     def contact():
         return render_template("contact_us.html")
 
     # Deploiement
-    @app.route("/robots.txt")
+    @main_bp.route("/robots.txt", endpoint="robots")
     def robots():
         return send_from_directory(app.static_folder, "robots.txt")
 
-    @app.route("/sitemap.xml")
+    @main_bp.route("/sitemap.xml", endpoint="sitemap")
     def sitemap():
         return send_from_directory(app.static_folder, "sitemap.xml")
+
+    return main_bp

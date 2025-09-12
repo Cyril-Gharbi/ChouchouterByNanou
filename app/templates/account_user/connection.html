@@ -10,7 +10,7 @@
 <div class="login-box {% if user_logged_in %}connecte{% endif %}">
     {% if not current_user.is_authenticated %}
         <p>Connexion</p>
-        <form action="{{ url_for('login') }}" method="POST" class="login-form">
+        <form action="{{ url_for('account.login') }}" method="POST" class="login-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="text" name="username" placeholder="Nom d'utilisateur" required>
             <input type="password" name="password" placeholder="Mot de passe" required>
@@ -22,8 +22,8 @@
 
             <button type="submit">Connexion</button>
         </form>
-        <a href="{{ url_for('reset_user_request') }}">Mot de passe oublié ?</a>
-        <a href="{{ url_for('register') }}">Créer un compte</a>
+        <a href="{{ url_for('reset_password.reset_user_request') }}">Mot de passe oublié ?</a>
+        <a href="{{ url_for('account.register') }}">Créer un compte</a>
 
     {% elif request.args.get("scan_success") %}
         <div class="welcome">
@@ -57,8 +57,8 @@
 
                 <p class="merci-message">Merci de votre fidélité ❤️ !</p>
 
-            <a href="{{ url_for('logout') }}">Déconnexion</a>
-            <a href="{{ url_for('delete_account') }}">Supprimer mon compte</a>
+            <a href="{{ url_for('account.logout') }}">Déconnexion</a>
+            <a href="{{ url_for('account.delete_account') }}">Supprimer mon compte</a>
         </div>
     {% endif %}
 </div>      

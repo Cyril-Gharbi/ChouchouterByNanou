@@ -34,7 +34,7 @@
 
         <!-- Logo on the left -->
         <div class="nav-left me-auto">
-          <a class="navbar-brand" href="{{ url_for('accueil') }}">
+          <a class="navbar-brand" href="{{ url_for('main.accueil') }}">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="img-fluid logo-img">
           </a>
         </div>
@@ -47,19 +47,19 @@
         <!-- Main menu in collapse, centered on large screen -->
         <div class="collapse navbar-collapse justify-content-center" id="main-nav">
           <ul class="navbar-nav flex-column flex-lg-row gap-2 gap-md-3 mx-auto text-center">
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('accueil') }}">Accueil</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('portfolio') }}">Réalisations</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('rates') }}">Prestations</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('comments') }}">Commentaires</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.accueil') }}">Accueil</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.portfolio') }}">Réalisations</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.rates') }}">Prestations</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.comments') }}">Commentaires</a></li>
 
             <li class="nav-item d-lg-none">
               {% if user_logged_in %}
-                <a class="nav-link" href="{{ url_for('connection') }}">Mon espace</a>
-                <a class="nav-link" href="{{ url_for('my_comments') }}">Mes commentaires</a>
-                <a class="nav-link" href="{{ url_for('logout') }}">Déconnexion</a>
+                <a class="nav-link" href="{{ url_for('main.connection') }}">Mon espace</a>
+                <a class="nav-link" href="{{ url_for('comment.my_comments') }}">Mes commentaires</a>
+                <a class="nav-link" href="{{ url_for('account.logout') }}">Déconnexion</a>
               {% else %}
-                <a class="nav-link" href="{{ url_for('connection') }}">Connexion</a>
-                <a class="nav-link" href="{{ url_for('register') }}">Créer mon compte</a>
+                <a class="nav-link" href="{{ url_for('main.connection') }}">Connexion</a>
+                <a class="nav-link" href="{{ url_for('account.register') }}">Créer mon compte</a>
               {% endif %}
             </li>
           </ul>
@@ -72,12 +72,12 @@
           </div>
           <ul class="dropdown-list horizontal">
             {% if user_logged_in %}
-              <li><a href="{{ url_for('my_comments') }}">Mes commentaires</a></li>
-              <li><a href="{{ url_for('connection') }}">Mon espace</a></li>
-              <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+              <li><a href="{{ url_for('comment.my_comments') }}">Mes commentaires</a></li>
+              <li><a href="{{ url_for('main.connection') }}">Mon espace</a></li>
+              <li><a href="{{ url_for('account.logout') }}">Déconnexion</a></li>
             {% else %}
-              <li><a href="{{ url_for('register') }}">Créer un compte</a></li>
-              <li><a href="{{ url_for('connection') }}">Connexion</a></li>
+              <li><a href="{{ url_for('account.register') }}">Créer un compte</a></li>
+              <li><a href="{{ url_for('main.connection') }}">Connexion</a></li>
             {% endif %}
           </ul>
         </div>
@@ -117,14 +117,14 @@
 
       <!-- Links to the center -->
       <div class="footer-center text-center mb-3 mb-md-0">
-        <a href="{{ url_for('mentions') }}" class="footer-link">Mentions légales</a>
-        <a href="{{ url_for('cgu') }}" class="footer-link">CGU</a>
-        <a href="{{ url_for('politique') }}" class="footer-link">Politique de confidentialité</a>
+        <a href="{{ url_for('main.mentions') }}" class="footer-link">Mentions légales</a>
+        <a href="{{ url_for('main.cgu') }}" class="footer-link">CGU</a>
+        <a href="{{ url_for('main.politique') }}" class="footer-link">Politique de confidentialité</a>
       </div>
 
       <!-- Contact right -->
       <div class="footer-right text-md-end">
-        <a href="{{ url_for('contact') }}" class="footer-link">Nous contacter</a>
+        <a href="{{ url_for('main.contact') }}" class="footer-link">Nous contacter</a>
       </div>
 
     </div>

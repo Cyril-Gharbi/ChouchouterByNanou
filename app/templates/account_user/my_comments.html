@@ -24,7 +24,7 @@
           </div>
 
           <!-- Editing form (hidden by default) -->
-          <form method="POST" action="{{ url_for('edit_comment') }}" class="edit-form" id="edit-form-{{ comment.id }}" style="display:none;">
+          <form method="POST" action="{{ url_for('comment.edit_comment') }}" class="edit-form" id="edit-form-{{ comment.id }}" style="display:none;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="comment_id" value="{{ comment.id }}">
             <textarea name="content" required>{{ comment.content }}</textarea>
@@ -33,7 +33,7 @@
           </form>
 
           <!-- Form deletion (hidden by default) -->
-          <form method="POST" action="{{ url_for('delete_comment') }}" class="delete-form" id="delete-form-{{ comment.id }}" style="display:none;">
+          <form method="POST" action="{{ url_for('comment.delete_comment') }}" class="delete-form" id="delete-form-{{ comment.id }}" style="display:none;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="comment_id" value="{{ comment.id }}">
             <button type="button" onclick="submitDelete('{{ comment.id }}')">Confirmer suppression</button>
@@ -50,7 +50,7 @@
   {% if current_user.is_authenticated %}
   <div class="comment-form" style="margin-top:2rem;">
     <h3>Laissez un commentaire</h3>
-    <form method="POST" action="{{ url_for('add_comment') }}">
+    <form method="POST" action="{{ url_for('comment.add_comment') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <textarea name="content" placeholder="Votre commentaire..." required></textarea>
       <button type="submit">Envoyer</button>
@@ -58,7 +58,7 @@
   </div>
   {% else %}
   <div class="login-prompt" style="margin-top:2rem;">
-    <p>Vous devez être <a href="{{ url_for('connection') }}">connecté(e)</a> pour laisser un commentaire.</p>
+    <p>Vous devez être <a href="{{ url_for('main.connection') }}">connecté(e)</a> pour laisser un commentaire.</p>
   </div>
   {% endif %}
 </section>

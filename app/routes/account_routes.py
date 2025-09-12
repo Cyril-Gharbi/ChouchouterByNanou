@@ -3,6 +3,7 @@ import secrets
 from datetime import datetime, timezone
 
 from flask import (
+    Blueprint,
     current_app,
     flash,
     redirect,
@@ -20,8 +21,10 @@ from app.utils import send_email, verifier_email
 
 
 def init_routes(app):
+    account_bp = Blueprint("account", __name__)
+
     # User registration (GET shows form, POST processes registration)
-    @app.route("/register", methods=["GET", "POST"])
+    @account_bp.route("/register", methods=["GET", "POST"], endpoint="register")
     def register():
         if request.method == "POST":
             username = request.form["username"]
@@ -34,7 +37,7 @@ def init_routes(app):
                 verifier_email(email)
             except ValueError as e:
                 flash(str(e), "error")
-                return redirect(url_for("register"))
+                return redirect(url_for("account.register"))
 
             if "consent_privacy" not in request.form:
                 flash(
@@ -42,7 +45,7 @@ def init_routes(app):
                     "pour créer un compte.",
                     "error",
                 )
-                return redirect(url_for("register"))
+                return redirect(url_for("account.register"))
 
             if len(password) < 8:
                 flash("Le mot de passe doit comporter au moins 8 caractères.", "error")
@@ -62,7 +65,7 @@ def init_routes(app):
                             "par un autre compte actif",
                             "error",
                         )
-                        return redirect(url_for("register"))
+                        return redirect(url_for("account.register"))
 
                     user.username = username
                     user.firstname = firstname
@@ -77,7 +80,7 @@ def init_routes(app):
                     except IntegrityError:
                         db.session.rollback()
                         flash("Une erreur est survenue : doublon détecté.", "error")
-                        return redirect(url_for("register"))
+                        return redirect(url_for("account.register"))
 
                     flash(
                         "Votre compte a été réactivé avec succès. "
@@ -103,13 +106,13 @@ def init_routes(app):
                             "À très bientôt,\nL'équipe Chouchouter"
                         ),
                     )
-                    return redirect(url_for("accueil"))
+                    return redirect(url_for("main.accueil"))
                 else:
                     flash("Un compte avec cet email existe déjà.", "error")
 
             if User.query.filter_by(username=username, deleted_at=None).first():
                 flash("Nom d'utilisateur déjà utilisé", "error")
-                return redirect(url_for("register"))
+                return redirect(url_for("account.register"))
 
             utc_now = datetime.now(timezone.utc)
 
@@ -131,7 +134,7 @@ def init_routes(app):
             except IntegrityError:
                 db.session.rollback()
                 flash("Une erreur est survenue : email ou pseudo déjà utilisé", "error")
-                return redirect(url_for("register"))
+                return redirect(url_for("account.register"))
 
             flash(
                 "Votre demande de création de compte a bien été prise en compte.\n\n"
@@ -157,14 +160,14 @@ def init_routes(app):
                     "À très bientôt,\nL'équipe Chouchouter"
                 ),
             )
-            return redirect(url_for("register"))
+            return redirect(url_for("account.register"))
         return render_template("account_user/register.html")
 
     # User login route (GET shows form, POST processes login)
-    @app.route("/login", methods=["GET", "POST"])
+    @account_bp.route("/login", methods=["GET", "POST"], endpoint="login")
     def login():
         if current_user.is_authenticated:
-            return redirect(url_for("connection"))
+            return redirect(url_for("main.connection"))
 
         if request.method == "POST":
             username = request.form["username"]
@@ -185,7 +188,7 @@ def init_routes(app):
                     login_user(user)
 
                     next_page = request.form.get("next")
-                    return redirect(next_page or url_for("connection"))
+                    return redirect(next_page or url_for("main.connection"))
                 else:
                     flash("Mot de passe incorrect", "error")
                     return render_template(
@@ -196,7 +199,7 @@ def init_routes(app):
             admin = Admin.query.filter_by(username=username).first()
             if admin and admin.check_password(password):
                 session["admin_id"] = admin.id
-                return redirect(url_for("admin_dashboard"))
+                return redirect(url_for("admin.admin_dashboard"))
 
             # Invalid credentials
             flash("Identifiants incorrects")
@@ -208,16 +211,18 @@ def init_routes(app):
         return render_template("account_user/connection.html", next=next_page)
 
     # Logout user by clearing session
-    @app.route("/logout")
+    @account_bp.route("/logout", endpoint="logout")
     def logout():
         logout_user()
-        return redirect(url_for("accueil"))
+        return redirect(url_for("main.accueil"))
 
     # Delete user account (GET shows form, POST processes deletion)
-    @app.route("/delete_account", methods=["GET", "POST"])
+    @account_bp.route(
+        "/delete_account", methods=["GET", "POST"], endpoint="delete_account"
+    )
     def delete_account():
         if not current_user.is_authenticated:
-            return redirect(url_for("accueil"))
+            return redirect(url_for("main.accueil"))
 
         if request.method == "POST":
             password = request.form["password"]
@@ -263,7 +268,7 @@ def init_routes(app):
                     ),
                 )
 
-                return redirect(url_for("accueil"))
+                return redirect(url_for("main.accueil"))
             else:
                 flash("Mot de passe incorrect")
                 return render_template(
@@ -271,3 +276,5 @@ def init_routes(app):
                 )
 
         return render_template("account_user/delete_account.html")
+
+    return account_bp

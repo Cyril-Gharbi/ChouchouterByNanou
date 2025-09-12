@@ -1,4 +1,4 @@
-from flask import redirect, session, url_for
+from flask import Blueprint, redirect, session, url_for
 
 from app.extensions import db
 from app.models import FidelityRewardLog, User
@@ -6,11 +6,13 @@ from app.utils import send_discount_email, update_user_session
 
 
 def init_routes(app):
+    qr_bp = Blueprint("qr", __name__)
+
     # QR code scan route, increments user's fidelity level and handles rewards
-    @app.route("/scan")
+    @qr_bp.route("/scan", endpoint="scan")
     def scan():
         if "user" not in session:
-            return redirect(url_for("login", next=url_for("scan")))
+            return redirect(url_for("account.login", next=("qr.scan")))
 
         username = session["user"]["username"]
         user = User.query.filter_by(username=username).first()
@@ -50,4 +52,6 @@ def init_routes(app):
                     db.session.add(new_reward)
                     db.session.commit()
 
-        return redirect(url_for("connection", scan_success="1"))
+        return redirect(url_for("main.connection", scan_success="1"))
+
+    return qr_bp

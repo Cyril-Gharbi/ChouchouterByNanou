@@ -1,4 +1,4 @@
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
 from app.extensions import db
 from app.models import Admin, User
@@ -10,7 +10,11 @@ from app.utils import (
 
 
 def init_routes(app):
-    @app.route("/reset_user_password", methods=["GET", "POST"])
+    reset_password_bp = Blueprint("reset_password", __name__)
+
+    @reset_password_bp.route(
+        "/reset_user_password", methods=["GET", "POST"], endpoint="reset_user_password"
+    )
     def reset_user_password():
         token = request.args.get("token")
         if not token:
@@ -23,13 +27,15 @@ def init_routes(app):
 
         if not new_password or len(new_password) < 8:
             flash("Le mot de passe doit contenir au moins 8 caractères.")
-            return redirect(url_for("reset_user_password") + f"?token={token}")
+            return redirect(
+                url_for("reset_password.reset_user_password") + f"?token={token}"
+            )
 
         email, user_type = verify_password_reset_token(token)
 
         if email is None:
             flash("Lien invalide ou expiré", "error")
-            return redirect(url_for("reset_password_request"))
+            return redirect(url_for("reset_password.reset_password_request"))
 
         if user_type == "admin":
             user = Admin.query.filter_by(email=email).first()
@@ -38,15 +44,17 @@ def init_routes(app):
 
         if not user:
             flash("Utilisateur introuvable.")
-            return redirect(url_for("reset_user_request"))
+            return redirect(url_for("reset_password.reset_user_request"))
 
         user.set_password(new_password)
         db.session.commit()
 
         flash("Votre mot de passe a été mis à jour.")
-        return redirect(url_for("login"))
+        return redirect(url_for("account.login"))
 
-    @app.route("/reset_user_request", methods=["GET", "POST"])
+    @reset_password_bp.route(
+        "/reset_user_request", methods=["GET", "POST"], endpoint="reset_user_request"
+    )
     def reset_user_request():
         if request.method == "POST":
             email = request.form.get("email")
@@ -54,10 +62,12 @@ def init_routes(app):
 
             if not user or not email:
                 flash("Aucun compte utilisateur associé à cet email.")
-                return redirect(url_for("reset_user_request"))
+                return redirect(url_for("reset_password.reset_user_request"))
 
             token = generate_password_reset_token(email, "user")
-            reset_url = url_for("reset_user_password", token=token, _external=True)
+            reset_url = url_for(
+                "reset_password.reset_user_password", token=token, _external=True
+            )
 
             subject = "Réinitialisation de votre mot de passe"
             text_body = (
@@ -80,6 +90,8 @@ def init_routes(app):
                     "envoyé pour le moment."
                 )
 
-            return redirect(url_for("login"))
+            return redirect(url_for("account.login"))
 
         return render_template("account_user/reset_password_request.html")
+
+    return reset_password_bp

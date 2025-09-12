@@ -9,8 +9,8 @@
     <header>
         <h1>Panneau d'administration</h1>
             <div class="button-container">
-                <a href="{{ url_for('accueil') }}" class="retour">Déconnexion</a>
-                <a href="{{ url_for('admin_dashboard') }}" class="button">Dashboard</a>
+                <a href="{{ url_for('main.accueil') }}" class="retour">Déconnexion</a>
+                <a href="{{ url_for('admin.admin_dashboard') }}" class="button">Dashboard</a>
             </div>
     </header>
     <main>
@@ -29,7 +29,7 @@
                 <tbody>
                     {% for user in users %}
                         <tr>
-                            <form method="POST" action="{{ url_for('process_user_request', user_id=user.id) }}">
+                            <form method="POST" action="{{ url_for('admin.process_user_request', user_id=user.id) }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.lastname }}</td>

@@ -16,15 +16,6 @@ if ROOT not in sys.path:
 
 
 # ------------------------------------------------------------------
-# Mongo (mongomock)
-# ------------------------------------------------------------------
-@pytest.fixture(scope="function")
-def mongo_db():
-    client = mongomock.MongoClient()
-    return client["chouchouter"]
-
-
-# ------------------------------------------------------------------
 # PostgreSQL (pytest-postgresql) ou fallback SQLite
 # ------------------------------------------------------------------
 try:
@@ -34,17 +25,23 @@ except ImportError:
 
 
 @pytest.fixture(scope="session")
+def mongo_db():
+    """MongoDB mocké disponible pour tous les tests d'intégration."""
+    client = mongomock.MongoClient()
+    return client["chouchouter"]
+
+
+@pytest.fixture(scope="session")
 def pg_app(request):
     """
-    Crée une app Flask pour les tests Postgres.
-    - Si Postgres est dispo (Linux/CI), utilise pytest-postgresql.
-    - Sinon (Windows local), fallback sur SQLite.
+    Crée une app Flask pour les tests intégration.
+    - Si Postgres dispo (Linux/CI), utilise pytest-postgresql.
+    - Sinon (Windows/local), fallback sur SQLite.
     """
     if POSTGRES_AVAILABLE and not sys.platform.startswith("win"):
         postgresql_proc = factories.postgresql_proc()
         uri = postgresql_proc.dsn()
     else:
-        # fallback simple sur SQLite
         uri = "sqlite:///:memory:"
 
     app = create_app(
@@ -72,3 +69,25 @@ def pg_client(pg_app):
 @pytest.fixture()
 def pg_db(pg_app):
     return _db
+
+
+@pytest.fixture(scope="function")
+def app_mongo(mongo_db):
+    """App Flask d'intégration dédiée aux tests MongoDB purs."""
+    app = create_app(
+        {
+            "TESTING": True,
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+            "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+            "MONGO_DB": mongo_db,
+        }
+    )
+    with app.app_context():
+        _db.create_all()
+        yield app
+        _db.drop_all()
+
+
+@pytest.fixture()
+def client_mongo(app_mongo):
+    return app_mongo.test_client()
