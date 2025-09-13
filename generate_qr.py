@@ -1,8 +1,13 @@
 import qrcode
 
-url = "https://fd96-2001-861-3206-56a0-e949-c047-ff23-a2eb.ngrok-free.app/scan"
+# Ton URL Railway
+url = "https://web-production-c8a9d.up.railway.app/scan"
 
-qr = qrcode.make(url)
-qr.save("qr_scan.png")
+# Générer le QR code
+img = qrcode.make(url)
 
-print("QR code généré : qr_scan.png")
+# Sauvegarder le fichier
+with open("qr_railway.png", "wb") as f:
+    img.save(f, format="PNG")
+
+print("QR code créé : qr_railway.png ✅")

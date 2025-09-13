@@ -20,8 +20,8 @@ instance/
 
 # --- Sensitive / local scripts ---
 create_admin.py
-setup_env.bat   # script Windows local
-setup.sh        # facultatif si tu veux le garder local aussi
+setup_env.bat
+setup.sh
 
 # --- Database dumps ---
 dump/

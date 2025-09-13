@@ -187,7 +187,7 @@ def init_routes(app):
                 if user.check_password(password):
                     login_user(user)
 
-                    next_page = request.form.get("next")
+                    next_page = request.form.get("next") or request.args.get("next")
                     return redirect(next_page or url_for("main.connection"))
                 else:
                     flash("Mot de passe incorrect", "error")
