@@ -39,7 +39,7 @@ def init_routes(app):
         login_user(user)
 
         # 6) Récompense aux paliers (ex: 4 et 9)
-        if user.fidelity_level in [4, 9]:
+        if user.fidelity_level in [5, 10]:
             existing = FidelityRewardLog.query.filter_by(
                 user_id=user.id,
                 level_reached=user.fidelity_level,

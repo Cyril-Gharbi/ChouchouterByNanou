@@ -49,6 +49,7 @@ def init_routes(app):
 
             if len(password) < 8:
                 flash("Le mot de passe doit comporter au moins 8 caractères.", "error")
+                return redirect(url_for("account.register"))
 
             user = User.query.filter_by(email=email).first()
 
