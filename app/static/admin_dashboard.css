@@ -37,6 +37,7 @@ form {
 
 .actions form {
     display: inline-block;
+    margin: 2px;
 }
 
 .actions button {
