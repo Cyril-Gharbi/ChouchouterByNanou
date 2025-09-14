@@ -1,7 +1,7 @@
 import qrcode
 
 # Ton URL Railway
-url = "web-production-c8a9d.up.railway.app/scan"
+url = "https://web-production-c8a9d.up.railway.app/scan"
 
 # Générer le QR code
 img = qrcode.make(url)
