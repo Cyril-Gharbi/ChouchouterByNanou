@@ -179,20 +179,4 @@ def create_app(config: dict | None = None):
         app.register_blueprint(qr_routes.init_routes(app))
         app.register_blueprint(reset_password_routes.init_routes(app))
 
-        # ✅ Route spéciale de test SMTP (hors blueprint)
-        import smtplib
-        import socket
-
-        @app.route("/test_smtp")
-        def test_smtp():
-            try:
-                server = smtplib.SMTP("smtp.mail.me.com", 587, timeout=10)
-                server.ehlo()
-                server.quit()
-                return "✅ Connexion réussie à smtp.mail.me.com:587"
-            except (socket.timeout, ConnectionRefusedError) as e:
-                return f"❌ Connexion échouée : {e}"
-            except Exception as e:
-                return f"⚠️ Autre erreur : {e}"
-
     return app
