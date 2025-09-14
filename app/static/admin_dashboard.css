@@ -32,11 +32,15 @@ form {
 
 .actions {
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
 }
 
 .actions form {
     display: inline-block;
+}
+
+.actions button {
+    max-width: 100%;
 }
 
 .button-container {
