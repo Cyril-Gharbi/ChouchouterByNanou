@@ -33,11 +33,11 @@ form {
 .actions {
     text-align: center;
     white-space: normal;
+    margin: 2px;
 }
 
 .actions form {
     display: inline-block;
-    margin: 2px;
 }
 
 .actions button {
