@@ -1,40 +1,39 @@
-/* Main container */
+/* Conteneur principal */
 .comments-section {
     color: #333;
     font-family: "Segoe UI", Roboto, sans-serif;
-    margin: 2rem auto;
-    max-width: 800px;      /* limit on large screens */
-    width: 100%;           /* take full available width */
-    padding: 0 1rem;       /* adaptive inner margins */
-    box-sizing: border-box;
+    margin: 40px auto;
+    max-width: 800px;
+    padding: 0 15px;
 }
 
-/* Title */
+/* Titre */
 .comments-section h2 {
     color: #222;
     margin-bottom: 20px;
     text-align: center;
 }
 
-/* Comment card */
+/* Carte de commentaire */
 .comment {
     background-color: #fff;
-    border: 1px solid #dee2e6; /* gray */
-    border-radius: 0.375rem;   /* rounded corners */
+    border: 1px solid #dee2e6; /* gris Bootstrap */
+    border-radius: 0.375rem; /* arrondi Bootstrap */
     box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
-    margin: 1.5rem 0;
-    padding: 1rem;
+    margin-bottom: 1rem;
+    margin-top: 40px;
+    padding: 15px 20px;
 }
 
-/* Author */
+/* Auteur */
 .comment .author {
-    color: #343a40; /* dark text */
+    color: #343a40; /* texte sombre */
     font-weight: bold;
     margin-bottom: 10px;
     text-decoration: underline;
 }
 
-/* Content */
+/* Contenu */
 .comment .content {
     line-height: 1.4;
     margin-bottom: 0.5rem;
@@ -42,15 +41,15 @@
 
 /* Date */
 .comment .date {
-    color: #6c757d; /* gray */
+    color: #6c757d; /* gris bootstrap */
     font-size: 0.85rem;
     text-align: right;
 }
 
-/* Style for deleted accounts */
+/* Style pour comptes supprimés */
 .comment.deleted-user {
-    background-color: #f8f9fa; /* light gray */
-    border-left: 4px solid #adb5bd; /* medium gray */
+    background-color: #f8f9fa; /* gris clair bootstrap */
+    border-left: 4px solid #adb5bd; /* gris moyen */
     font-style: italic;
     opacity: 0.8;
 }
@@ -59,54 +58,54 @@
     color: #6c757d;
 }
 
-/* Actions (Edit / Delete) */
-.actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap; /* allow buttons to wrap if space is too narrow */
-    margin-top: 0.5rem;
+/* Formulaire */
+.comment-form textarea {
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 10px;
+    resize: vertical;
+    width: 700px;
 }
 
-.actions button {
-    flex: 1;            /* each button takes equal space */
-    min-width: 120px;   /* prevent buttons from being too small */
-    padding: 0.5rem 1rem;
+/* Bouton */
+.comment-form button, .delete-form button,
+.edit-form button, .actions button {
+    background-color: #f08080;
     border: none;
     border-radius: 0.375rem;
-    background-color: #007bff;
     color: white;
     cursor: pointer;
-    transition: background-color 0.2s;
+    padding: 8px 16px;
+    transition: background-color 0.2s ease;
 }
 
-.actions button:hover {
-    background-color: #0056b3;
+.comment-form button:hover, .delete-form button:hover,
+.edit-form button:hover, .actions button:hover {
+    background-color: #d96e6e;
 }
 
-/* Edit form */
-.edit-form {
+/* Message invite à se connecter */
+.login-prompt {
+    color: #495057;
     margin-top: 1rem;
+    text-align: center;
 }
 
-.edit-form input,
-.edit-form textarea,
-.edit-form button {
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
+.login-prompt a {
+    color: #f08080;
+    text-decoration: underline;
 }
 
-.edit-form button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.login-prompt a:hover {
+    color: #d96e6e;
 }
 
-.edit-form button:hover {
-    background-color: #218838;
+.comment-form {
+    text-align: center;
+}
+
+.edit-form textarea {
+    width: 600px;
 }
