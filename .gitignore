@@ -20,6 +20,7 @@ instance/
 
 # --- Sensitive / local scripts ---
 create_admin.py
+generate_qr.py
 setup_env.bat
 setup.sh
 
