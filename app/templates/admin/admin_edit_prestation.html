@@ -6,14 +6,17 @@
     <meta charset="UTF-8">
     <title>Admin - Modification des Prestations - Chouchouter By Nanou</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin_edit_prestation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
 </head>
 <body>
     <header>
         <h1>Panneau d'administration</h1>
         <div class="button-container">
-            <a href="{{ url_for('main.accueil') }}" class="retour">Déconnexion</a>
+            <a href="{{ url_for('admin.admin_logout') }}" class="retour">Déconnexion</a>
         </div>
     </header>
+
+    {% include "admin/admin_flash.html" %}
 
     <main>
         <h2>Modification de la prestation</h2>

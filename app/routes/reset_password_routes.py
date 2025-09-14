@@ -26,7 +26,7 @@ def init_routes(app):
         new_password = request.form.get("new_password")
 
         if not new_password or len(new_password) < 8:
-            flash("Le mot de passe doit contenir au moins 8 caractères.")
+            flash("Le mot de passe doit contenir au moins 8 caractères.", "admin_error")
             return redirect(
                 url_for("reset_password.reset_user_password") + f"?token={token}"
             )
@@ -43,13 +43,13 @@ def init_routes(app):
             user = User.query.filter_by(email=email).first()
 
         if not user:
-            flash("Utilisateur introuvable.")
+            flash("Utilisateur introuvable.", "admin_error")
             return redirect(url_for("reset_password.reset_user_request"))
 
         user.set_password(new_password)
         db.session.commit()
 
-        flash("Votre mot de passe a été mis à jour.")
+        flash("Votre mot de passe a été mis à jour.", "admin_success")
         return redirect(url_for("account.login"))
 
     @reset_password_bp.route(
@@ -61,7 +61,7 @@ def init_routes(app):
             user = User.query.filter_by(email=email).first()
 
             if not user or not email:
-                flash("Aucun compte utilisateur associé à cet email.")
+                flash("Aucun compte utilisateur associé à cet email.", "admin_error")
                 return redirect(url_for("reset_password.reset_user_request"))
 
             token = generate_password_reset_token(email, "user")
@@ -83,11 +83,15 @@ def init_routes(app):
             )
 
             if ok:
-                flash("Un email de réinitialisation a été envoyé à votre adresse.")
+                flash(
+                    "Un email de réinitialisation a été envoyé à votre adresse.",
+                    "admin_info",
+                )
             else:
                 flash(
                     "Votre demande est enregistrée, mais l'email n'a pas pu être "
-                    "envoyé pour le moment."
+                    "envoyé pour le moment.",
+                    "admin_info",
                 )
 
             return redirect(url_for("account.login"))

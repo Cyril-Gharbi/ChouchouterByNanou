@@ -1,0 +1,16 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        {% if category.startswith("admin_") %}
+          {% set lvl = category.split('_')[1] %}
+          {% set bs = 'danger' if lvl == 'error' else lvl %}
+          <div class="alert alert-{{ bs }} flash-box alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

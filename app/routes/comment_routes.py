@@ -14,7 +14,7 @@ def init_routes(app):
     def add_comment():
         content = request.form.get("content", "").strip()
         if not content:
-            flash("Le commentaire ne peut pas être vide.")
+            flash("Le commentaire ne peut pas être vide.", "admin_error")
             return redirect(url_for("comment.my_comments"))
 
         comment = Comment(
@@ -23,7 +23,7 @@ def init_routes(app):
         db.session.add(comment)
         db.session.commit()
 
-        flash("Merci pour votre commentaire !")
+        flash("Merci pour votre commentaire !", "admin_success")
         return redirect(url_for("comment.my_comments"))
 
     @comment_bp.route("/delete_comment", methods=["POST"], endpoint="delete_comment")

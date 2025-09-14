@@ -6,12 +6,14 @@
     <meta charset="UTF-8">
     <title>Admin - Gestion des Utilisateurs - Chouchouter By Nanou</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
+
 </head>
 <body>
     <header>
     <h1>Panneau d'administration</h1>
         <div class="button-container">
-            <a href="{{ url_for('main.accueil') }}" class="retour">Déconnexion</a>
+            <a href="{{ url_for('admin.admin_logout') }}" class="retour">Déconnexion</a>
             <a href="#renvoi-liste" class="button">Liste des utilisateurs</a>
             <a href="#renvoi-prestations" class="button">Liste des prestations</a>
             <a href="#renvoi-photos" class="button">Gestion des photos</a>
@@ -19,6 +21,9 @@
             <a href="{{ url_for('admin.pending_users') }}" class="btn">Demande de création de compte</a>
         </div>
     </header>
+
+    {% include "admin/admin_flash.html" %}
+
     <main>
         <div class="main-search">
           <h2 id="renvoi-liste">Liste des utilisateurs</h2>

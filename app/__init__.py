@@ -11,7 +11,7 @@ from flask_login import current_user
 from flask_mail import Message
 from flask_wtf.csrf import generate_csrf
 
-from app.models import User
+from app.models import Admin, User
 
 load_dotenv()
 
@@ -84,13 +84,27 @@ def create_app(config: dict | None = None):
     # Initialization of extensions
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = "login"  # pyright: ignore[reportAttributeAccessIssue]
+    login_manager.login_view = (
+        "account.login"  # pyright: ignore[reportAttributeAccessIssue]
+    )
     csrf.init_app(app)
     mail.init_app(app)
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.filter_by(id=int(user_id), deleted_at=None).first()
+        if not user_id:
+            return None
+
+        # sécurité : s'assurer qu'on manipule une string
+        user_id = str(user_id)
+
+        if user_id.startswith("user-"):
+            return User.query.get(int(user_id.split("-", 1)[1]))
+        elif user_id.startswith("admin-"):
+            return Admin.query.get(int(user_id.split("-", 1)[1]))
+
+        # fallback : ancien cookie sans préfixe
+        return None
 
     @app.context_processor
     def inject_user_logged_in():

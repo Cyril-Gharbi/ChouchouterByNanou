@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <title>Admin - Demande de crétion de compte - Chouchouter By Nanou</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin_approbation.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
 </head>
 <body>
     <header>
         <h1>Panneau d'administration</h1>
             <div class="button-container">
-                <a href="{{ url_for('main.accueil') }}" class="retour">Déconnexion</a>
+                <a href="{{ url_for('admin.admin_logout') }}" class="retour">Déconnexion</a>
                 <a href="{{ url_for('admin.admin_dashboard') }}" class="button">Dashboard</a>
             </div>
     </header>
+
+    {% include "admin/admin_flash.html" %}
+
     <main>
         <h2>Décision de la demande de création de compte</h2>
 

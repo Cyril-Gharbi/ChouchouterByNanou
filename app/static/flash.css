@@ -1,0 +1,55 @@
+.flash-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+
+.flash-box {
+  font-weight: bold;
+  opacity: 1 !important;
+  border: 3px solid #000;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  background-color: #ff4d4d;
+  color: #000;
+}
+
+.alert-success {
+  background-color: #d1e7dd;
+  border-color: #badbcc;
+  color: #0f5132;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border-color: #f5c2c7;
+  color: #842029;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border-color: #ffecb5;
+  color: #664d03;
+}
+
+.alert-info {
+  background-color: #cff4fc;
+  border-color: #b6effb;
+  color: #055160;
+}
+
+.alert {
+  animation: fadeOut 0.5s ease-in-out 3s forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

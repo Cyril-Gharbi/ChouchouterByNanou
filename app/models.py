@@ -40,6 +40,9 @@ class User(db.Model, UserMixin):
         """Check the password against the stored hash."""
         return check_password_hash(self.password_hash, password)
 
+    def get_id(self):
+        return f"user-{self.id}"
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,7 +59,7 @@ class Comment(db.Model):
     user = db.relationship("User", backref=db.backref("comments", lazy=True))
 
 
-class Admin(db.Model):
+class Admin(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(512))
@@ -75,6 +78,9 @@ class Admin(db.Model):
             db.session.commit()
             return True
         return False
+
+    def get_id(self):
+        return f"admin-{self.id}"
 
 
 class FidelityRewardLog(db.Model):

@@ -9,7 +9,6 @@ from flask import (
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
 from flask_login import current_user, login_user, logout_user
@@ -199,11 +198,12 @@ def init_routes(app):
             # Admin login check
             admin = Admin.query.filter_by(username=username).first()
             if admin and admin.check_password(password):
-                session["admin_id"] = admin.id
+                login_user(admin)
+                flash("Bienvenue dans le dashboard d'administration", "admin_success")
                 return redirect(url_for("admin.admin_dashboard"))
 
             # Invalid credentials
-            flash("Identifiants incorrects")
+            flash("Identifiants incorrects", "admin_danger")
             return render_template(
                 "account_user/connection.html", error="Identifiants incorrects"
             )
@@ -271,7 +271,7 @@ def init_routes(app):
 
                 return redirect(url_for("main.accueil"))
             else:
-                flash("Mot de passe incorrect")
+                flash("Mot de passe incorrect", "admin_error")
                 return render_template(
                     "account_user/delete_account.html", error="Mot de passe incorrect"
                 )
