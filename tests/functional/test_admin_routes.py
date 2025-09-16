@@ -56,8 +56,6 @@ def app_sqlite():
         _db.session.add(admin)
         user = User(
             username="u1",
-            firstname="A",
-            lastname="B",
             email="u1@example.com",
             is_approved=True,
         )

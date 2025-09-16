@@ -47,16 +47,15 @@ def client(app_sqlite):
 
 
 def register_and_login(client):
+    user = User(username="bob", email="b@example.com", is_approved=True)
+    user.set_password("Secret123!")
+    _db.session.add(user)
+    _db.session.commit()
+
+    # Connexion avec email
     client.post(
-        "/register",
-        data={
-            "username": "bob",
-            "firstname": "B",
-            "lastname": "O",
-            "email": "b@example.com",
-            "password": "Secret123!",
-            "consent_privacy": "on",
-        },
+        "/login",
+        data={"email": "b@example.com", "password": "Secret123!"},
         follow_redirects=True,
     )
 
@@ -84,7 +83,7 @@ def test_add_edit_delete_comment_flow(client, monkeypatch):
 
     # list my comments (should be OK)
     resp = client.get("/my_comments")
-    assert resp.status_code in (200,)
+    assert resp.status_code == 200
 
     # edit need comment id: récupérons via la DB
     # (On ne peut pas importer directement la DB ici,

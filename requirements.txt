@@ -1,15 +1,15 @@
 # --- Production requirements ---
 flask
-flask_sqlalchemy
-flask_wtf
-flask_migrate
+flask-SQLAlchemy
+flask-wtf
+flask-migrate
 flask-login
 flask-mail
 python-dotenv
 gunicorn
 psycopg2-binary
 sqlalchemy
-werkzeug
+flask-bcrypt
 pytz
 pymongo
 requests

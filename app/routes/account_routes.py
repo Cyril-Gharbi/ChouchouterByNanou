@@ -15,7 +15,7 @@ from flask_login import current_user, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
-from app.models import Admin, User
+from app.models import Admin, User, UserRequest
 from app.utils import send_email, verifier_email
 
 
@@ -28,8 +28,6 @@ def init_routes(app):
         if request.method == "POST":
             username = request.form["username"]
             password = request.form["password"]
-            firstname = request.form["firstname"]
-            lastname = request.form["lastname"]
             email = request.form["email"]
 
             try:
@@ -50,86 +48,29 @@ def init_routes(app):
                 flash("Le mot de passe doit comporter au moins 8 caractères.", "error")
                 return redirect(url_for("account.register"))
 
-            user = User.query.filter_by(email=email).first()
+            admin_email = current_app.config.get("MAIL_DEFAULT_SENDER")
 
-            if user:
-                if user.deleted_at is not None:
-                    username_taken = User.query.filter(
-                        User.username == username,
-                        User.deleted_at.is_(None),
-                        User.id != user.id,
-                    ).first()
-                    if username_taken:
-                        flash(
-                            "Le nom d'utilisateur est déjà utilisé "
-                            "par un autre compte actif",
-                            "error",
-                        )
-                        return redirect(url_for("account.register"))
+            # Vérifier si un utilisateur actif existe déjà avec cet email
+            existing_user = User.query.filter_by(email=email).first()
+            if existing_user:
+                flash("Un compte avec cet email existe déjà.", "error")
+                return redirect(url_for("account.register"))
 
-                    user.username = username
-                    user.firstname = firstname
-                    user.lastname = lastname
-                    user.set_password(password)
-                    user.deleted_at = None
-                    user.consent_privacy = True
-                    user.consent_date = datetime.now(timezone.utc)
-                    user.is_approved = False
-                    try:
-                        db.session.commit()
-                    except IntegrityError:
-                        db.session.rollback()
-                        flash("Une erreur est survenue : doublon détecté.", "error")
-                        return redirect(url_for("account.register"))
-
-                    flash(
-                        "Votre compte a été réactivé avec succès. "
-                        "Une validation sera effectuée.",
-                        "info",
-                    )
-                    send_email(
-                        subject="Nouvelle demande d'inscription",
-                        recipients=[current_app.config.get("MAIL_USERNAME")],
-                        body=(
-                            "Nouvelle demande de réactivation de compte pour : "
-                            f"{firstname} {lastname} ({email}).\n\n"
-                            "Validez-la depuis l'interface admin."
-                        ),
-                    )
-                    send_email(
-                        subject="Votre demande d'inscription",
-                        recipients=[user.email],
-                        body=(
-                            f"Bonjour {user.firstname},\n\n"
-                            "Merci beaucoup pour votre demande de réinscription.\n\n"
-                            "Votre requête sera traitée dans les plus brefs délais.\n\n"
-                            "À très bientôt,\nL'équipe Chouchouter"
-                        ),
-                    )
-                    return redirect(url_for("main.accueil"))
-                else:
-                    flash("Un compte avec cet email existe déjà.", "error")
-
-            if User.query.filter_by(username=username, deleted_at=None).first():
+            # Vérifier si le username est déjà pris par un utilisateur actif
+            if User.query.filter(User.username == username).first():
                 flash("Nom d'utilisateur déjà utilisé", "error")
                 return redirect(url_for("account.register"))
 
-            utc_now = datetime.now(timezone.utc)
+            # Vérifier si une demande existe déjà avec ce mail
+            if UserRequest.query.filter_by(email=email).first():
+                flash("Une demande avec cet email est déjà en attente.", "error")
+                return redirect(url_for("main.accueil"))
 
-            user = User(
-                username=username,
-                firstname=firstname,
-                lastname=lastname,
-                email=email,
-                fidelity_level=0,
-                fidelity_cycle=0,
-                consent_privacy=True,
-                consent_date=utc_now,
-                is_approved=False,
-            )
-            user.set_password(password)
+            # ✅ Nouvelle demande
             try:
-                db.session.add(user)
+                new_request = UserRequest(username=username, email=email)
+                new_request.set_password(password)
+                db.session.add(new_request)
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
@@ -137,30 +78,30 @@ def init_routes(app):
                 return redirect(url_for("account.register"))
 
             flash(
-                "Votre demande de création de compte a bien été prise en compte.\n\n"
-                "Une validation va être effectuée.",
+                "Votre demande de création de compte a bien été prise en compte."
+                "\n\nUne validation va être effectuée.",
                 "info",
             )
             send_email(
                 subject="Nouvelle demande d'inscription",
-                recipients=[current_app.config.get("MAIL_DEFAULT_SENDER")],
+                recipients=[admin_email],
                 body=(
-                    "Nouvelle demande de compte pour : "
-                    f"{firstname} {lastname}, {email}.\n\n"
-                    "Validez-la depuis l'interface admin."
+                    f"Nouvelle demande de compte pour : {username}, {email}."
+                    "\n\nValidez-la depuis l'interface admin."
                 ),
             )
             send_email(
                 subject="Votre demande d'inscription",
-                recipients=[user.email],
+                recipients=[email],
                 body=(
-                    f"Bonjour {user.firstname},\n\n"
-                    "Merci beaucoup pour votre demande d'inscription.\n\n"
-                    "Votre requête sera traitée dans les plus brefs délais.\n\n"
-                    "À très bientôt,\nL'équipe Chouchouter"
+                    f"Bonjour {username},"
+                    "\n\nMerci beaucoup pour votre demande d'inscription."
+                    "\n\nVotre requête sera traitée dans les plus brefs délais."
+                    "\n\nÀ très bientôt,\nL'équipe Chouchouter"
                 ),
             )
-            return redirect(url_for("account.register"))
+            return redirect(url_for("main.accueil"))
+
         return render_template("account_user/register.html")
 
     # User login route (GET shows form, POST processes login)
@@ -231,7 +172,7 @@ def init_routes(app):
             if current_user.check_password(password):
                 user = current_user
                 user_email = current_user.email
-                user_firstname = current_user.firstname
+                user_username = current_user.username
 
                 for comment in user.comments:
                     comment.user_id = None
@@ -247,14 +188,13 @@ def init_routes(app):
                 user.is_anonymized = True
 
                 db.session.commit()
-                db.session.flush()
                 logout_user()
 
                 send_email(
                     subject="Nous sommes tristes de vous voir partir 💔",
                     recipients=[user_email],
                     body=(
-                        f"Bonjour {user_firstname},\n\n"
+                        f"Bonjour {user_username},\n\n"
                         "Nous avons bien pris en compte la suppression "
                         "de votre compte.\n\n"
                         "C’est toujours un petit pincement au cœur de voir partir l’un"
@@ -268,7 +208,7 @@ def init_routes(app):
                         "Avec toute notre bienveillance,\nL’équipe Chouchouter"
                     ),
                 )
-
+                flash("Votre compte a été supprimé et anonymisé.", "success")
                 return redirect(url_for("main.accueil"))
             else:
                 flash("Mot de passe incorrect", "admin_error")

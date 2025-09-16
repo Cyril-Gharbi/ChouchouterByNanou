@@ -119,16 +119,6 @@ def email():
 
 
 @pytest.fixture
-def firstname():
-    return "Alice"
-
-
-@pytest.fixture
-def lastname():
-    return "Martin"
-
-
-@pytest.fixture
 def content():
     return "Hello world"
 

@@ -11,8 +11,6 @@ def test_register_login_logout_flow(client, monkeypatch):
         "/register",
         data={
             "username": "bob",
-            "firstname": "B",
-            "lastname": "O",
             "email": "b@example.com",
             "password": "Secret123!",
         },

@@ -14,7 +14,7 @@ from flask_login import current_user
 from pymongo.database import Database
 
 from app.extensions import db
-from app.models import Comment
+from app.models import Comment, FidelityRewardLog
 
 
 def init_routes(app, mongo_db: Database):
@@ -91,7 +91,19 @@ def init_routes(app, mongo_db: Database):
     # User connection page, requires user to be logged in
     @main_bp.route("/connection", endpoint="connection")
     def connection():
-        return render_template("account_user/connection.html", user=current_user)
+        level = 0
+
+        if current_user.is_authenticated:
+            last_log = (
+                FidelityRewardLog.query.filter_by(user_id=current_user.id)
+                .order_by(FidelityRewardLog.date.desc())
+                .first()
+            )
+            level = last_log.fidelity_level if last_log else 0
+
+        return render_template(
+            "account_user/connection.html", user=current_user, level=level
+        )
 
     # Terms and conditions page route
     @main_bp.route("/cgu", endpoint="cgu")

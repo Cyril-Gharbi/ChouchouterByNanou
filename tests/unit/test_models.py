@@ -9,8 +9,6 @@ from app.models import Comment, User
 def test_create_user(db):
     u = User(
         username="testuser",
-        firstname="Test",
-        lastname="User",
         email="testuser@example.com",
     )
     u.set_password("password123!")
@@ -23,8 +21,6 @@ def test_create_comment(db):
     # We first create a user so that the comment is linked to someone
     user = User(
         username="commenter1",
-        firstname="Comment",
-        lastname="User",
         email="commenter1@example.com",
     )
     user.set_password("password123!")
@@ -45,16 +41,12 @@ def test_create_comment(db):
 
 def test_unique_email(db):
     """Un email doit être unique"""
-    u1 = User(
-        username="user1", firstname="User", lastname="One", email="unique1@example.com"
-    )
+    u1 = User(username="user1", email="unique1@example.com")
     u1.set_password("password123!")
     db.session.add(u1)
     db.session.commit()
 
-    u2 = User(
-        username="user2", firstname="User", lastname="Two", email="unique1@example.com"
-    )
+    u2 = User(username="user2", email="unique1@example.com")
     u2.set_password("password456!")
     db.session.add(u2)
 
@@ -67,8 +59,6 @@ def test_comment_linked_to_user(db):
     """Un commentaire doit être lié à un utilisateur existant"""
     user = User(
         username="commenter2",
-        firstname="Com",
-        lastname="Menter",
         email="commenter2@example.com",
     )
     user.set_password("password123!")
@@ -90,7 +80,7 @@ def test_comment_linked_to_user(db):
 
 def test_required_field_email(db):
     """Un utilisateur sans email ne peut pas être créé (email NOT NULL)"""
-    u = User(username="nouser", firstname="No", lastname="Email", email=None)
+    u = User(username="nouser", email=None)
     u.set_password("password123!")
     db.session.add(u)
 

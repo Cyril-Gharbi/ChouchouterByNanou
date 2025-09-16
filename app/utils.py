@@ -7,7 +7,6 @@ from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 
 from app.extensions import mail
-from app.models import User
 
 
 def verifier_email(email):
@@ -44,25 +43,15 @@ def send_discount_email(user, level):
     discount = 20 if level == 4 else 30
 
     subject = "🎉 Félicitations pour votre fidélité !"
-    text_body = (
-        f"Bonjour {user.firstname},\n\n"
+    body = (
+        f"Bonjour {user.username},\n\n"
         f"Bravo ! Vous avez atteint le niveau {level} de fidélité.\n"
         f"Vous bénéficiez de {discount}% de réduction sur votre prochaine séance !\n\n"
         "À très bientôt ✨\n"
         "L'équipe Chouchouter"
     )
-    html_body = f"""
-    <p>Bonjour {user.firstname},</p>
-    <p>Bravo ! Vous avez atteint le niveau {level} de fidélité.</p>
-    <p><strong>{discount}%</strong> de réduction sur votre prochaine séance 🎁</p>
-    <p>À très bientôt ✨<br>L'équipe Chouchouter</p>
-    """
 
-    ok = send_email(
-        subject=subject, recipients=[user.email], body=text_body, html=html_body
-    )
-
-    return ok
+    return send_email(subject=subject, recipients=[user.email], body=body)
 
 
 def send_email(subject, recipients, body, html=None):
@@ -71,8 +60,10 @@ def send_email(subject, recipients, body, html=None):
     - SMTP (iCloud, Gmail, etc.)
     - SendGrid (API HTTP, recommandé en hébergeur cloud)
     """
+    env = os.getenv("FLASK_ENV", "development")
+    provider = "sengrid" if env == "production" else "smtp"
 
-    provider = os.getenv("MAIL_PROVIDER", "smtp")
+    html = html or body.replace("\n", "<br>")
 
     if provider == "smtp":
         try:
@@ -81,7 +72,7 @@ def send_email(subject, recipients, body, html=None):
             logging.info(f"Email envoyé via SMTP à {recipients}")
             return True
         except Exception as e:
-            logging.error(f"Erreur SMTP: {e}")
+            logging.error(f"❌ Erreur SMTP: {e}")
             return False
 
     elif provider == "sendgrid":
@@ -90,7 +81,7 @@ def send_email(subject, recipients, body, html=None):
             sender = os.getenv("MAIL_DEFAULT_SENDER")
 
             if not api_key or not sender:
-                logging.error("Config SendGrid manquante (API key ou sender).")
+                logging.error("❌ Config SendGrid manquante (API key ou sender).")
                 return False
 
             data = {
@@ -99,7 +90,7 @@ def send_email(subject, recipients, body, html=None):
                 "subject": subject,
                 "content": [
                     {"type": "text/plain", "value": body},
-                    {"type": "text/html", "value": html or body},
+                    {"type": "text/html", "value": html},
                 ],
             }
 
@@ -114,16 +105,16 @@ def send_email(subject, recipients, body, html=None):
             )
 
             if response.status_code == 202:
-                logging.info(f"Email envoyé via SendGrid à {recipients}")
+                logging.info(f"📨 Email envoyé via SendGrid à {recipients}")
                 return True
             else:
                 logging.error(
-                    f"Erreur SendGrid: {response.status_code}, {response.text}"
+                    f"❌ Erreur SendGrid: {response.status_code}, {response.text}"
                 )
                 return False
 
         except Exception as e:
-            logging.error(f"Erreur lors de l'envoi via SendGrid: {e}")
+            logging.error(f"❌ Erreur lors de l'envoi via SendGrid: {e}")
             return False
 
 
@@ -131,12 +122,5 @@ def send_email(subject, recipients, body, html=None):
 def update_user_session(user):
     session["user"] = {
         "username": user.username,
-        "firstname": user.firstname,
-        "lastname": user.lastname,
         "email": user.email,
-        "fidelity_level": user.fidelity_level,
     }
-
-
-def is_existing_user(email):
-    return User.query.filter_by(email=email).first() is not None

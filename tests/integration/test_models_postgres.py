@@ -7,7 +7,7 @@ from app.models import Comment, User
 
 @pytest.mark.integration
 def test_postgres_user_insertion(pg_db):
-    u = User(username="pguser", firstname="Pg", lastname="User", email="pg@example.com")
+    u = User(username="pguser", email="pg@example.com")
     u.set_password("Secret123!")
     pg_db.session.add(u)
     pg_db.session.commit()
@@ -16,7 +16,7 @@ def test_postgres_user_insertion(pg_db):
 
 @pytest.mark.integration
 def test_postgres_relations(pg_db):
-    u = User(username="rel", firstname="Rel", lastname="User", email="rel@example.com")
+    u = User(username="rel", email="rel@example.com")
     u.set_password("Secret123!")
     pg_db.session.add(u)
     pg_db.session.commit()

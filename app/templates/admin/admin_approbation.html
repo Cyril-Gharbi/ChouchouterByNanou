@@ -24,21 +24,17 @@
                 <thead>
                     <tr>
                         <th>Nom d'utilisateur</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
                         <th>Email</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user in users %}
+                    {% for req in requests %}
                         <tr>
-                            <form method="POST" action="{{ url_for('admin.process_user_request', user_id=user.id) }}">
+                            <form method="POST" action="{{ url_for('admin.process_user_request', request_id=req.id) }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.lastname }}</td>
-                                <td>{{ user.firstname }}</td>
-                                <td>{{ user.email }}</td>
+                                <td>{{ req.username }}</td>
+                                <td>{{ req.email }}</td>
                                 <td class="actions">
                                     <button type="submit" name="action" value="approve">✅ Valider</button>
                                     <button type="submit" name="action" value="refuse" onclick="return confirm('Refuser et supprimer cet utilisateur ?');">❌ Refuser</button>

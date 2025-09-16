@@ -44,7 +44,7 @@ def app_sqlite():
         reset_password_routes.init_routes(app)
         _db.create_all()
 
-        u = User(username="bob", firstname="B", lastname="O", email="b@example.com")
+        u = User(username="bob", email="b@example.com")
         u.set_password("Secret123!")
         _db.session.add(u)
         a = Admin(username="admin", email="a@example.com")

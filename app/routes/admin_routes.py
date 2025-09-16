@@ -1,4 +1,7 @@
+import hashlib
 import os
+import secrets
+from datetime import datetime, timezone
 from functools import wraps
 
 from bson import ObjectId
@@ -16,7 +19,8 @@ from pymongo.database import Database
 from werkzeug.utils import secure_filename
 
 from app.extensions import db
-from app.models import Admin, Comment, User
+from app.models import Admin, Comment, FidelityRewardLog, User, UserRequest
+from app.services.user_service import get_users_with_last_log
 from app.utils import (
     generate_password_reset_token,
     send_email,
@@ -65,8 +69,9 @@ def init_routes(app, mongo_db: Database):
         if mongo_db is None:
             return "MongoDB non configuré"
         mdb = mongo_db
-        prestations = list(mdb.Prestations.find())
-        users = User.query.filter_by(is_approved=True, deleted_at=None).all()
+
+        # Recovery of users with their last loyalty log
+        users = get_users_with_last_log()
 
         # Folder containing the images - absolute path
         folder = current_app.config["UPLOAD_FOLDER"]
@@ -168,18 +173,44 @@ def init_routes(app, mongo_db: Database):
         user = User.query.get_or_404(user_id)
         if request.method == "POST":
             user.username = request.form["username"]
-            user.firstname = request.form["firstname"]
-            user.lastname = request.form["lastname"]
+            user.email = request.form["email"]
+
             fidelity_str = request.form.get("fidelity_level")
             try:
-                user.fidelity_level = int(fidelity_str) if fidelity_str else 0
+                new_level = int(fidelity_str) if fidelity_str else 0
             except ValueError:
-                user.fidelity_level = 0
-            user.email = request.form["email"]
+                new_level = 0
+            last_log = (
+                FidelityRewardLog.query.filter_by(user_id=user.id)
+                .order_by(FidelityRewardLog.date.desc())
+                .first()
+            )
+            cycle = last_log.fidelity_cycle if last_log else 0
+
+            new_log = FidelityRewardLog(
+                user_id=user.id,
+                fidelity_level=new_level,
+                fidelity_cycle=cycle,
+                level_reached=new_level,
+                cycle_number=cycle,
+            )
+            db.session.add(new_log)
             db.session.commit()
             flash("Utilisateur modifié.", "admin_success")
             return redirect(url_for("admin.admin_dashboard"))
-        return render_template("admin/admin_edit_user.html", user=user)
+            # GET → afficher formulaire avec valeur actuelle
+        last_log = (
+            FidelityRewardLog.query.filter_by(user_id=user.id)
+            .order_by(FidelityRewardLog.date.desc())
+            .first()
+        )
+        current_level = last_log.fidelity_level if last_log else 0
+
+        return render_template(
+            "admin/admin_edit_user.html",
+            user=user,
+            current_level=current_level,
+        )
 
     # Admin deletes a user by user ID
     @admin_bp.route(
@@ -189,14 +220,29 @@ def init_routes(app, mongo_db: Database):
     )
     @admin_required
     def admin_delete_user(user_id):
-        if not hasattr(current_user, "delete_user"):
-            flash("Action non autorisée.", "admin_error")
-            return redirect(url_for("admin.admin_dashboard"))
-        success = current_user.delete_user(user_id)
-        if success:
-            flash("Utilisateur supprimé.", "admin_success")
-        else:
+        user = User.query.get(user_id)
+        if not user:
             flash("Utilisateur introuvable.", "admin_error")
+            return redirect(url_for("admin.admin_dashboard"))
+
+        # Détacher les commentaires associés
+        for comment in user.comments:
+            comment.user_id = None
+
+        # Anonymiser username et email
+        anonym_suffix = hashlib.sha256(
+            str(datetime.now(timezone.utc)).encode()
+        ).hexdigest()[:6]
+        user.username = f"deleted_user_{user.id}_{anonym_suffix}"
+        user.email = f"deleted_user_{user.id}_{secrets.token_hex(4)}@example.com"
+
+        # Marquer comme supprimé
+        user.deleted_at = datetime.now(timezone.utc)
+        user.is_anonymized = True
+
+        db.session.commit()
+
+        flash("Utilisateur supprimé et anonymisé (RGPD).", "admin_success")
         return redirect(url_for("admin.admin_dashboard"))
 
     # Photo upload and delete for admin
@@ -392,27 +438,37 @@ def init_routes(app, mongo_db: Database):
     @admin_bp.route("/admin/pending_users", endpoint="pending_users")
     @admin_required
     def pending_users():
-        users = User.query.filter_by(is_approved=False).all()
-        return render_template("admin/admin_approbation.html", users=users)
+        requests = UserRequest.query.all()
+        return render_template("admin/admin_approbation.html", requests=requests)
 
     @admin_bp.route(
-        "/admin/process_user_request/<int:user_id>",
+        "/admin/process_user_request/<int:request_id>",
         methods=["POST"],
         endpoint="process_user_request",
     )
     @admin_required
-    def process_user_request(user_id):
-        user = User.query.get_or_404(user_id)
+    def process_user_request(request_id):
+        user_request = UserRequest.query.get_or_404(request_id)
         action = request.form.get("action")
 
         if action == "approve":
-            user.is_approved = True
+            new_user = User(
+                username=user_request.username,
+                email=user_request.email,
+                password_hash=user_request.password_hash,
+                consent_privacy=True,
+                consent_date=datetime.now(timezone.utc),
+                is_approved=True,
+            )
+            db.session.add(new_user)
+            db.session.delete(user_request)
             db.session.commit()
+
             send_email(
                 subject="Acceptation de votre demande de création de compte",
-                recipients=[user.email],
+                recipients=[new_user.email],
                 body=(
-                    f"Félicitations {user.firstname} !\n\n"
+                    f"Félicitations {new_user.username} !\n\n"
                     "Votre demande de création de compte a été acceptée. "
                     "Nous sommes ravis de vous compter parmi nos clients.\n\n"
                     "Vous pouvez dès à présent vous connecter "
@@ -420,16 +476,19 @@ def init_routes(app, mongo_db: Database):
                     "À très bientôt,\nL'équipe Chouchouter"
                 ),
             )
-            flash(f"Utilisateur {user.username} validé avec succès.", "admin_success")
+            flash(
+                f"Utilisateur {new_user.username} validé avec succès.", "admin_success"
+            )
 
         elif action == "refuse":
-            db.session.delete(user)
+            db.session.delete(user_request)
             db.session.commit()
+
             send_email(
                 subject="Refus de votre demande de création de compte",
-                recipients=[user.email],
+                recipients=[user_request.email],
                 body=(
-                    f"Bonjour {user.firstname},\n\n"
+                    f"Bonjour {user_request.username},\n\n"
                     "Nous vous remercions pour votre intérêt.\n\n"
                     "Malheureusement, nous ne pouvons donner suite à "
                     "votre demande de création de compte.\n\n"
@@ -442,7 +501,7 @@ def init_routes(app, mongo_db: Database):
                     "À très bientôt,\nL'équipe Chouchouter"
                 ),
             )
-            flash(f"Utilisateur {user.username} supprimé.", "admin_info")
+            flash(f"Utilisateur {user_request.username} supprimé.", "admin_info")
 
         return redirect(url_for("admin.pending_users"))
 

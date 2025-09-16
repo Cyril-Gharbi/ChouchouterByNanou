@@ -27,8 +27,6 @@
                 <thead>
                     <tr>
                         <th>Nom d'utilisateur</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
                         <th>Niveau fidélité</th>
                         <th>Email</th>
                     </tr>
@@ -36,9 +34,7 @@
                 <tbody>
                     <tr>
                         <td><input type="text" name="username" value="{{ user.username }}" required></td>
-                        <td><input type="text" name="lastname" value="{{ user.lastname }}" required></td>
-                        <td><input type="text" name="firstname" value="{{ user.firstname }}" required></td>
-                        <td><input type="number" name="fidelity_level" value="{{ user.fidelity_level }}" min="0" required></td>
+                        <td><input type="number" name="fidelity_level" value="{{ current_level }}" min="0" required></td>
                         <td><input type="email" name="email" value="{{ user.email }}" required></td>
                     </tr>
                 </tbody>

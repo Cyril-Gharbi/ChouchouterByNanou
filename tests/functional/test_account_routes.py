@@ -73,8 +73,6 @@ def test_register_and_login_logout(client):
         "/register",
         data={
             "username": "bob",
-            "firstname": "B",
-            "lastname": "O",
             "email": "b@example.com",
             "password": "Secret123!",
         },

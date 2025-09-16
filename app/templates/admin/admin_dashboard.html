@@ -35,8 +35,6 @@
             <tr>
                 <th>ID</th>
                 <th>Nom d'utilisateur</th>
-                <th>Nom</th>
-                <th>Prénom</th>
                 <th>Niveau fidélité</th>
                 <th>Email</th>
                 <th>Niveau du cycle</th>
@@ -49,8 +47,6 @@
             <tr>
                 <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
-                <td>{{ user.lastname }}</td>
-                <td>{{ user.firstname }}</td>
                 <td>{{ user.fidelity_level }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.fidelity_cycle }}</td>
@@ -218,11 +214,9 @@
 
             rows.forEach(row => {
                 const username = row.cells[3].textContent.toLowerCase();
-                const lastname = row.cells[1].textContent.toLowerCase();
-                const firstname = row.cells[2].textContent.toLowerCase();
                 const email = row.cells[5].textContent.toLowerCase();
 
-                const match = lastname.includes(searchTerm) || firstname.includes(searchTerm) || username.includes(searchTerm) || email.includes(searchTerm);
+                const match = username.includes(searchTerm) || email.includes(searchTerm);
                 row.style.display = match ? '' : 'none';
             });
 
